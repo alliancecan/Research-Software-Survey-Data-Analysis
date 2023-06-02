@@ -74,6 +74,45 @@ survey_organized_spread <- pivot_wider(survey_organized_clean,
                                        values_from = Answer,
                                        values_fn = list)
 
+#Select columns that will be used for the data analysis
+survey_selected_data <- 
+  survey_organized_spread %>% 
+  select(Internal.ID, B1, B2, B3, B7, B8, C2, C3, C4, C5, C6, C7, C10, C11,
+         C12, C13, C14, C15, D2, D3, D4, D5, D6, D8, D9)
+
+# General colour Schemes ############################################################################################
+
+cbp1 <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
+              "#32322F", "#FBFAFA", "#D55E00", "#CC79A7"), 100)
+
+#This to be used to plot the geographical location                      
+cbp_Cad <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
+                 "#32322F", "darkturquoise", "#D55E00", "#CC79A7",
+                 "green4", "lightslategrey"), 100)
+
+# This to be used for yes, no, not sure                 
+cb_pie <- rep(c("#32322F","#FBFAFA", "#D6AB00","#00DBA7", "#B7B6B3",
+                "#0072B2", "#D55E00", "#CC79A7"), 100)
+
+# This to be used to plot the domains
+cb_pie_3 <- rep(c("#32322F","#B7B6B3", "#D6AB00"), 100)
+
+
 
 # General Survey Questions ############################################################################################
-### Q1 - Please describe your role(s). ######
+### B1 - What is your primary institutional affiliation? ######
+survey_B1_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, B1) %>% 
+  unnest(B1) %>% 
+  rename(Affiliation = B1)
+
+sort(unique(survey_B1_v1$Affiliation))# to clean the data
+
+survey_B1_v2 <- 
+  survey_B1_v1 %>% 
+  mutate(Affiliation_n = ifelse(
+    Affiliation == "Lawson Research Institiute ", "Lawson Research Institute", ifelse(
+      Affiliation == "Autre", "Other", ifelse(
+        Affiliation == "Birds Canada (NGO)", "Birds Canada" , Affiliation
+))))
