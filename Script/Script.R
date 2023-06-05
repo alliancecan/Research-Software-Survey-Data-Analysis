@@ -116,3 +116,76 @@ survey_B1_v2 <-
       Affiliation == "Autre", "Other", ifelse(
         Affiliation == "Birds Canada (NGO)", "Birds Canada" , Affiliation
 ))))
+
+
+### B2 - Please choose your primary research domain based on the Canadian Research and Development Classification (CRDC) 2020. ######
+Domain_Breakdown<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, B2) %>% 
+  unnest(B2) %>% 
+  rename(Domain = B2)
+
+#summarise the data = count domain's n
+domain_summary <- 
+  Domain_Breakdown %>% 
+  group_by(Domain) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  print()
+
+
+#### Group domains into TC3 ####
+domain_summary1 <- 
+  domain_summary %>% 
+  mutate(TC3 = ifelse(
+    Domain == "Natural sciences", "Sciences and Engineering", ifelse(
+      Domain == "Sciences naturelles", "Sciences and Engineering", ifelse(
+        Domain == "Medical, health and life sciences", "Health Research", ifelse(
+          Domain == "Sciences medicales, de la sante et de la vie", "Health Research", ifelse(
+            Domain == "Engineering and technology", "Sciences and Engineering", ifelse(
+              Domain == "Genie et technologies", "Sciences and Engineering", ifelse(
+                Domain ==  "Humanities and the arts", "Social Sciences and Humanities", ifelse(
+                  Domain == "Sciences humaines et arts", "Social Sciences and Humanities", ifelse(
+                    Domain == "Sciences sociales", "Social Sciences and Humanities", ifelse(
+                      Domain == "Social sciences", "Social Sciences and Humanities", ifelse(
+                        Domain == "Agricultural and veterinary sciences", "Sciences and Engineering", ifelse(
+                          Domain == "Sciences agricoles et veterinaires", "Sciences and Engineering", "X"
+                          )))))))))))))
+
+#Link TC3 to Internal.ID = this will be used for the rest of the analysis as we will analyse data by TC3
+domain <- 
+  Domain_Breakdown %>% 
+  left_join(domain_summary1, by = "Domain") %>% 
+  select(-n) # n = 518
+
+domain1 <- 
+  domain %>% 
+  select(-Domain)
+
+b2.domain <- domain
+
+#group by domain
+b2.domain.summary <- 
+  b2.domain %>% 
+  group_by(TC3) %>% count() %>% drop_na()
+
+# #for esthethis purposes, we add "\n" to long TC3 names and to domains so they the names will fully appear in the pie charts
+q3.domain.summary$TC3[q3.domain.summary$TC3 == "Social Sciences and Humanities"] <- "Social Sciences\nand Humanities"
+q3.domain.summary$TC3[q3.domain.summary$TC3 == "Sciences and Engineering"] <- "Sciences and\nEngineering"
+domain_summary1$Domain[domain_summary1$Domain == "Medical, Health and Life Sciences "] <- "Medical, Health\nand Life Sciences"
+
+#### Pie charts ####
+
+
+PieDonut(b2.domain.summary, 
+         aes(TC3, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         title= "Respondents' roles", 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp1)
+
