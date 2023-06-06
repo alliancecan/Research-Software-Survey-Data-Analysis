@@ -306,7 +306,7 @@ PieDonut(B7_summay,
   scale_fill_manual(values =  cb_pie)
 
 
-### B8 - How is your group’s research software budget funded?? ######
+### B8 - How is your group’s research software budget funded? ######
 survey_B8_v1<- 
   survey_organized_spread %>% 
   select(Internal.ID, B8) %>% 
@@ -387,3 +387,130 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
   guides(fill=guide_legend(title="Tri-agency"))+
    xlab("") + 
    ylab("")
+
+### C2 - Do you consider the use of research software critical to your research? ######
+survey_C2_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C2) %>% 
+  unnest(C2) %>% 
+  rename(answer = C2)
+
+sort(unique(survey_C2_v1$answer))# to clean the data
+
+survey_C2_v2 <- 
+  survey_C2_v1 %>% 
+  mutate(answer_n = ifelse(
+    answer == "Je ne sais pas", "Not sure", ifelse(
+      answer == "Non", "No", ifelse(
+        answer == "Oui", "Yes", ifelse(
+          answer == "Yes", "yes", ifelse(
+            answer == "No", "No", ifelse(
+              answer == "Not sure", "Not sure", "Other"
+            )))))))
+
+survey_C2_v3 <- 
+  survey_C2_v2 %>% 
+  filter(!answer_n == "Other")
+
+C2_summay <- 
+  survey_C2_v3 %>% 
+  group_by(answer_n) %>% 
+  count()
+
+#Link to TC3
+survey_C2_v3_tc3 <- 
+  survey_C2_v3 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+
+#summarize the data
+summary_C2_tc3 <- 
+  survey_C2_v3_tc3 %>% 
+  group_by(TC3, answer_n) %>% 
+  count() %>% 
+  print()
+
+
+#### Pie chart #### 
+PieDonut(C2_summay, 
+         aes(answer_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+#### Bar plot - TC3 #### 
+
+ggplot(summary_C2_tc3, aes(fill=TC3, y=n, x=answer_n)) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
+
+
+### C3 - Do you consider the development of research software a primary output of your research? ######
+survey_C3_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C3) %>% 
+  unnest(C3) %>% 
+  rename(answer = C3)
+
+C3_summay <- 
+  survey_C3_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+#Link to TC3
+survey_C3_v3_tc3 <- 
+  survey_C3_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+
+#summarize the data
+summary_C3_tc3 <- 
+  survey_C3_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+
+#### Pie chart #### 
+PieDonut(C3_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+#### Bar plot - TC3 #### 
+
+ggplot(summary_C3_tc3, aes(fill=TC3, y=n, x=answer)) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
+
