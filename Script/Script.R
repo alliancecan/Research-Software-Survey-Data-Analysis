@@ -306,24 +306,84 @@ PieDonut(B7_summay,
   scale_fill_manual(values =  cb_pie)
 
 
-### B8 - Quelles sont les sources de financement pour le budget réservé aux logiciels de recherche de votre groupe? ######
+### B8 - How is your group’s research software budget funded?? ######
 survey_B8_v1<- 
   survey_organized_spread %>% 
   select(Internal.ID, B8) %>% 
-  unnest(B8)
+  unnest(B8) %>% 
+  rename(answer = B8)
 
 sort(unique(survey_B8_v1$B8))# to clean the data
 
 survey_B8_v2 <- 
   survey_B8_v1 %>% 
-  mutate(B8_n = ifelse(
-    B8 == "Il n'est pas finance", "It is not funded", ifelse(
-      B8 == "Institutionnel", "Institutional", ifelse(
-        B8 == "Organisme international", "International funding", ifelse(
-          B8 == "Organisme provincial", "Provincial funding", ifelse(
-            B8 == "Subvention ou financement de l_industrie", "Industry grants", ifelse(
-              B8 == "IRSC", "CIHR", ifelse(
-                B8 == "CRSNG", "NSERC", ifelse(
-                  B8 == "CRSH", "SSHRC", ifelse(
-                    B8 == "FCI", "CFI", B8
-                    ))))))))))
+  mutate(answer_n = ifelse(
+    answer == "Il n'est pas finance", "It is not funded", ifelse(
+      answer == "Institutionnel", "Institutional", ifelse(
+        answer == "Organisme international", "International funding", ifelse(
+          answer == "Organisme provincial", "Provincial funding", ifelse(
+            answer == "Subvention ou financement de l_industrie", "Industry grants", ifelse(
+              answer == "IRSC", "CIHR", ifelse(
+                answer == "CRSNG", "NSERC", ifelse(
+                  answer == "CRSH", "SSHRC", ifelse(
+                    answer == "FCI", "CFI", answer
+                    )))))))))) %>% 
+  select(-answer)
+
+
+#summarize the data
+B8_summary <- 
+  survey_B8_v2 %>% 
+  group_by(Answer_n) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  print()
+
+
+#link TC3 to q7 IDs
+B8.domain <- 
+  survey_B8_v2 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  print() ## n = 358 = unique(Internal.ID)
+
+
+Workflow.B8 <- 
+  B8.domain %>% 
+  unique()
+
+nHR <- filter(Workflow.B8, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #100
+nSE <- filter(Workflow.B8, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#234
+nSSH <- filter(Workflow.B8, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #114
+
+Workflow_Health <- filter(Workflow.B8, TC3=="Health Research") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.B8, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.B8, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
+# #### Plot funds source #### 
+
+ ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
+   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+   scale_fill_manual(values =  cbp1) + 
+   coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+   theme_linedraw(base_size = 20) +
+   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+   # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+   xlab("") + 
+   ylab("")
