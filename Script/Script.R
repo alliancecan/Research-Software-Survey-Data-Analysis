@@ -514,3 +514,133 @@ ggplot(summary_C3_tc3, aes(fill=TC3, y=n, x=answer)) +
   ylab("n")
 
 
+
+### C4 - Do you have access to software development support? ######
+survey_C4_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C4) %>% 
+  unnest(C4) %>% 
+  rename(answer = C4)
+
+C4_summay <- 
+  survey_C4_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+#Link to TC4
+survey_C4_v3_tc3 <- 
+  survey_C4_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+
+#summarize the data
+summary_C4_tc3 <- 
+  survey_C4_v3_tC4 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+
+#### Pie chart #### 
+PieDonut(C4_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+#### Bar plot - TC3 #### 
+
+ggplot(summary_C4_tc3, aes(fill=TC3, y=n, x=answer)) + 
+  geom_bar(position="fill", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("%")
+
+
+
+
+
+### C5 - Who provides this support? ######
+
+#C5 is part of of C4: select the C5 questions
+
+survey_C5_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "C5")
+
+#Separate the answers from the question
+survey_C5_v2 <- 
+  within(
+    survey_C5_v1, 
+    Question <- 
+      data.frame(
+        do.call(
+          'rbind',
+          strsplit(
+            as.character(Question), 
+            '__', 
+            fixed=TRUE))))
+
+#Clean the data
+survey_C5_v3 <- 
+  survey_C5_v2 %>% 
+  drop_na() %>% 
+  unnest(Question) %>% 
+  select(-X1) %>% 
+  mutate(Answer_n = ifelse(
+    X2 == "_My_institution_", "My institution", ifelse(
+      X2 == "_The_Alliance_", "The Alliance", ifelse(
+        X2 == "_A_disciplinary_community_", "A disciplinary community", "Paid consultants or professional services"
+          )))) %>% 
+  select(-X2)
+
+
+survey_C5_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C5) %>% 
+  unnest(C5) %>% 
+  rename(answer = C5)
+
+sort(unique(survey_C5_v1$answer))# to clean the data
+
+survey_C2_v2 <- 
+  survey_C2_v1 %>% 
+  mutate(answer_n = ifelse(
+    answer == "Je ne sais pas", "Not sure", ifelse(
+      answer == "Non", "No", ifelse(
+        answer == "Oui", "Yes", ifelse(
+          answer == "Yes", "yes", ifelse(
+            answer == "No", "No", ifelse(
+              answer == "Not sure", "Not sure", "Other"
+            )))))))
+
+C5_summay <- 
+  survey_C5_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+#Link to TC5
+survey_C5_v3_tc3 <- 
+  survey_C5_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+
+#summarize the data
+summary_C5_tc3 <- 
+  survey_C5_v3_tC5 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
