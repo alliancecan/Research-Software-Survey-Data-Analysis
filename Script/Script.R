@@ -32,12 +32,12 @@ library(ggthemes)
 survey <- read.csv("ID_Alliance_RS_Survey_EN_FR_20230602.csv",
                    header = T,
                    encoding = "UTF-8",
-                   na.strings=c("","NA")) %>% 
+                   na.strings=c("","NA")) %>%
   rename(Internal.ID = ID)
 
 
 # Organizing data ----------------------------------------------------------------
-# 
+# # 
 # #Create unique ID per column, as raw data doesn't have unique ID
 # set.seed(5)#to generate the same numbers each time the code is run
 # randnum <- sample.int(1500,952)
@@ -322,7 +322,7 @@ survey_B8_v2 <-
       answer == "Institutionnel", "Institutional", ifelse(
         answer == "Organisme international", "International funding", ifelse(
           answer == "Organisme provincial", "Provincial funding", ifelse(
-            answer == "Subvention ou financement de l_industrie", "Industry grants", ifelse(
+            answer == "Subvention ou financement de l'industrie", "Industry grants", ifelse(
               answer == "IRSC", "CIHR", ifelse(
                 answer == "CRSNG", "NSERC", ifelse(
                   answer == "CRSH", "SSHRC", ifelse(
@@ -334,7 +334,7 @@ survey_B8_v2 <-
 #summarize the data
 B8_summary <- 
   survey_B8_v2 %>% 
-  group_by(Answer_n) %>% 
+  group_by(answer_n) %>% 
   count() %>% 
   arrange(-n) %>% 
   print()
@@ -606,41 +606,61 @@ survey_C5_v3 <-
           )))) %>% 
   select(-X2)
 
-
-survey_C5_v1<- 
-  survey_organized_spread %>% 
-  select(Internal.ID, C5) %>% 
-  unnest(C5) %>% 
-  rename(answer = C5)
-
-sort(unique(survey_C5_v1$answer))# to clean the data
-
-survey_C2_v2 <- 
-  survey_C2_v1 %>% 
-  mutate(answer_n = ifelse(
-    answer == "Je ne sais pas", "Not sure", ifelse(
-      answer == "Non", "No", ifelse(
-        answer == "Oui", "Yes", ifelse(
-          answer == "Yes", "yes", ifelse(
-            answer == "No", "No", ifelse(
-              answer == "Not sure", "Not sure", "Other"
-            )))))))
-
-C5_summay <- 
-  survey_C5_v1 %>% 
-  group_by(answer) %>% 
-  count()
-
-#Link to TC5
-survey_C5_v3_tc3 <- 
-  survey_C5_v1 %>% 
+#Link to TC4
+C5.domain <- 
+  survey_C5_v3 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
-  drop_na()
+  drop_na() # n = 320
+
 
 #summarize the data
-summary_C5_tc3 <- 
-  survey_C5_v3_tC5 %>% 
-  group_by(TC3, answer) %>% 
+C5_summary <- 
+  survey_C5_v3 %>% 
+  group_by(Answer_n) %>% 
   count() %>% 
+  arrange(-n) %>% 
   print()
+
+
+Workflow.C5 <- 
+  C5.domain %>% 
+  unique()
+
+nHR <- filter(Workflow.C5, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #100
+nSE <- filter(Workflow.C5, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#234
+nSSH <- filter(Workflow.C5, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #114
+
+Workflow_Health <- filter(Workflow.C5, TC3=="Health Research") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.C5, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.C5, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
+# #### Plot funds source #### 
+
+ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
 
