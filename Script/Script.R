@@ -403,7 +403,7 @@ survey_C2_v2 <-
     answer == "Je ne sais pas", "Not sure", ifelse(
       answer == "Non", "No", ifelse(
         answer == "Oui", "Yes", ifelse(
-          answer == "Yes", "yes", ifelse(
+          answer == "Yes", "Yes", ifelse(
             answer == "No", "No", ifelse(
               answer == "Not sure", "Not sure", "Other"
             )))))))
@@ -467,28 +467,37 @@ survey_C3_v1<-
   unnest(C3) %>% 
   rename(answer = C3)
 
-C3_summay <- 
+sort(unique(survey_C3_v1$answer))# to clean the data
+
+survey_C3_v2 <- 
   survey_C3_v1 %>% 
+  mutate(answer_n = ifelse(
+    answer == "Oui", "Yes", ifelse(
+      answer == "Non", "No", answer
+      )))
+
+C3_summay <- 
+  survey_C3_v2 %>% 
   group_by(answer) %>% 
   count()
 
 #Link to TC3
 survey_C3_v3_tc3 <- 
-  survey_C3_v1 %>% 
+  survey_C3_v2 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na()
 
 #summarize the data
 summary_C3_tc3 <- 
   survey_C3_v3_tc3 %>% 
-  group_by(TC3, answer) %>% 
+  group_by(TC3, answer_n) %>% 
   count() %>% 
   print()
 
 
 #### Pie chart #### 
-PieDonut(C3_summay, 
-         aes(answer, count= n), 
+PieDonut(summary_C3_tc3, 
+         aes(answer_n, count= n), 
          ratioByGroup = FALSE, 
          showPieName=F, 
          r0=0.0,r1=1,r2=1.4,start=pi/2,
@@ -503,7 +512,7 @@ PieDonut(C3_summay,
 
 #### Bar plot - TC3 #### 
 
-ggplot(summary_C3_tc3, aes(fill=TC3, y=n, x=answer)) + 
+ggplot(summary_C3_tc3, aes(fill=TC3, y=n, x=answer_n)) + 
   geom_bar(position="stack", stat="identity") +
   scale_fill_manual(values =  cbp1) + 
   # ggtitle("") +
@@ -522,28 +531,40 @@ survey_C4_v1<-
   unnest(C4) %>% 
   rename(answer = C4)
 
-C4_summay <- 
+sort(unique(survey_C4_v1$answer))# to clean the data
+
+survey_C4_v2 <- 
   survey_C4_v1 %>% 
-  group_by(answer) %>% 
+  mutate(answer_n = ifelse(
+    answer == "Oui", "Yes", ifelse(
+      answer == "Non", "No", ifelse(
+        answer == "Je ne sais pas", "Not sure", answer
+        )))) %>% 
+  select(-answer)
+
+
+C4_summay <- 
+  survey_C4_v2 %>% 
+  group_by(answer_n) %>% 
   count()
 
-#Link to TC4
+#Link to TC3
 survey_C4_v3_tc3 <- 
-  survey_C4_v1 %>% 
+  survey_C4_v2 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na()
 
 #summarize the data
 summary_C4_tc3 <- 
-  survey_C4_v3_tC4 %>% 
-  group_by(TC3, answer) %>% 
+  survey_C4_v3_tc3 %>% 
+  group_by(TC3, answer_n) %>% 
   count() %>% 
   print()
 
 
 #### Pie chart #### 
 PieDonut(C4_summay, 
-         aes(answer, count= n), 
+         aes(answer_n, count= n), 
          ratioByGroup = FALSE, 
          showPieName=F, 
          r0=0.0,r1=1,r2=1.4,start=pi/2,
@@ -558,19 +579,15 @@ PieDonut(C4_summay,
 
 #### Bar plot - TC3 #### 
 
-ggplot(summary_C4_tc3, aes(fill=TC3, y=n, x=answer)) + 
-  geom_bar(position="fill", stat="identity") +
+ggplot(summary_C4_tc3, aes(fill=TC3, y=n, x=answer_n)) + 
+  geom_bar(position="stack", stat="identity") +
   scale_fill_manual(values =  cbp1) + 
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
   theme_linedraw(base_size = 20) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   xlab("")+
-  ylab("%")
-
-
-
-
+  ylab("n")
 
 ### C5 - Who provides this support? ######
 
@@ -593,6 +610,8 @@ survey_C5_v2 <-
             '__', 
             fixed=TRUE))))
 
+
+
 #Clean the data
 survey_C5_v3 <- 
   survey_C5_v2 %>% 
@@ -606,12 +625,16 @@ survey_C5_v3 <-
           )))) %>% 
   select(-X2)
 
-#Link to TC4
+#Link to TC3
 C5.domain <- 
   survey_C5_v3 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
-  drop_na() # n = 320
+  drop_na() # n = 1280
 
+#Select only rows with Yes (as this is linked to "Yes")
+C5.domain.yes <- 
+  C5.domain %>% 
+  filter(Answer == "Yes")
 
 #summarize the data
 C5_summary <- 
@@ -620,47 +643,3 @@ C5_summary <-
   count() %>% 
   arrange(-n) %>% 
   print()
-
-
-Workflow.C5 <- 
-  C5.domain %>% 
-  unique()
-
-nHR <- filter(Workflow.C5, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #100
-nSE <- filter(Workflow.C5, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#234
-nSSH <- filter(Workflow.C5, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #114
-
-Workflow_Health <- filter(Workflow.C5, TC3=="Health Research") %>%
-  group_by(TC3, answer_n) %>%
-  summarize(n = n()) %>%
-  arrange(desc(n),.by_group = T) %>%
-  mutate('%' = (n / nHR)*100)
-
-Workflow_SciEng <- filter(Workflow.C5, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer_n) %>%
-  summarize(n = n()) %>%
-  arrange(desc(n),.by_group = T) %>%
-  mutate('%' = (n / nSE)*100)
-
-Workflow_SSH <- filter(Workflow.C5, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer_n) %>%
-  summarize(n = n()) %>%
-  arrange(desc(n),.by_group = T) %>%
-  mutate('%' = (n / nSSH)*100) 
-
-Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
-
-# #### Plot funds source #### 
-
-ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
-  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
-  scale_fill_manual(values =  cbp1) + 
-  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  # ggtitle("") +
-  guides(fill=guide_legend(title="Tri-agency"))+
-  xlab("") + 
-  ylab("")
-
-
