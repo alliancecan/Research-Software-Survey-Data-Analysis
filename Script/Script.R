@@ -198,35 +198,11 @@ survey_B3_v1<-
   unnest(B3) %>% 
   rename(Role = B3)
 
-sort(unique(survey_B3_v1$Role))# to clean the data
-
-survey_B3_v2 <- 
-  survey_B3_v1 %>% 
-  mutate(Role_n = ifelse(
-    Role == "Administratrice ou administrateur", "Administrator", ifelse(
-      Role == "Associee ou associe de recherche", "Research Associate", ifelse(
-        Role == "Autre", "Other", ifelse(
-          Role == "Bibliothecaire", "Librarian", ifelse(
-            Role == "Boursiere postdoctorale ou boursier postdoctoral", "Post-Doctoral Fellow", ifelse(
-              Role == "Chercheuse ou chercheur", "Researcher", ifelse(
-                Role == "Conseillere a la recherche", "Research Staff", ifelse(
-                  Role == "Developpeuse ou developpeur de logiciel de recherche", "Research Software Developer", ifelse(
-                    Role == "etudiante ou etudiant au doctorat", "Student (Doctoral)", ifelse(
-                      Role == "etudiante ou etudiant de premier cycle", "Student (Undergrad)", ifelse(
-                        Role == "etudiante ou etudiant diplome", "Student (Graduate)", ifelse(
-                          Role == "Ingenieure ou ingenieur en logiciels de recherche / Experte ou expert", "Research Software Engineer / Expert", ifelse(
-                            Role == "Personnel de recherche", "Research Staff", ifelse(
-                              Role == "Personnel de soutien", "Research Staff", ifelse(
-                                Role == "Professeure ou professeur auxiliaire, professeure ou professeur emerite, professeure ou professeur invite, professeure ou professeur avec mandat limite", "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
-                                  Role == "Professeure ou professeur, (incluant professeure ou professeur assistant, professeure ou professeur associe, professeure ou professeur titulaire, professeure ou professeur clinique, professeure ou professeur d_enseignement)", "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", ifelse(
-                                    Role == "staff in research support unit", "Research Staff", Role
-                                    ))))))))))))))))))
-
 
 ##From "Other", avoid duplication and select answers
 
 #Add "2" to rows that I want to select
-duplications_v1 <- survey_B3_v2 %>% 
+duplications_v1 <- survey_B3_v1 %>% 
   group_by(Internal.ID) %>% 
   mutate(num_dups = n(), 
          dup_id = row_number()) %>% 
@@ -275,18 +251,8 @@ survey_B7_v1<-
   select(Internal.ID, B7) %>% 
   unnest(B7)
 
-sort(unique(survey_B7_v1$B7))# to clean the data
-
-survey_B7_v2 <- 
-  survey_B7_v1 %>% 
-  mutate(B7_n = ifelse(
-    B7 == "Je ne sais pas", "Not sure", ifelse(
-      B7 == "Non", "No", ifelse(
-        B7 == "Oui", "Yes", B7
-        ))))
-
 B7_summay <- 
-  survey_B7_v2 %>% 
+  survey_B7_v1 %>% 
   group_by(B7_n) %>% 
   count()
 
@@ -313,23 +279,6 @@ survey_B8_v1<-
   unnest(B8) %>% 
   rename(answer = B8)
 
-sort(unique(survey_B8_v1$B8))# to clean the data
-
-survey_B8_v2 <- 
-  survey_B8_v1 %>% 
-  mutate(answer_n = ifelse(
-    answer == "Il n'est pas finance", "It is not funded", ifelse(
-      answer == "Institutionnel", "Institutional", ifelse(
-        answer == "Organisme international", "International funding", ifelse(
-          answer == "Organisme provincial", "Provincial funding", ifelse(
-            answer == "Subvention ou financement de l'industrie", "Industry grants", ifelse(
-              answer == "IRSC", "CIHR", ifelse(
-                answer == "CRSNG", "NSERC", ifelse(
-                  answer == "CRSH", "SSHRC", ifelse(
-                    answer == "FCI", "CFI", answer
-                    )))))))))) %>% 
-  select(-answer)
-
 
 #summarize the data
 B8_summary <- 
@@ -340,7 +289,7 @@ B8_summary <-
   print()
 
 
-#link TC3 to q7 IDs
+#link TC3 to B8 IDs
 B8.domain <- 
   survey_B8_v2 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
@@ -351,9 +300,9 @@ Workflow.B8 <-
   B8.domain %>% 
   unique()
 
-nHR <- filter(Workflow.B8, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #100
-nSE <- filter(Workflow.B8, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#234
-nSSH <- filter(Workflow.B8, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #114
+nHR <- filter(Workflow.B8, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #50
+nSE <- filter(Workflow.B8, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#117
+nSSH <- filter(Workflow.B8, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #57
 
 Workflow_Health <- filter(Workflow.B8, TC3=="Health Research") %>%
   group_by(TC3, answer_n) %>%
@@ -400,17 +349,20 @@ sort(unique(survey_C2_v1$answer))# to clean the data
 survey_C2_v2 <- 
   survey_C2_v1 %>% 
   mutate(answer_n = ifelse(
-    answer == "Je ne sais pas", "Not sure", ifelse(
-      answer == "Non", "No", ifelse(
-        answer == "Oui", "Yes", ifelse(
-          answer == "Yes", "Yes", ifelse(
-            answer == "No", "No", ifelse(
-              answer == "Not sure", "Not sure", "Other"
-            )))))))
+    answer == "No", "No", ifelse(
+      answer == "Yes", "Yes", ifelse(
+        answer == "Not sure", "Not sure", "Other"))))
 
 survey_C2_v3 <- 
   survey_C2_v2 %>% 
   filter(!answer_n == "Other")
+
+#Select other
+other <- 
+  survey_C2_v2 %>% 
+  filter(answer_n == "Other")
+
+# write.csv(other, "C2.csv")
 
 C2_summay <- 
   survey_C2_v3 %>% 
@@ -467,17 +419,9 @@ survey_C3_v1<-
   unnest(C3) %>% 
   rename(answer = C3)
 
-sort(unique(survey_C3_v1$answer))# to clean the data
-
-survey_C3_v2 <- 
-  survey_C3_v1 %>% 
-  mutate(answer_n = ifelse(
-    answer == "Oui", "Yes", ifelse(
-      answer == "Non", "No", answer
-      )))
 
 C3_summay <- 
-  survey_C3_v2 %>% 
+  survey_C3_v1 %>% 
   group_by(answer) %>% 
   count()
 
@@ -531,21 +475,9 @@ survey_C4_v1<-
   unnest(C4) %>% 
   rename(answer = C4)
 
-sort(unique(survey_C4_v1$answer))# to clean the data
-
-survey_C4_v2 <- 
-  survey_C4_v1 %>% 
-  mutate(answer_n = ifelse(
-    answer == "Oui", "Yes", ifelse(
-      answer == "Non", "No", ifelse(
-        answer == "Je ne sais pas", "Not sure", answer
-        )))) %>% 
-  select(-answer)
-
-
 C4_summay <- 
-  survey_C4_v2 %>% 
-  group_by(answer_n) %>% 
+  survey_C4_v1 %>% 
+  group_by(answer) %>% 
   count()
 
 #Link to TC3
@@ -564,7 +496,7 @@ summary_C4_tc3 <-
 
 #### Pie chart #### 
 PieDonut(C4_summay, 
-         aes(answer_n, count= n), 
+         aes(answer, count= n), 
          ratioByGroup = FALSE, 
          showPieName=F, 
          r0=0.0,r1=1,r2=1.4,start=pi/2,
@@ -643,3 +575,196 @@ C5_summary <-
   count() %>% 
   arrange(-n) %>% 
   print()
+
+### C6 - How important is (or would be) such a service to your research? ######
+survey_C6_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C6) %>% 
+  unnest(C6) %>% 
+  rename(answer = C6)
+
+sort(unique(survey_C6_v1$answer))# to clean the data
+
+survey_C6_v2 <- 
+  survey_C6_v1 %>% 
+  mutate(answer_n = ifelse(
+    answer == "Tres important", "Very important", ifelse(
+      answer == "Un peu important", "Somewhat important", ifelse(
+        answer == "Neutre", "Neutral", ifelse(
+          answer == "Pas important", "Not important", ifelse(
+            answer == "Ne s'applique pas", "It doesn't matter",
+            )))))) %>% 
+  select(-answer)
+
+
+C6_summay <- 
+  survey_C6_v2 %>% 
+  group_by(answer_n) %>% 
+  count()
+
+#Link to TC3
+survey_C6_v3_tc3 <- 
+  survey_C6_v2 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+
+#summarize the data
+summary_C6_tc3 <- 
+  survey_C6_v3_tc3 %>% 
+  group_by(TC3, answer_n) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    answer_n == "Neutral", 3, ifelse(
+      answer_n == "Not important", 4, ifelse(
+        answer_n == "Somewhat important", 2, ifelse(
+          answer_n == "Very important", 1, 5
+          ))))) %>% 
+  print()
+
+
+#### Bar plot - TC3 #### 
+
+ggplot(summary_C6_tc3, aes(fill=TC3, y=n, x=reorder(answer_n, -order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
+
+### C11 - Are there particular software platforms or software services you currently use which you feel would be valuable to be offered as a national service for all researchers to access? ######
+survey_C11_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C11) %>% 
+  unnest(C11)
+
+sort(unique(survey_C11_v1$C11))# to clean the data
+
+survey_C11_v2 <- 
+  survey_C11_v1 %>% 
+  mutate(C11_n = ifelse(
+    C11 == "Oui", "Yes", ifelse(
+      C11 == "Non", "No", C11
+      )))
+
+C11_summay <- 
+  survey_C11_v2 %>% 
+  group_by(C11_n) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(C11_summay, 
+         aes(C11_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+
+### C12 - Would you be interested in sharing success stories with the Alliance? If yes, please provide your contact information and the URL of the software platform. ######
+survey_C12_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C12) %>% 
+  unnest(C12)
+
+sort(unique(survey_C12_v1$C12))# to clean the data
+
+survey_C12_v2 <- 
+  survey_C12_v1 %>% 
+  mutate(C12_n = ifelse(
+    C12 == "Oui", "Yes", ifelse(
+      C12 == "Non", "No", ifelse(
+        C12 == "Yes", "Yes", ifelse(
+          C12 == "No", "No", "Other"
+          )))))
+
+survey_C12_v3 <- 
+  survey_C12_v2 %>% 
+  filter(!C12_n == "Other") %>% 
+  unique() # because of duplications
+
+#select the shared success stories
+other <- 
+  survey_C12_v2 %>% 
+  filter(C12_n == "Other")
+
+# write.csv(SS, "C12.csv")
+
+C12_summay <- 
+  survey_C12_v3 %>% 
+  group_by(C12_n) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(C12_summay, 
+         aes(C12_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+
+### D2 - Have you or your team received funding from a funding call that is specific to the development of research software (e.g. CANARIE Research Software, CFI Cyberinfrastructure Challenge I, Chan Zuckerberg Open Source Software)? ######
+survey_D2_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D2) %>% 
+  unnest(D2)
+
+sort(unique(survey_D2_v1$D2))# to clean the data
+
+survey_D2_v2 <- 
+  survey_D2_v1 %>% 
+  mutate(D2_n = ifelse(
+    D2 == "Je ne sais pas", "Not sure", ifelse(
+      D2 == "Non", "No", ifelse(
+        D2 == "Oui", "Yes", D2
+      ))))
+
+D2_summay <- 
+  survey_D2_v2 %>% 
+  group_by(D2_n) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D2_summay, 
+         aes(D2_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+### D3 - From which funding agencies? ######
+survey_D3_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D3) %>% 
+  unnest(D3) %>% 
+  unique()
+
+sort(unique(survey_D3_v1$D3))# to clean the data
+
+write.csv(survey_D3_v1, "D3.csv")

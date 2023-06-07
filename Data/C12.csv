@@ -1,0 +1,163 @@
+"","Internal.ID","C12","C12_n"
+"1",3,"hng1@queensu.ca
+
+https://geodynamics.org/resources/specfem3dgeotech
+
+I am also one of the main developers of these software packages:
+https://geodynamics.org/resources/specfem3d
+https://geodynamics.org/resources/specfem3dcartesian
+
+We are preparing to release our ambitious software package called SPECFEM-X.","Other"
+"2",21,"myLaminin has brought a blockchain-enabled research data-sharing service to market that was researcher-designed. A product of a 3-month pilot with Queen's University at Kingston, it has been very well received and addresses many of the operational requirements mentioned above. 
+
+A case study summarizing that pilot initiative can be found here: https://www.mylaminin.net/downloads
+
+Queen's has now committed to a 12-month user validation phase that will no doubt enhance the service and give an opportunity to further increase the value proposition.
+
+We are an Ontario-based, Canadian company. Our contact information is:
+
+Ash Bassili
+ash@myLaminin.net
+www.myLaminin.net
++14438243081","Other"
+"3",22,"Jeffery Antoniuk <jeffery.antoniuk@ualberta.ca>
+(1) https://www.islandora.ca/","Other"
+"4",31,"Maxime Boissonneault, maxime.boissonneault@calculquebec.ca
+https://github.com/ComputeCanada/magic_castle","Other"
+"5",37,"Well, mine obviously. But I write all of it.","Other"
+"6",53,"https://voyant-tools.org/
+","Other"
+"7",73,"www.pmcobe.ca","Other"
+"8",81,"Geodisy/Lunaris was originally based in UBC","Other"
+"9",91,"We developed a platform in the Research Software program under CANARIE and it has been publicized","Other"
+"10",105,"We develop 3D Slicer (www.slicer.org) for medical image analysis. The effort had been funded by Canarie.  The resource has been used worldwide, through over 1M downloads. ","Other"
+"11",109,"We created an internal solution to provide automation to our REB processes using Salesforce. ","Other"
+"12",110,"https://github.com/hep-gc/cloudscheduler
+https://indico.cern.ch/event/1222948/contributions/5321031/attachments/2621040/4531571/HEPiX-032023-CSV2.pdf
+https://indico.jlab.org/event/459/contributions/11481/attachments/9688/14133/CHEP_CSV2.pdf
+","Other"
+"13",112,"https://www.ogsl.ca/en/home-slgo/","Other"
+"14",152,"Voyant Tools (voyant-tools.org) is widely used around the world. It has over 200,000 users a year. My contact information is Geoffrey Rockwell (grockwel@ualberta.ca)","Other"
+"15",161,"adam.rankin@uwo.ca, 3D Slicer at https://www.slicer.org/","Other"
+"16",164,"MAX3D (https://max3d.mcmaster.ca/) is a 3D visualization software used to visualize x-ray diffraction in reciprocal space. It's been sponsored by Sharcnet under its DP program.","Other"
+"17",177,"Scientific data management and workflow management services such as rucio, panda.","Other"
+"18",191,"This already is a national service but OpenStack has been amazing and has catalyzed a lot of research.  Also the CANFAR services https://www.canfar.net/en/ have been instrumental to my research.","Other"
+"19",204,"https://www.canfar.net/science-portal/","Other"
+"20",207,"I was planning to prepare to form to appear on the Navigator as soon as the SD4Health platform will be ready
+Nathalie.aerens@mcgill.ca","Other"
+"21",212,"Voyant Tools is an often-used and often cited piece of research software that has enabled new frontiers in humanities research.","Other"
+"22",218,"https://paradim.science/
+philippe.despres@phy.ulaval.ca","Other"
+"23",233,"CANFAR 
+https://www.canfar.net/en/","Other"
+"24",238,"kubernetes","Other"
+"25",290,"https://bhklab.ca/","Other"
+"26",291,"Nous avons perdu recemment l'appui financier de l'institution, de l'equipe de developpement de logiciels de recherche (et du fond CANARIE non renouvele/lable) donc le logiciel est encore a l'etat de prototype...","Other"
+"27",297,"World-wide implementation of the UltraScan Science Gateway.","Other"
+"28",310,"Our pilot project (https://omero.med.ualberta.ca/index/) is tool for all canadian scientists using light microscopy.  Raw data can be be visualized (an essential aspect for imaging data.  Metadata and code are linked to the raw and analyzed data.  The research software we developped, assist users for the generation of the metadata for the entire data life cycle.  The tool also has the intrinsic ability to connect to advanced research computing clusters for data processing and analysis.","Other"
+"29",324,"xxia@uottawa.ca","Other"
+"30",327,"You already host my Umple research software: https://www.umple.org","Other"
+"31",329,"Everyone knows the good computing facilities are vital. We should stop having to justify this. If the present government considers things like AI, quantum-computing reserach, the design of ""green"" technology, and other things, to be important for Canada's future, they should be told by their scientific advisors that none of this can be done without good computing facilities.","Other"
+"32",330,"Working on sharing ocean general circulation model code, forcing and output among the community - works now to some level, but could be done more efficiently.","Other"
+"33",336,"http://faculty.cbu.ca/jgerrie/Home/Type-in-Mania.html","Other"
+"34",338,"RStudio: https://posit.co/products/open-source/rstudio/","Other"
+"35",363,"Catherine Jardine, Birds Canada cjardine@birdscanada.org
+NatureCounts data collection app: https://naturecounts.ca/nc/default/nc_app.jsp
+NatureCounts Open Access Data Platform: https://naturecounts.ca/nc/default/explore.jsp#download
+Motus Wildlife Tracking System: https://motus.org/
+","Other"
+"36",364,"CANFAR ARCADES has been absolutely amazing https://www.canfar.net/en/","Other"
+"37",381,"Michael Hoffman &lt;michael.hoffman@utoronto.ca&gt;
+https://usegalaxy.org/","Other"
+"38",390,"DICE software package","Other"
+"39",392,"Sure, but not at this moment,","Other"
+"40",401,"AWS cloud, specifically CloudFormation, Batch, StepFunctions, Cognito, IAM, ECS, EC2. Cloud databases would be great too, but not on the AWS model (e.g., Dynamo). Maybe something more like Big Table or managed Postgres instances.","Other"
+"41",408,"https://www.snowflake.com/en/","Other"
+"42",424,"leme.library.utoronto.ca and leme.utoronto.ca
+","Other"
+"43",425,"https://www.openlayers.org","Other"
+"44",447,"IrisBG","Other"
+"45",473,"The REDcap platform has been very useful for our research team over the last three years. ","Other"
+"46",474,"I use the Wolfram Language (Mathematica) for my own research and for development in small teams of digital humanists. I also teach it to undergrads from across the university. I have an open-access, open-source, open-content course on digital research methods available here https://williamjturkel.net/digital-research-methods-with-mathematica/","Other"
+"47",475,"https://posit.co/products/open-source/shinyserver/","Other"
+"48",479,"hng1@queensu.ca
+
+https://geodynamics.org/resources/specfem3dgeotech
+
+I am also one of the main developers of these software packages:
+https://geodynamics.org/resources/specfem3d
+https://geodynamics.org/resources/specfem3dcartesian
+
+We are preparing to release our ambitious software package called SPECFEM-X.","Other"
+"49",497,"myLaminin has brought a blockchain-enabled research data-sharing service to market that was researcher-designed. A product of a 3-month pilot with Queen's University at Kingston, it has been very well received and addresses many of the operational requirements mentioned above. 
+
+A case study summarizing that pilot initiative can be found here: https://www.mylaminin.net/downloads
+
+Queen's has now committed to a 12-month user validation phase that will no doubt enhance the service and give an opportunity to further increase the value proposition.
+
+We are an Ontario-based, Canadian company. Our contact information is:
+
+Ash Bassili
+ash@myLaminin.net
+www.myLaminin.net
++14438243081","Other"
+"50",498,"Jeffery Antoniuk <jeffery.antoniuk@ualberta.ca>
+(1) https://www.islandora.ca/","Other"
+"51",507,"Maxime Boissonneault, maxime.boissonneault@calculquebec.ca
+https://github.com/ComputeCanada/magic_castle","Other"
+"52",513,"Well, mine obviously. But I write all of it.","Other"
+"53",529,"https://voyant-tools.org/
+","Other"
+"54",549,"www.pmcobe.ca","Other"
+"55",557,"Geodisy/Lunaris was originally based in UBC","Other"
+"56",567,"We developed a platform in the Research Software program under CANARIE and it has been publicized","Other"
+"57",581,"We develop 3D Slicer (www.slicer.org) for medical image analysis. The effort had been funded by Canarie.  The resource has been used worldwide, through over 1M downloads. ","Other"
+"58",585,"We created an internal solution to provide automation to our REB processes using Salesforce. ","Other"
+"59",586,"https://github.com/hep-gc/cloudscheduler
+https://indico.cern.ch/event/1222948/contributions/5321031/attachments/2621040/4531571/HEPiX-032023-CSV2.pdf
+https://indico.jlab.org/event/459/contributions/11481/attachments/9688/14133/CHEP_CSV2.pdf
+","Other"
+"60",588,"https://www.ogsl.ca/en/home-slgo/","Other"
+"61",628,"Voyant Tools (voyant-tools.org) is widely used around the world. It has over 200,000 users a year. My contact information is Geoffrey Rockwell (grockwel@ualberta.ca)","Other"
+"62",637,"adam.rankin@uwo.ca, 3D Slicer at https://www.slicer.org/","Other"
+"63",640,"MAX3D (https://max3d.mcmaster.ca/) is a 3D visualization software used to visualize x-ray diffraction in reciprocal space. It's been sponsored by Sharcnet under its DP program.","Other"
+"64",653,"Scientific data management and workflow management services such as rucio, panda.","Other"
+"65",667,"This already is a national service but OpenStack has been amazing and has catalyzed a lot of research.  Also the CANFAR services https://www.canfar.net/en/ have been instrumental to my research.","Other"
+"66",680,"https://www.canfar.net/science-portal/","Other"
+"67",683,"I was planning to prepare to form to appear on the Navigator as soon as the SD4Health platform will be ready
+Nathalie.aerens@mcgill.ca","Other"
+"68",688,"Voyant Tools is an often-used and often cited piece of research software that has enabled new frontiers in humanities research.","Other"
+"69",694,"https://paradim.science/
+philippe.despres@phy.ulaval.ca","Other"
+"70",709,"CANFAR 
+https://www.canfar.net/en/","Other"
+"71",714,"kubernetes","Other"
+"72",766,"https://bhklab.ca/","Other"
+"73",767,"Nous avons perdu recemment l'appui financier de l'institution, de l'equipe de developpement de logiciels de recherche (et du fond CANARIE non renouvele/lable) donc le logiciel est encore a l'etat de prototype...","Other"
+"74",773,"World-wide implementation of the UltraScan Science Gateway.","Other"
+"75",786,"Our pilot project (https://omero.med.ualberta.ca/index/) is tool for all canadian scientists using light microscopy.  Raw data can be be visualized (an essential aspect for imaging data.  Metadata and code are linked to the raw and analyzed data.  The research software we developped, assist users for the generation of the metadata for the entire data life cycle.  The tool also has the intrinsic ability to connect to advanced research computing clusters for data processing and analysis.","Other"
+"76",800,"xxia@uottawa.ca","Other"
+"77",803,"You already host my Umple research software: https://www.umple.org","Other"
+"78",805,"Everyone knows the good computing facilities are vital. We should stop having to justify this. If the present government considers things like AI, quantum-computing reserach, the design of ""green"" technology, and other things, to be important for Canada's future, they should be told by their scientific advisors that none of this can be done without good computing facilities.","Other"
+"79",806,"Working on sharing ocean general circulation model code, forcing and output among the community - works now to some level, but could be done more efficiently.","Other"
+"80",812,"http://faculty.cbu.ca/jgerrie/Home/Type-in-Mania.html","Other"
+"81",814,"RStudio: https://posit.co/products/open-source/rstudio/","Other"
+"82",839,"Catherine Jardine, Birds Canada cjardine@birdscanada.org
+NatureCounts data collection app: https://naturecounts.ca/nc/default/nc_app.jsp
+NatureCounts Open Access Data Platform: https://naturecounts.ca/nc/default/explore.jsp#download
+Motus Wildlife Tracking System: https://motus.org/
+","Other"
+"83",840,"CANFAR ARCADES has been absolutely amazing https://www.canfar.net/en/","Other"
+"84",857,"Michael Hoffman &lt;michael.hoffman@utoronto.ca&gt;
+https://usegalaxy.org/","Other"
+"85",866,"DICE software package","Other"
+"86",868,"Sure, but not at this moment,","Other"
+"87",877,"AWS cloud, specifically CloudFormation, Batch, StepFunctions, Cognito, IAM, ECS, EC2. Cloud databases would be great too, but not on the AWS model (e.g., Dynamo). Maybe something more like Big Table or managed Postgres instances.","Other"
+"88",884,"https://www.snowflake.com/en/","Other"
+"89",900,"leme.library.utoronto.ca and leme.utoronto.ca
+","Other"
+"90",901,"https://www.openlayers.org","Other"
+"91",923,"IrisBG","Other"
+"92",949,"The REDcap platform has been very useful for our research team over the last three years. ","Other"
+"93",950,"I use the Wolfram Language (Mathematica) for my own research and for development in small teams of digital humanists. I also teach it to undergrads from across the university. I have an open-access, open-source, open-content course on digital research methods available here https://williamjturkel.net/digital-research-methods-with-mathematica/","Other"
+"94",951,"https://posit.co/products/open-source/shinyserver/","Other"
