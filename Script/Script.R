@@ -583,20 +583,6 @@ survey_C6_v1<-
   unnest(C6) %>% 
   rename(answer = C6)
 
-sort(unique(survey_C6_v1$answer))# to clean the data
-
-survey_C6_v2 <- 
-  survey_C6_v1 %>% 
-  mutate(answer_n = ifelse(
-    answer == "Tres important", "Very important", ifelse(
-      answer == "Un peu important", "Somewhat important", ifelse(
-        answer == "Neutre", "Neutral", ifelse(
-          answer == "Pas important", "Not important", ifelse(
-            answer == "Ne s'applique pas", "It doesn't matter",
-            )))))) %>% 
-  select(-answer)
-
-
 C6_summay <- 
   survey_C6_v2 %>% 
   group_by(answer_n) %>% 
@@ -642,15 +628,6 @@ survey_C11_v1<-
   select(Internal.ID, C11) %>% 
   unnest(C11)
 
-sort(unique(survey_C11_v1$C11))# to clean the data
-
-survey_C11_v2 <- 
-  survey_C11_v1 %>% 
-  mutate(C11_n = ifelse(
-    C11 == "Oui", "Yes", ifelse(
-      C11 == "Non", "No", C11
-      )))
-
 C11_summay <- 
   survey_C11_v2 %>% 
   group_by(C11_n) %>% 
@@ -683,16 +660,13 @@ sort(unique(survey_C12_v1$C12))# to clean the data
 survey_C12_v2 <- 
   survey_C12_v1 %>% 
   mutate(C12_n = ifelse(
-    C12 == "Oui", "Yes", ifelse(
-      C12 == "Non", "No", ifelse(
-        C12 == "Yes", "Yes", ifelse(
-          C12 == "No", "No", "Other"
-          )))))
+    C12 == "Yes", "Yes", ifelse(
+      C12 == "No", "No", "Other")))
 
 survey_C12_v3 <- 
   survey_C12_v2 %>% 
   filter(!C12_n == "Other") %>% 
-  unique() # because of duplications
+  unique() 
 
 #select the shared success stories
 other <- 
@@ -767,4 +741,17 @@ survey_D3_v1<-
 
 sort(unique(survey_D3_v1$D3))# to clean the data
 
-write.csv(survey_D3_v1, "D3.csv")
+# write.csv(survey_D3_v1, "D3.csv")
+
+D3_other <- read.csv("D3.csv") %>% 
+  group_by(D3_n) %>% count() %>% 
+  drop_na()
+
+
+ggplot(D3_other, aes(x= reorder(D3_n, n), y=n)) + 
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_minimal(base_size = 20)+
+  xlab("Funding agency") + 
+  ylab("n")
+

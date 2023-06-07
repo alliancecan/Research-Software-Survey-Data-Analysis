@@ -1,87 +1,71 @@
-"","Internal.ID","D3"
-"1",22,"CANARIE, Mellon Foundation"
-"2",35,"CANARIE"
-"3",42,"CANARIE, CFI Cyber I, Genome Canada"
-"4",46,"CANARIE"
-"5",49,"Yes."
-"6",67,"CFI, CIHR, UBC, OICR"
-"7",81,"CANARIE"
-"8",84,"CFI, SSHRC"
-"9",91,"CANARIE Research Software"
-"10",105,"Canarie
-Chan Zuckerberg Open Source Software"
-"11",111,"CANARIE"
-"12",125,"Canarie"
-"13",138,"CANARIE"
-"14",148,"CANARIE Research Software"
-"15",151,"CANARIE Research Software"
-"16",152,"CFI"
-"17",161,"I was partially funded by a CANARIE grant"
-"18",174,"Both CANARIE and CFI"
-"19",191,"CANARIE, CFI"
-"20",192,"CANARIE"
-"21",201,"CFI"
-"22",218,"CANARIE (mais au final c'est l'Universite qui a re<e7>u l'argent, et je n'ai pas pu en profiter)
+Internal.ID,D3,D3_n
+22,"CANARIE, Mellon Foundation",CANARIE
+22,"CANARIE, Mellon Foundation",Mellon Foundation
+35,CANARIE,CANARIE
+42,"CANARIE, CFI Cyber I, Genome Canada",CANARIE
+42,"CANARIE, CFI Cyber I, Genome Canada",CFI
+42,"CANARIE, CFI Cyber I, Genome Canada",Genome Canada
+46,CANARIE,CANARIE
+49,Yes.,NA
+67,"CFI, CIHR, UBC, OICR",CFI
+67,"CFI, CIHR, UBC, OICR",CIHR
+67,"CFI, CIHR, UBC, OICR",UBC
+67,"CFI, CIHR, UBC, OICR",OICR
+81,CANARIE,CANARIE
+84,"CFI, SSHRC",CFI
+84,"CFI, SSHRC",SSHRC
+91,CANARIE Research Software,CANARIE
+105,"Canarie
+Chan Zuckerberg Open Source Software",CANARIE
+111,CANARIE,CANARIE
+125,Canarie,CANARIE
+138,CANARIE,CANARIE
+148,CANARIE Research Software,CANARIE
+151,CANARIE Research Software,CANARIE
+152,CFI,CFI
+161,I was partially funded by a CANARIE grant,CANARIE
+174,Both CANARIE and CFI,CANARIE
+174,Both CANARIE and CFI,CFI
+191,"CANARIE, CFI",CANARIE
+191,"CANARIE, CFI",CFI
+192,CANARIE,CANARIE
+201,CFI,CFI
+218,"CANARIE (mais au final c'est l'Universite qui a re<e7>u l'argent, et je n'ai pas pu en profiter)
 Societe canadienne du cancer (Data Transformation Grant)
-FRQS (appel bilateral avec Baviere)"
-"23",231,"CFI within a larger infrastructure application, NSERC"
-"24",235,"CANARIE Research Software"
-"25",238,"Canarie"
-"26",273,"CANARIE and CFI"
-"27",275,"CRSNG - RDA"
-"28",290,"Canadian Cancer Society Data Transformation grant"
-"29",291,"CANARIE (par l'equipe de Developpement de Logiciels de Recherche) de mon Universite (Ottawa)"
-"30",307,"CANARIE"
-"31",310,"Chan Zuckerberg,
+FRQS (appel bilateral avec Baviere)",CANARIE
+231,"CFI within a larger infrastructure application, NSERC",CFI
+231,"CFI within a larger infrastructure application, NSERC",NSERC
+235,CANARIE Research Software,CANARIE
+238,Canarie,CANARIE
+273,CANARIE and CFI,CANARIE
+273,CANARIE and CFI,CFI
+275,CRSNG - RDA,RDA
+275,CRSNG - RDA,CRSNG
+290,Canadian Cancer Society Data Transformation grant,Canadian Cancer Society Data Transformation
+291,CANARIE (par l'equipe de Developpement de Logiciels de Recherche) de mon Universite (Ottawa),CANARIE
+307,CANARIE,CANARIE
+310,"Chan Zuckerberg,
 Tanenbaum Open Science Institute
 Molson Family Foundation
-Center for Open Science"
-"32",330,"MEOPAR NCE"
-"33",338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development"
-"34",341,"CANARIE"
-"35",363,"CANARIE"
-"36",406,"CANARIE"
-"37",435,"CFI"
-"38",498,"CANARIE, Mellon Foundation"
-"39",511,"CANARIE"
-"40",518,"CANARIE, CFI Cyber I, Genome Canada"
-"41",522,"CANARIE"
-"42",525,"Yes."
-"43",543,"CFI, CIHR, UBC, OICR"
-"44",557,"CANARIE"
-"45",560,"CFI, SSHRC"
-"46",567,"CANARIE Research Software"
-"47",581,"Canarie
-Chan Zuckerberg Open Source Software"
-"48",587,"CANARIE"
-"49",601,"Canarie"
-"50",614,"CANARIE"
-"51",624,"CANARIE Research Software"
-"52",627,"CANARIE Research Software"
-"53",628,"CFI"
-"54",637,"I was partially funded by a CANARIE grant"
-"55",650,"Both CANARIE and CFI"
-"56",667,"CANARIE, CFI"
-"57",668,"CANARIE"
-"58",677,"CFI"
-"59",694,"CANARIE (mais au final c'est l'Universite qui a re<e7>u l'argent, et je n'ai pas pu en profiter)
-Societe canadienne du cancer (Data Transformation Grant)
-FRQS (appel bilateral avec Baviere)"
-"60",707,"CFI within a larger infrastructure application, NSERC"
-"61",711,"CANARIE Research Software"
-"62",714,"Canarie"
-"63",749,"CANARIE and CFI"
-"64",751,"CRSNG - RDA"
-"65",766,"Canadian Cancer Society Data Transformation grant"
-"66",767,"CANARIE (par l'equipe de Developpement de Logiciels de Recherche) de mon Universite (Ottawa)"
-"67",783,"CANARIE"
-"68",786,"Chan Zuckerberg,
+Center for Open Science",CZI
+310,"Chan Zuckerberg,
 Tanenbaum Open Science Institute
 Molson Family Foundation
-Center for Open Science"
-"69",806,"MEOPAR NCE"
-"70",814,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development"
-"71",817,"CANARIE"
-"72",839,"CANARIE"
-"73",882,"CANARIE"
-"74",911,"CFI"
+Center for Open Science",Tanenbaum Open Science Institute
+310,"Chan Zuckerberg,
+Tanenbaum Open Science Institute
+Molson Family Foundation
+Center for Open Science",Molson Family Foundation
+310,"Chan Zuckerberg,
+Tanenbaum Open Science Institute
+Molson Family Foundation
+Center for Open Science",Center for Open Scienc
+330,MEOPAR NCE,MEOPAR NCE
+338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",CZI
+338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",NIH
+338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",CFI
+338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",Genome Canada
+341,CANARIE,CANARIE
+363,CANARIE,CANARIE
+406,CANARIE,CANARIE
+435,CFI,CFI
