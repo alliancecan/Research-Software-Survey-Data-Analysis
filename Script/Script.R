@@ -878,8 +878,7 @@ survey_D5_v3 <-
                 X2 == "_Researcher_End_User_", "Researcher/End-User", "Other"
                 )))))))) %>% 
   select(-X2) %>% 
-  filter(Answer == "Yes") %>% 
-  select(-Answer)
+  filter(!Answer == "No")
 
 #Link to TC3
 D5.domain <- 
@@ -923,7 +922,17 @@ D5_B3_summary <-
   left_join(order, by = "answer_n") %>% 
   print()
 
-#### Bar plots #### 
+#select "Others"
+other <- 
+  survey_D5_v3 %>% 
+  filter(answer_n == "Other") %>% 
+  drop_na() %>% 
+  unique() %>% 
+  print()
+
+# write.csv(other, "D5.csv")
+
+#### Bar plot #### 
 
 #D5 + TC3
 ggplot(D5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
@@ -949,5 +958,78 @@ ggplot(D5_B3_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) +
   coord_flip() +
   theme(legend.position = "right", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   xlab("Years of research software development experience")+
+  ylab("n")
+
+
+### D6 - Who develops the software in your group? ######
+survey_D6_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D6") %>% 
+  mutate(answer_n = ifelse(
+    Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty Professor", ifelse(
+      Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
+        Question == "Who_develops_the_software_in_your_group___Administrator__", "Administrator", ifelse(
+          Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Post Doctoral Fellow", ifelse(
+            Question == "Who_develops_the_software_in_your_group___Research_Software_Engineer___Expert_", "Research Software Engineer Expert", ifelse(
+              Question == "Who_develops_the_software_in_your_group___Research_Associate__"  , "Research Associate", ifelse(
+                Question == "Who_develops_the_software_in_your_group___Research_Staff__", "Research Staff", ifelse(
+                  Question == "Who_develops_the_software_in_your_group___Student__Doctoral__", "Student Doctoral", ifelse(
+                    Question == "Who_develops_the_software_in_your_group___Student__Masters___", "Student Masters", ifelse(
+                      Question == "Who_develops_the_software_in_your_group___Student__Undergrad___", "Student Undergrad", ifelse(
+                        Question == "Who_develops_the_software_in_your_group___Researcher_", "Researcher", ifelse(
+                          Question == "Who_develops_the_software_in_your_group___Librarian_" , "Librarian", ifelse(
+                            Question == "Who_develops_the_software_in_your_group___Other_", "Other", ifelse(
+                              Question == "Who_develops_the_software_in_your_group___Research_Software_Developer_", "Research Software Developer", "?"
+                              ))))))))))))))) %>% 
+  select(-Question)
+
+#Clean the data
+survey_D6_v2 <- 
+  survey_D6_v1 %>% 
+  drop_na() %>% 
+  unnest(answer_n) %>% 
+  select(-Ques_num)
+
+survey_D6_v3 <- 
+  survey_D6_v2 %>% 
+  filter(!Answer == "No") %>% #To not select "Other"
+  unique() %>% 
+  print()
+
+#Link to TC3
+D6.domain <- 
+  survey_D6_v3 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() # 
+
+#summary table - D6 and TC3
+D6_summary <- 
+  D6.domain %>% 
+  group_by(answer_n, TC3) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  print()
+
+#select "Others"
+other <- 
+  survey_D6_v2 %>% 
+  filter(answer_n == "Other") %>% 
+  drop_na() %>% 
+  unique() %>% 
+  print()
+
+# write.csv(other, "D6.csv")
+
+
+#### Bar plot - TC3 #### 
+ggplot(D6_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip()+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
   ylab("n")
 
