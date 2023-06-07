@@ -550,31 +550,43 @@ survey_C5_v3 <-
   drop_na() %>% 
   unnest(Question) %>% 
   select(-X1) %>% 
-  mutate(Answer_n = ifelse(
+  mutate(answer_n = ifelse(
     X2 == "_My_institution_", "My institution", ifelse(
       X2 == "_The_Alliance_", "The Alliance", ifelse(
         X2 == "_A_disciplinary_community_", "A disciplinary community", "Paid consultants or professional services"
           )))) %>% 
-  select(-X2)
+  select(-X2) %>% 
+  filter(Answer == "Yes") %>% 
+  select(-Answer) %>% 
+  unique()
 
 #Link to TC3
 C5.domain <- 
   survey_C5_v3 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
-  drop_na() # n = 1280
-
-#Select only rows with Yes (as this is linked to "Yes")
-C5.domain.yes <- 
-  C5.domain %>% 
-  filter(Answer == "Yes")
+  drop_na() # 
 
 #summarize the data
 C5_summary <- 
-  survey_C5_v3 %>% 
-  group_by(Answer_n) %>% 
+  C5.domain %>% 
+  group_by(answer_n, TC3) %>% 
   count() %>% 
   arrange(-n) %>% 
   print()
+
+#### Bar plot - TC3 #### 
+
+ggplot(C5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip()+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
 
 ### C6 - How important is (or would be) such a service to your research? ######
 survey_C6_v1<- 
@@ -747,11 +759,195 @@ D3_other <- read.csv("D3.csv") %>%
   group_by(D3_n) %>% count() %>% 
   drop_na()
 
-
+#### Bar plot #### 
 ggplot(D3_other, aes(x= reorder(D3_n, n), y=n)) + 
   geom_bar(stat = "identity") +
   coord_flip() +
   theme_minimal(base_size = 20)+
   xlab("Funding agency") + 
+  ylab("n")
+
+### D4 - How many years of research software development experience do you have? ######
+survey_D4_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D4) %>% 
+  unnest(D4) %>% 
+  unique()
+
+#Link Domain - D4 and B3 (role)
+
+D4_B3 <- 
+  survey_D4_v1 %>% 
+  left_join(survey_B3_v3, by = "Internal.ID")
+
+D4_B3_domain <- 
+  D4_B3 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+  
+#summary table - only experience (D4)
+D4_summary <- 
+  survey_D4_v1 %>% 
+  group_by(D4) %>% 
+  count() %>% 
+  print()
+
+#summary table - D4 and Role
+D4_B3_summary <- 
+  D4_B3_domain %>% 
+  group_by(D4, Role_n) %>% 
+  count() %>% 
+  mutate(Role_n = ifelse(
+    Role_n == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty - Professor", Role_n
+  )) %>% 
+  print()
+  
+#summary table - D4 and TC3
+D4_TC3_summary <- 
+  D4_B3_domain %>% 
+  group_by(D4, TC3) %>% 
+  count() %>% 
+  print()
+
+#### Bar plot #### 
+
+#Only D4
+ggplot(D4_summary, aes(x= reorder(D4, n), y=n)) + 
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_minimal(base_size = 20)+
+  xlab("Years of research software development experience") + 
+  ylab("n")
+
+#D4 + B3 (roles) 
+ggplot(D4_B3_summary, aes(fill=Role_n, y=n, x= reorder(D4, as.numeric(D4)))) + 
+  geom_bar(position="stack", stat="identity") +
+  # scale_fill_manual(values =  cbp_Cad) + 
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Roles"))+
+  theme_linedraw(base_size = 20) +
+  coord_flip() +
+  theme(legend.position = "right", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("Years of research software development experience")+
+  ylab("n")
+
+#D4 + TC3
+ggplot(D4_TC3_summary, aes(fill=TC3, y=n, x= reorder(D4, as.numeric(D4)))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("Years of research software development experience")+
+  ylab("n")
+
+### D5 - What roles do you as an individual play on your software development team? ######
+survey_D5_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D5")
+
+#When there is "Yes" it means the responded selected that "answer"
+survey_D5_v2 <- 
+  within(
+    survey_D5_v1, 
+    Question <- 
+      data.frame(
+        do.call(
+          'rbind',
+          strsplit(
+            as.character(Question), 
+            '__', 
+            fixed=TRUE))))
+
+
+
+#Clean the data
+survey_D5_v3 <- 
+  survey_D5_v2 %>% 
+  drop_na() %>% 
+  unnest(Question) %>% 
+  select(-X1) %>% 
+  mutate(answer_n = ifelse(
+    X2 == "_Design_", "Design", ifelse(
+      X2 == "_Development_", "Development", ifelse(
+        X2 == "_Documentation_", "Documentation", ifelse(
+          X2 == "_Outreach_", "Outreach", ifelse(
+            X2 == "_Funding_", "Funding", ifelse(
+              X2 == "_Quality_Assurance_", "Quality Assurance", ifelse(
+                X2 == "_Researcher_End_User_", "Researcher/End-User", "Other"
+                )))))))) %>% 
+  select(-X2) %>% 
+  filter(Answer == "Yes") %>% 
+  select(-Answer)
+
+#Link to TC3
+D5.domain <- 
+  survey_D5_v3 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() # 
+
+#summary table - D5 and TC3
+D5_summary <- 
+  D5.domain %>% 
+  group_by(answer_n, TC3) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  print()
+
+
+#Link Domain - D5 and B3 (role)
+D5_B3 <- 
+  survey_D5_v3 %>% 
+  left_join(survey_B3_v3, by = "Internal.ID") %>% 
+  drop_na() %>% 
+  select(-Ques_num) %>% 
+  unique()
+
+#to use to reorder the bars for roles
+order <- 
+  D5_B3 %>% 
+  group_by(answer_n) %>% 
+  count() %>% 
+  rename(order = n) %>% 
+  print()
+  
+#summary table - D4 and Role
+D5_B3_summary <- 
+  D5_B3 %>% 
+  group_by(answer_n, Role_n) %>% 
+  count()  %>% 
+  mutate(Role_n = ifelse(
+    Role_n == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty - Professor", Role_n
+  )) %>% 
+  left_join(order, by = "answer_n") %>% 
+  print()
+
+#### Bar plots #### 
+
+#D5 + TC3
+ggplot(D5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip()+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
+
+#D5 + B3 (roles) 
+ggplot(D5_B3_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
+  geom_bar(position="stack", stat="identity") +
+  coord_flip()+
+  # scale_fill_manual(values =  cbp_Cad) + 
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Role"))+
+  theme_linedraw(base_size = 20) +
+  coord_flip() +
+  theme(legend.position = "right", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("Years of research software development experience")+
   ylab("n")
 
