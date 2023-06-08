@@ -94,6 +94,10 @@ cbp_Cad <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
 cb_pie <- rep(c("#32322F","#FBFAFA", "#D6AB00","#00DBA7", "#B7B6B3",
                 "#0072B2", "#D55E00", "#CC79A7"), 100)
 
+# This is for mirror plots
+cb_pie1 <- rep(c("#32322F", "#D6AB00"), 100)
+cb_pie2 <- rep(c("#D6AB00","#32322F"), 100)
+
 # This to be used to plot the domains
 cb_pie_3 <- rep(c("#32322F","#B7B6B3", "#D6AB00"), 100)
 
@@ -1049,4 +1053,212 @@ survey_D7_v2 <-
   drop_na() %>% 
   unnest(Answer) %>% 
   select(-Ques_num)
+
+#"Team" data
+D7_team <- 
+  survey_D7_v2 %>% 
+  filter(question_n == "Team")
+
+#"You" data
+D7_you <- 
+  survey_D7_v2 %>% 
+  filter(question_n == "You")
+
+#Link "Team" to TC3
+D7_team.domain <- 
+  D7_team %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() 
+
+#Link "You" to TC3
+D7_you.domain <- 
+  D7_you %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() 
+
+#Link "You" to B3 (role)
+D7_you_role <- 
+  D7_you %>% 
+  left_join(survey_B3_v3, by = "Internal.ID") %>% 
+  drop_na() %>% 
+  select(-question_n) %>%
+  unique()
+
+##Summarize tables
+#summary table - "Team" and TC3
+D7_team_summary <- 
+  D7_team.domain %>% 
+  group_by(Answer, TC3) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of an FTE", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+          ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", ">2", ifelse(
+      Answer == "Between 1 and 2 FTEs", "1 - 2", ifelse(
+        Answer == "Less than 1/4 of an FTE", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  print()
+
+
+#summary table - "You" and TC3
+D7_you_summary <- 
+  D7_you.domain %>% 
+  group_by(Answer, TC3) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of an FTE", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", ">2", ifelse(
+      Answer == "Between 1 and 2 FTEs", "1 - 2", ifelse(
+        Answer == "Less than 1/4 of an FTE", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  arrange(-n) %>% 
+  print()
+
+#Mirror ="Team and "you"
+survey_D7_v3 <- survey_D7_v2
+survey_D7_v3$question_n[survey_D7_v3$question_n == "You"] <- "Respondant"
+survey_D7_v3$question_n[survey_D7_v3$question_n == "X35"] <- "Research team"
+
+#link to TC3
+survey_D7_v3_TC3 <- 
+  survey_D7_v3 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() 
+
+#summarize
+survey_D7_v3_TC3.summary <- 
+  survey_D7_v3_TC3 %>% 
+  group_by(question_n, Answer) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of an FTE", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", ">2", ifelse(
+      Answer == "Between 1 and 2 FTEs", "1 - 2", ifelse(
+        Answer == "Less than 1/4 of an FTE", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>%  
+  drop_na()
+
+#sum
+survey_D7_v3_TC3.sum <- 
+  survey_D7_v3_TC3.summary %>% 
+  group_by(question_n) %>% 
+  summarise(sum = sum(n))
+
+#merge sum table to summary table
+
+survey_D7_v3_TC3.merged <- 
+  survey_D7_v3_TC3.summary %>% 
+  left_join(survey_D7_v3_TC3.sum, by = "question_n") %>% 
+  mutate(proportion = (n/sum)*100)
+
+#Add negative values to create the mirror barplot graph
+survey_D7_v3_TC3.sum.flip <- survey_D7_v3_TC3.merged %>% 
+  mutate(new_n = ifelse(question_n == "Respondant",
+                        -1*proportion, proportion))
+
+
+#### Bar plots#### 
+
+#"Team" and TC3
+ggplot(D7_team_summary, aes(fill=TC3, y=n, x= reorder(answer_n, order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
+
+#"You" and TC3
+ggplot(D7_you_summary, aes(fill=TC3, y=n, x= reorder(answer_n, order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
+
+#Mirror bar plots
+ggplot(survey_D7_v3_TC3.sum.flip, aes(fill=question_n, y=new_n, x=reorder(Answer, -order))) + 
+  geom_bar(position="stack", stat="identity")+
+  coord_flip()+
+  theme(plot.title = element_text(size = 18, face = "bold"),
+        axis.title = element_text(size = 15),
+        axis.text.x = element_text(size = 15),
+        axis.text.y = element_text(size = 12),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 15))+
+  xlab("Answer") + ylab("Proportion")+
+  theme_linedraw(base_size = 18) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("Commercial cloud vs Alliance Community cloud")+
+  scale_fill_manual(values =  cb_pie2)+
+  guides(fill=guide_legend(title="Group"))+
+  ylim(-100,100)
+
+
+
+### D8 - Approximately how many dollars (CDN) of research funds did your research group spend over the last calendar year on developing research software resources? ######
+survey_D8_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D8) %>% 
+  unnest(D8) %>% 
+  rename(answer = D8) %>% 
+  filter(!answer == "Other")
+
+#Link to TC3
+survey_D8_v3_tc3 <- 
+  survey_D8_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() %>% 
+  print()
+
+#summarize the data
+summary_D8_tc3 <- 
+  survey_D8_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    answer == "$0 (None)", 1, ifelse(
+      answer == "$1 to less than $1000", 2, ifelse(
+        answer == "$1000 to less than $5000", 3, ifelse(
+          answer == "$5000 to less than $50K", 4, ifelse(
+            answer == "$50K to less than $100K", 5, ifelse(
+              answer == "$100K to less that $250K", 6, ifelse(
+                answer == "More than $250K", 7, 8
+                )))))))) %>% 
+  print()
+
+
+#### Bar plot - TC3 #### 
+
+ggplot(summary_D8_tc3, aes(fill=TC3, y=n, x=reorder(answer, -order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  # coord_flip() +
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
 
