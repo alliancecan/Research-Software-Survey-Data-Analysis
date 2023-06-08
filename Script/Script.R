@@ -966,7 +966,7 @@ survey_D6_v1 <-
   survey_organized %>% 
   filter(Ques_num == "D6") %>% 
   mutate(answer_n = ifelse(
-    Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty Professor", ifelse(
+    Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty - Professor", ifelse(
       Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
         Question == "Who_develops_the_software_in_your_group___Administrator__", "Administrator", ifelse(
           Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Post Doctoral Fellow", ifelse(
@@ -1032,4 +1032,21 @@ ggplot(D6_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   xlab("")+
   ylab("n")
+
+
+### D7 - Can you provide an estimate of the time you and your research team spend developing research software? ######
+survey_D7_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D7") %>% 
+  mutate(question_n = ifelse(
+    Question == "Can_you_provide_an_estimate_of_the_time_you_and_your_research_team_spend_developing_research_software___The_time_you_spend_developing_research_software___", "You", "Team"
+  )) %>% 
+  select(-Question)
+    
+#Clean the data
+survey_D7_v2 <- 
+  survey_D7_v1 %>% 
+  drop_na() %>% 
+  unnest(Answer) %>% 
+  select(-Ques_num)
 
