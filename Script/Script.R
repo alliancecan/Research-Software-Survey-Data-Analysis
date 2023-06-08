@@ -570,27 +570,69 @@ C5.domain <-
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() # 
 
-#summarize the data
-C5_summary <- 
+# #summarize the data
+# C5_summary <- 
+#   C5.domain %>% 
+#   group_by(answer_n, TC3) %>% 
+#   count() %>% 
+#   arrange(-n) %>% 
+#   print()
+
+
+##add percentage
+Workflow.C5 <- 
   C5.domain %>% 
-  group_by(answer_n, TC3) %>% 
-  count() %>% 
-  arrange(-n) %>% 
-  print()
+  unique()
+
+nHR <- filter(Workflow.C5, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #16
+nSE <- filter(Workflow.C5, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#45
+nSSH <- filter(Workflow.C5, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #16
+
+Workflow_Health <- filter(Workflow.C5, TC3=="Health Research") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.C5, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.C5, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
 #### Bar plot - TC3 #### 
 
-ggplot(C5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
-  geom_bar(position="stack", stat="identity") +
+# #TC3
+# ggplot(C5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp1) + 
+#   coord_flip()+
+#   # ggtitle("") +
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
-  coord_flip()+
-  # ggtitle("") +
-  guides(fill=guide_legend(title="Tri-agency"))+
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("")+
-  ylab("n")
-
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
 
 ### C6 - How important is (or would be) such a service to your research? ######
 survey_C6_v1<- 
@@ -608,34 +650,76 @@ C6_summay <-
 survey_C6_v3_tc3 <- 
   survey_C6_v2 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
-  drop_na()
-
-#summarize the data
-summary_C6_tc3 <- 
-  survey_C6_v3_tc3 %>% 
-  group_by(TC3, answer_n) %>% 
-  count() %>% 
   mutate(order = ifelse(
     answer_n == "Neutral", 3, ifelse(
       answer_n == "Not important", 4, ifelse(
         answer_n == "Somewhat important", 2, ifelse(
           answer_n == "Very important", 1, 5
-          ))))) %>% 
-  print()
+        ))))) %>%
+  drop_na()
 
+# #summarize the data
+# summary_C6_tc3 <- 
+#   survey_C6_v3_tc3 %>% 
+#   group_by(TC3, answer_n) %>% 
+#   count() %>% 
+#   print()
+
+
+##add percentage
+Workflow.C6 <- 
+  survey_C6_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.C6, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #24
+nSE <- filter(Workflow.C6, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#49
+nSSH <- filter(Workflow.C6, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #29
+
+Workflow_Health <- filter(Workflow.C6, TC3=="Health Research") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.C6, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.C6, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
 #### Bar plot - TC3 #### 
 
-ggplot(summary_C6_tc3, aes(fill=TC3, y=n, x=reorder(answer_n, -order))) + 
-  geom_bar(position="stack", stat="identity") +
+# #TC3
+# ggplot(summary_C6_tc3, aes(fill=TC3, y=n, x=reorder(answer_n, -order))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp1) + 
+#   coord_flip() +
+#   # ggtitle("") +
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
-  coord_flip() +
-  # ggtitle("") +
-  guides(fill=guide_legend(title="Tri-agency"))+
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("")+
-  ylab("n")
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
 
 
 ### C11 - Are there particular software platforms or software services you currently use which you feel would be valuable to be offered as a national service for all researchers to access? ######
@@ -907,13 +991,13 @@ D5_B3 <-
   select(-Ques_num) %>% 
   unique()
 
-#to use to reorder the bars for roles
-order <- 
-  D5_B3 %>% 
-  group_by(answer_n) %>% 
-  count() %>% 
-  rename(order = n) %>% 
-  print()
+# #to use to reorder the bars for roles
+# order <- 
+#   D5_B3 %>% 
+#   group_by(answer_n) %>% 
+#   count() %>% 
+#   rename(order = n) %>% 
+#   print()
   
 #summary table - D4 and Role
 D5_B3_summary <- 
@@ -936,19 +1020,48 @@ other <-
 
 # write.csv(other, "D5.csv")
 
+##add percentage
+Workflow.D5 <- 
+  D5.domain %>% 
+  unique()
+
+nHR <- filter(Workflow.D5, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #26
+nSE <- filter(Workflow.D5, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#80
+nSSH <- filter(Workflow.D5, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #28
+
+Workflow_Health <- filter(Workflow.D5, TC3=="Health Research") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D5, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D5, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
 #### Bar plot #### 
 
-#D5 + TC3
-ggplot(D5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
-  geom_bar(position="stack", stat="identity") +
-  scale_fill_manual(values =  cbp1) + 
-  coord_flip()+
-  # ggtitle("") +
-  guides(fill=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("")+
-  ylab("n")
+# #D5 + TC3
+# ggplot(D5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp1) + 
+#   coord_flip()+
+#   # ggtitle("") +
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
 
 
 #D5 + B3 (roles) 
@@ -964,6 +1077,17 @@ ggplot(D5_B3_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) +
   xlab("Years of research software development experience")+
   ylab("n")
 
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
 
 ### D6 - Who develops the software in your group? ######
 survey_D6_v1 <- 
@@ -1006,13 +1130,13 @@ D6.domain <-
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() # 
 
-#summary table - D6 and TC3
-D6_summary <- 
-  D6.domain %>% 
-  group_by(answer_n, TC3) %>% 
-  count() %>% 
-  arrange(-n) %>% 
-  print()
+# #summary table - D6 and TC3
+# D6_summary <- 
+#   D6.domain %>% 
+#   group_by(answer_n, TC3) %>% 
+#   count() %>% 
+#   arrange(-n) %>% 
+#   print()
 
 #select "Others"
 other <- 
@@ -1024,19 +1148,58 @@ other <-
 
 # write.csv(other, "D6.csv")
 
+##add percentage
+Workflow.D6 <- 
+  D6.domain %>% 
+  unique()
+
+nHR <- filter(Workflow.D6, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #26
+nSE <- filter(Workflow.D6, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#79
+nSSH <- filter(Workflow.D6, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #28
+
+Workflow_Health <- filter(Workflow.D6, TC3=="Health Research") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D6, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D6, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
 #### Bar plot - TC3 #### 
-ggplot(D6_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
-  geom_bar(position="stack", stat="identity") +
+# ggplot(D6_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp1) + 
+#   coord_flip()+
+#   # ggtitle("") +
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
-  coord_flip()+
-  # ggtitle("") +
-  guides(fill=guide_legend(title="Tri-agency"))+
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("")+
-  ylab("n")
-
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
 
 ### D7 - Can you provide an estimate of the time you and your research team spend developing research software? ######
 survey_D7_v1 <- 
@@ -1230,13 +1393,6 @@ survey_D8_v3_tc3 <-
   survey_D8_v1 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() %>% 
-  print()
-
-#summarize the data
-summary_D8_tc3 <- 
-  survey_D8_v3_tc3 %>% 
-  group_by(TC3, answer) %>% 
-  count() %>% 
   mutate(order = ifelse(
     answer == "$0 (None)", 1, ifelse(
       answer == "$1 to less than $1000", 2, ifelse(
@@ -1245,20 +1401,68 @@ summary_D8_tc3 <-
             answer == "$50K to less than $100K", 5, ifelse(
               answer == "$100K to less that $250K", 6, ifelse(
                 answer == "More than $250K", 7, 8
-                )))))))) %>% 
+              )))))))) %>% 
+  print()
+
+#summarize the data
+summary_D8_tc3 <- 
+  survey_D8_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
   print()
 
 
+##add percentage
+Workflow.D8 <- 
+  survey_D8_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D8, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #26
+nSE <- filter(Workflow.D8, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#76
+nSSH <- filter(Workflow.D8, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+
+Workflow_Health <- filter(Workflow.D8, TC3=="Health Research") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D8, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D8, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
 #### Bar plot - TC3 #### 
 
-ggplot(summary_D8_tc3, aes(fill=TC3, y=n, x=reorder(answer, -order))) + 
-  geom_bar(position="stack", stat="identity") +
+# ggplot(summary_D8_tc3, aes(fill=TC3, y=n, x=reorder(answer, -order))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp1) + 
+#   # coord_flip() +
+#   # ggtitle("") +
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
   # coord_flip() +
-  # ggtitle("") +
-  guides(fill=guide_legend(title="Tri-agency"))+
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("")+
-  ylab("n")
-
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
