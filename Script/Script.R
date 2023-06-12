@@ -29,11 +29,11 @@ library(ggthemes)
 #                    encoding = "UTF-8",
 #                    na.strings=c("","NA"))
 
-survey <- read.csv("ID_Alliance_RS_Survey_EN_FR_20230602.csv",
+survey <- read.csv("ID_Alliance_RS_Survey_EN_FR_20230612.csv",
                    header = T,
                    encoding = "UTF-8",
                    na.strings=c("","NA")) %>%
-  rename(Internal.ID = ID)
+  rename(Internal.ID = X.U.FEFF.ID) # n = 548
 
 
 # Organizing data ----------------------------------------------------------------
@@ -109,7 +109,7 @@ survey_B1_v1<-
   survey_organized_spread %>% 
   select(Internal.ID, B1) %>% 
   unnest(B1) %>% 
-  rename(Affiliation = B1)
+  rename(Affiliation = B1) # n = 344
 
 sort(unique(survey_B1_v1$Affiliation))# to clean the data
 
@@ -118,8 +118,9 @@ survey_B1_v2 <-
   mutate(Affiliation_n = ifelse(
     Affiliation == "Lawson Research Institiute ", "Lawson Research Institute", ifelse(
       Affiliation == "Autre", "Other", ifelse(
-        Affiliation == "Birds Canada (NGO)", "Birds Canada" , Affiliation
-))))
+        Affiliation == "Birds Canada (NGO)", "Birds Canada" , ifelse(
+          Affiliation == "  ", NA, Affiliation
+          )))))
 
 
 ### B2 - Please choose your primary research domain based on the Canadian Research and Development Classification (CRDC) 2020. ######
@@ -127,7 +128,7 @@ Domain_Breakdown<-
   survey_organized_spread %>% 
   select(Internal.ID, B2) %>% 
   unnest(B2) %>% 
-  rename(Domain = B2)
+  rename(Domain = B2) # n = 312
 
 #summarise the data = count domain's n
 domain_summary <- 
@@ -137,30 +138,30 @@ domain_summary <-
   arrange(-n) %>% 
   print()
 
+domain_summary_v1 <- domain_summary
+domain_summary_v1$Domain[domain_summary_v1$Domain== "Social sciences"] <- "Social sciences"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Agricultural and veterinary sciences"] <- "Agricultural and\nveterinary sciences"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Engineering and technology"] <- "Engineering and\ntechnology"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Medical, health and life sciences"] <- "Medical, health\nand life sciences"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Humanities and the artss"] <- "Humanities and\nthe arts"
 
 #### Group domains into TC3 ####
-domain_summary1 <- 
-  domain_summary %>% 
+domain_summary1 <-
+  domain_summary %>%
   mutate(TC3 = ifelse(
     Domain == "Natural sciences", "Sciences and Engineering", ifelse(
-      Domain == "Sciences naturelles", "Sciences and Engineering", ifelse(
         Domain == "Medical, health and life sciences", "Health Research", ifelse(
-          Domain == "Sciences medicales, de la sante et de la vie", "Health Research", ifelse(
             Domain == "Engineering and technology", "Sciences and Engineering", ifelse(
-              Domain == "Genie et technologies", "Sciences and Engineering", ifelse(
-                Domain ==  "Humanities and the arts", "Social Sciences and Humanities", ifelse(
-                  Domain == "Sciences humaines et arts", "Social Sciences and Humanities", ifelse(
-                    Domain == "Sciences sociales", "Social Sciences and Humanities", ifelse(
-                      Domain == "Social sciences", "Social Sciences and Humanities", ifelse(
+              Domain ==  "Humanities and the arts", "Social Sciences and Humanities", ifelse(
+                  Domain == "Social sciences", "Social Sciences and Humanities", ifelse(
                         Domain == "Agricultural and veterinary sciences", "Sciences and Engineering", ifelse(
-                          Domain == "Sciences agricoles et veterinaires", "Sciences and Engineering", "X"
-                          )))))))))))))
+                          ))))))))
 
 #Link TC3 to Internal.ID = this will be used for the rest of the analysis as we will analyse data by TC3
 domain <- 
   Domain_Breakdown %>% 
   left_join(domain_summary1, by = "Domain") %>% 
-  select(-n) # n = 518
+  select(-n) # n = 312
 
 domain1 <- 
   domain %>% 
@@ -174,13 +175,24 @@ b2.domain.summary <-
   group_by(TC3) %>% count() %>% drop_na()
 
 # #for esthethis purposes, we add "\n" to long TC3 names and to domains so they the names will fully appear in the pie charts
-q3.domain.summary$TC3[q3.domain.summary$TC3 == "Social Sciences and Humanities"] <- "Social Sciences\nand Humanities"
-q3.domain.summary$TC3[q3.domain.summary$TC3 == "Sciences and Engineering"] <- "Sciences and\nEngineering"
-domain_summary1$Domain[domain_summary1$Domain == "Medical, Health and Life Sciences "] <- "Medical, Health\nand Life Sciences"
-
+b2.domain.summary$TC3[b2.domain.summary$TC3 == "Social Sciences and Humanities"] <- "Social Sciences\nand Humanities"
+b2.domain.summary$TC3[b2.domain.summary$TC3 == "Sciences and Engineering"] <- "Sciences and\nEngineering"
 #### Pie charts ####
 
+PieDonut(domain_summary_v1, 
+         aes(Domain, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         title= "Respondents' roles", 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp_Cad)
 
+
+#TC3
 PieDonut(b2.domain.summary, 
          aes(TC3, count= n), 
          ratioByGroup = FALSE, 
@@ -200,7 +212,7 @@ survey_B3_v1<-
   survey_organized_spread %>% 
   select(Internal.ID, B3) %>% 
   unnest(B3) %>% 
-  rename(Role = B3)
+  rename(Role = B3) # n = 328
 
 
 ##From "Other", avoid duplication and select answers
@@ -226,28 +238,61 @@ duplications_v2 <-
 #bind the two tables to have the final table
 survey_B3_v3 <- 
   rbind(other_answe, duplications_v2) %>% 
-  select(Internal.ID, Role_n)
+  select(Internal.ID, Role)
+
+#Clean the data
+survey_B3_v4 <- 
+  survey_B3_v3 %>% 
+  filter(!Role == "Other") %>% 
+  mutate(Role_n = ifelse(
+    Role == "staff in research support unit", "Other", ifelse(
+      Role == "Personnel de soutien", "Other", ifelse(
+        Role == "Bioinformatics", "Other", ifelse(
+          Role == "Program Manager", "Other", ifelse(
+            Role == "Director", "Other", ifelse(
+              Role == "Community Manager", "Other", ifelse(
+                Role == "User Support Analyst", "Other", ifelse(
+                  Role == "Sysadmin", "Other", ifelse(
+                    Role == "Data Steward", "Other", ifelse(
+                      Role == "Conseillere a la recherche", "Other", ifelse(
+                        Role == "Software Developer", "Other", ifelse(
+                          Role == "Emeritus", "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
+                            Role == "DG CCTT affilie cegep Ste-Foy", "Other", ifelse(
+                              Role == "IT", "Other", ifelse(
+                                Role == "project manager", "Other", Role
+                                ))))))))))))))))
 
 #### summary table - Roles ####
 roles_summary <-
-  survey_B3_v3 %>%
+  survey_B3_v4 %>%
   group_by(Role_n) %>%
   count() %>%
   arrange(-n) %>%
   drop_na() %>%
   print()
 
+roles_summary$Role_n[roles_summary$Role_n == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)"] <-  "Faculty - Professor"
 
-#### Pie charts ####
-PieDonut(roles_summary, 
-         aes(Role_n, count= n), 
-         ratioByGroup = FALSE, 
-         showPieName=FALSE, 
-         r0=0.25,r1=1,r2=1.4,start=pi/2,
-         labelpositionThreshold=1, 
-         showRatioThreshold = F, 
-         title= "Respondents' roles", 
-         titlesize = 5, pieAlpha = 1, donutAlpha = 1, color = "black")+ scale_fill_manual(values =  cbp_Cad) #+ 
+#### Bar plot ####
+# PieDonut(roles_summary, 
+#          aes(Role_n, count= n), 
+#          ratioByGroup = FALSE, 
+#          showPieName=FALSE, 
+#          r0=0.25,r1=1,r2=1.4,start=pi/2,
+#          labelpositionThreshold=1, 
+#          showRatioThreshold = F, 
+#          title= "Respondents' roles", 
+#          titlesize = 5, pieAlpha = 1, donutAlpha = 1, color = "black")+ scale_fill_manual(values =  cbp_Cad) #+ 
+
+ggplot(roles_summary, aes(y=n, x=reorder(Role_n, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip()+
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
 
 ### B7 - Are you eligible to apply for and receive Tri-Council, CFI, or other research funding? ######
 survey_B7_v1<- 
@@ -257,12 +302,12 @@ survey_B7_v1<-
 
 B7_summay <- 
   survey_B7_v1 %>% 
-  group_by(B7_n) %>% 
+  group_by(B7) %>% 
   count()
 
 #### Pie chart #### 
 PieDonut(B7_summay, 
-         aes(B7_n, count= n), 
+         aes(B7, count= n), 
          ratioByGroup = FALSE, 
          showPieName=F, 
          r0=0.0,r1=1,r2=1.4,start=pi/2,
