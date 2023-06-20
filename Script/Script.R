@@ -1687,5 +1687,212 @@ survey_D9_v3 <-
         Answer_q == "XQuery__XSLT_", "XQuery / XSLT", ifelse(
           Answer_q == "NOSQL_e_g__Cypher__SPARQL__","NOSQL (e.g. Cypher, SPARQL)", Answer_q
           ))))) %>% 
-  select(Internal.ID, Answer, Answer_n)
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
 
+#summarize the data
+summary_D9<- 
+  survey_D9_v3 %>% 
+  group_by(answer) %>% 
+  count() %>% 
+  print()
+
+#Link to TC3
+survey_D9_v3_tc3 <- 
+  survey_D9_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+#summarize the data
+summary_D9_TC3<- 
+  survey_D9_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+##add percentage
+Workflow.D9 <- 
+  survey_D9_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D9, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.D9, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#91
+nSSH <- filter(Workflow.D9, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+
+Workflow_Health <- filter(Workflow.D9, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D9, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D9, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots#### 
+
+#all
+ggplot(summary_D9, aes(y=n, x= reorder(answer, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  coord_flip()+
+  scale_fill_manual(values =  cbp1) + 
+  # guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("Programming language")+
+  ylab("n")
+
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+### D10 - WWhat type of research software do you develop? [refer to research software types from research software current state report] ######
+survey_D10_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D10")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_D10_v1$Question),'____',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_D10_v2 <- cbind(separete_v3, survey_D10_v1)
+
+#Clean the data
+survey_D10_v3 <- 
+  survey_D10_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Libraries that_are_used_by_other_research_software_tools__e_g__Numpy__", "Libraries that are used by other research software tools (e.g. Numpy)", ifelse(
+      Answer_q == "Tools that_are_run_by_researchers__e_g__OpenFoam__", "Tools that are run by researchers (e.g. OpenFoam)", ifelse(
+        Answer_q == "Services that_are_used_queried_by_researchers__e_g__MongoDB__", "Services that are used queried by researchers (e.g. MongoDB)", ifelse(
+          Answer_q == "Platforms that_are_used_by_end_users__e_g__FRDR__","Platforms that are use by end users (e.g. FRDR)", ifelse(
+            Answer_q == "Open source__e_g__GNU_Linux__", "Open source (e.g. GNU/Linux)", ifelse(
+              Answer_q == "Closed source__e_g__MATLAB__", "Closed source (e.g. MATLAB)", ifelse(
+                Answer_q == "Hybrid dual__or_multi_licensing__e_g__MySQL_AB_database__", "Hybrid dual or multi-licensing (e.g. MySQL AB database)", ifelse(
+                  Answer_q == "Source code__e_g__Python_code__", "Source code (e.g. Python_code)", ifelse(
+                    Answer_q == "Binary executable__package__e_g___exe_file__", "Binary executable, package (e.g. .exe file)", ifelse(
+                      Answer_q == "Container _e_g__Docker_container__", "Container (e.g. Docker container)", ifelse(
+                        Answer_q == "Virtual machine_image__e_g__VMware_Workstation__", "Virtual machine image (e.g. VMware Workstation)", ifelse(
+                          Answer_q == "Service _e_g__Slack__", "Service (e.g. Slack)", ifelse(
+                            Answer_q == "General _e_g__Numpy__", "General (e.g. Numpy)", ifelse(
+                              Answer_q == "Domain specific__e_g__Astropy__", "Domain-specific (e.g. Astropy)", ifelse(
+                                Answer_q == "Quantitative _e_g__R__", "Quantitative (e.g. R)", ifelse(
+                                  Answer_q == "Qualitative _e_g__NVivo__", "Qualitative (e.g. NVivo)", ifelse(
+                                    Answer_q == "Planning _e_g__Microsoft_Planner__", "Planning (e.g. Microsoft Planner)", ifelse(
+                                      Answer_q == "Analysis _e_g__SAS__", "Analysis (e.g. SAS)", ifelse(
+                                        Answer_q == "Computation _e_g__Mathematica__", "Computation e.g. Mathematica)", ifelse(
+                                          Answer_q == "Visualisation _e_g__MindManager__ParaView__", "Visualisation (e.g. MindManager, ParaView)", ifelse(
+                                            Answer_q == "Transfer _e_g__FTP__", "Transfer (e.g. FTP)", ifelse(
+                                              Answer_q == "Storage _e_g__Dropbox__", "Storage (e.g. Dropbox)", ifelse(
+                                                Answer_q == "Publishing _e_g__Zenodo__", "Publishing (e.g. Zenodo)", ifelse(
+                                                  Answer_q == "Curation preservation_of_data__e_g__Zenodo__", "Curation/preservationof data (e.g. Zenodo)", ifelse(
+                                                    Answer_q == "Curation preservation_of_software__e_g__Software_Heritage__Zenodo__", "Curation/preservation of software (e.g. Software Heritage, Zenodo)", ifelse(
+                                                      Answer_q == "Discovery _e_g__DataONE__", "Discovery (e.g. (DataONE)", "Other"
+                                                      ))))))))))))))))))))))))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#summarize the data
+summary_D10<- 
+  survey_D10_v3 %>% 
+  group_by(answer) %>% 
+  count() %>% 
+  print()
+
+#Link to TC3
+survey_D10_v3_tc3 <- 
+  survey_D10_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+#summarize the data
+summary_D10_TC3<- 
+  survey_D10_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+##add percentage
+Workflow.D10 <- 
+  survey_D10_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D10, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #35
+nSE <- filter(Workflow.D10, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#92
+nSSH <- filter(Workflow.D10, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+
+Workflow_Health <- filter(Workflow.D10, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D10, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D10, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots#### 
+
+#all
+ggplot(summary_D10, aes(y=n, x= reorder(answer, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  coord_flip()+
+  scale_fill_manual(values =  cbp1) + 
+  # guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("Programming language")+
+  ylab("n")
+
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
