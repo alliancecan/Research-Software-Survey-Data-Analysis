@@ -103,7 +103,7 @@ cb_pie_3 <- rep(c("#32322F","#B7B6B3", "#D6AB00"), 100)
 
 
 
-# General Survey Questions ############################################################################################
+# A ############################################################################################
 ### A1 - Select the option that best describes your gender identity. ######
 survey_A1_v1 <- 
   survey_organized %>% 
@@ -232,7 +232,163 @@ ggplot(A3_summay, aes(y=n, x=reorder(A3, n))) +
   xlab("")+
   ylab("n")
 
+### A4 - Do you identify as Indigenous? ######
+survey_A4_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, A4) %>% 
+  unnest(A4)
 
+A4_summay <- 
+  survey_A4_v1 %>% 
+  group_by(A4) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(A4_summay, 
+         aes(A4, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+
+### A6 - Do you identify as a member of a racialized group* in Canada? ######
+survey_A6_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, A6) %>% 
+  unnest(A6)
+
+A6_summay <- 
+  survey_A6_v1 %>% 
+  group_by(A6) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(A6_summay, 
+         aes(A6, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+
+### A7 - How do you identify your race/ethnicity? ######
+survey_A7_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "A7")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_A7_v1$Question),'y_',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X3)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X3, "_", " ")
+
+#Bin tables
+survey_A7_v2 <- cbind(separete_v3, survey_A7_v1)
+
+#Clean the data
+##This has longer names
+# survey_A7_v3 <- 
+#   survey_A7_v2 %>% 
+#   select(-Question) %>% 
+#   rename(Answer_q = separete_v3) %>% 
+#   drop_na() %>% 
+#   filter(!Answer == "No" | !Answer == NA) %>% 
+#   mutate(Answer_n = ifelse(
+#     Answer_q == " _Black_African__including_African_Canadian_American__Caribbean__", "Black/African (including African-Canadian/American, Caribbean)", ifelse(
+#       Answer_q == " _East_Asian__e_g___Chinese__Taiwanese__Japanese__Korean__", "East Asian (e.g. Chinese, Taiwanese, Japanese, Korean)" , ifelse(
+#         Answer_q ==  " _Indo_Caribbean__Indo_African__Indo_Fijian__or_West_Indian_",  "Indo-Caribbean, Indo- African, Indo-Fijian, or West-Indian", ifelse(
+#           Answer_q == " _Latin__South__or_Central_American_", "Latin, South, or Central American", ifelse(
+#             Answer_q == " _Pacific_Islanders_or_Polynesian_Melanesian_Micronesian__e_g___Cook_Island_Ma_ori__Hawaiian_Ma__oli__Fijians__Marquesan__Marshallese__Niuean__Samoans__Tahitian_Ma__ohi__Tongan__New_Zealand_Ma_ori__", "Pacific Islanders or Polynesian/Melanesian/Micronesian (e.g. Cook Island Māori, Hawaiian Mā'oli,Fijians, Marquesan, Marshallese, Niuean, Samoans, Tahitian, Maohi, Tongan, New-Zealand Maori)", ifelse(
+#               Answer_q == " _South_Asian__e_g___Bangladeshi__Pakistani__Indian__Sri_Lankan__Punjabi__", "South Asian .(e.g. Bangladeshi, Pakistani, Indian, Sri Lankan, Punjabi)", ifelse(
+#                 Answer_q == " _South_East_Asian__e_g___Cambodian__Filipino_a__Malaysian__Thai__Vietnamese__", "South East Asian (e.g. Cambodian, Filipino/a, Malaysian, Thai, Vietnamese)", ifelse(
+#                   Answer_q == " _West_Asian_or_North_African__e_g___Afghani__Armenian__Egyptian__Iranian__Iraqi__Israeli__Jordanian__Lebanese__Palestinian__Syrian__Yemeni___", "West Asian or North African (e.g. Afghani, Armenian, Egyptian, Iranian, Iraqi, Israeli, Jordanian, Lebanese, Palestinian, Syrian, Yemeni)", ifelse(
+#                     Answer_q == " _Prefer_not_to_answer__", "Prefer not to answer", "Other" )))))))))) %>%
+#   select(Internal.ID, Answer, Answer_n) %>% 
+#   rename(answer = Answer_n)
+
+survey_A7_v3 <- 
+  survey_A7_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == " _Black_African__including_African_Canadian_American__Caribbean__", "Black/African", ifelse(
+      Answer_q == " _East_Asian__e_g___Chinese__Taiwanese__Japanese__Korean__", "East Asian" , ifelse(
+        Answer_q ==  " _Indo_Caribbean__Indo_African__Indo_Fijian__or_West_Indian_",  "Indo-Caribbean, Indo- African, Indo-Fijian, or West-Indian", ifelse(
+          Answer_q == " _Latin__South__or_Central_American_", "Latin, South, or Central American", ifelse(
+            Answer_q == " _Pacific_Islanders_or_Polynesian_Melanesian_Micronesian__e_g___Cook_Island_Ma_ori__Hawaiian_Ma__oli__Fijians__Marquesan__Marshallese__Niuean__Samoans__Tahitian_Ma__ohi__Tongan__New_Zealand_Ma_ori__", "Pacific Islanders or Polynesian/Melanesian/Micronesiani)", ifelse(
+              Answer_q == " _South_Asian__e_g___Bangladeshi__Pakistani__Indian__Sri_Lankan__Punjabi__", "South Asian .(e.g. Bangladeshi, Pakistani, Indian, Sri Lankan, Punjabi)", ifelse(
+                Answer_q == " _South_East_Asian__e_g___Cambodian__Filipino_a__Malaysian__Thai__Vietnamese__", "South East Asian (e.g. Cambodian, Filipino/a, Malaysian, Thai, Vietnamese)", ifelse(
+                  Answer_q == " _West_Asian_or_North_African__e_g___Afghani__Armenian__Egyptian__Iranian__Iraqi__Israeli__Jordanian__Lebanese__Palestinian__Syrian__Yemeni___", "West Asian or North African", ifelse(
+                    Answer_q == " _Prefer_not_to_answer__", "Prefer not to answer", "Other" )))))))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+#summarize the data
+summary_A7<- 
+  survey_A7_v3 %>% 
+  group_by(answer) %>% 
+  count() %>% 
+  print()
+
+#### Plot #### 
+ggplot(summary_A7, aes(y=n, x=reorder(answer, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip()+
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+### A8 - Did you immigrate to Canada? ######
+survey_A8_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, A8) %>% 
+  unnest(A8)
+
+A8_summay <- 
+  survey_A8_v1 %>% 
+  group_by(A8) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(A8_summay, 
+         aes(A8, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+
+
+### B ############################################################################################
 ### B1 - What is your primary institutional affiliation? ######
 survey_B1_v1<- 
   survey_organized_spread %>% 
@@ -525,6 +681,7 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
    xlab("") + 
    ylab("")
 
+### C ############################################################################################
 ### C2 - Do you consider the use of research software critical to your research? ######
 survey_C2_v1<- 
   survey_organized_spread %>% 
