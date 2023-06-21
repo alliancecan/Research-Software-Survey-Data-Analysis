@@ -104,6 +104,135 @@ cb_pie_3 <- rep(c("#32322F","#B7B6B3", "#D6AB00"), 100)
 
 
 # General Survey Questions ############################################################################################
+### A1 - Select the option that best describes your gender identity. ######
+survey_A1_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "A1")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_A1_v1$Question),'____',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_A1_v2 <- cbind(separete_v3, survey_A1_v1)
+survey_A1_v2 <- 
+  survey_A1_v2 %>% 
+  drop_na() %>% 
+  filter(Answer == "Yes")
+
+#Clean the data
+survey_A1_v3 <- 
+  survey_A1_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Gender fluid_", "Gender fluid", ifelse(
+      Answer_q == " Man_", "Man", ifelse(
+        Answer_q == "Non binary_", "Non binary", ifelse(
+          Answer_q == "Two Spirit_", "Two Spirit", ifelse(
+            Answer_q == "Woman ", "Woman", "Prefer not to answer"
+            )))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#summarize
+A1_summary <- 
+  survey_A1_v3 %>% 
+  group_by(answer) %>% 
+  count() %>% 
+  arrange(n) %>% 
+  print()
+
+#### Pie charts ####
+
+PieDonut(A1_summary, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         title= "Respondents' roles", 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp_Cad)
+
+
+
+
+
+### A2 - Do you identify as transgender? ######
+survey_A2_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, A2) %>% 
+  unnest(A2)
+
+A2_summay <- 
+  survey_A2_v1 %>% 
+  group_by(A2) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(A2_summay, 
+         aes(A2, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+### A3 - WWhat type of research software do you develop? [refer to research software types from research software current state report] ######
+survey_A3_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "A3") %>% 
+  rename(A3 = Answer) %>% 
+  drop_na()
+
+A3_summay <- 
+  survey_A3_v1 %>% 
+  group_by(A3) %>% 
+  count() %>% 
+  filter(!A3 == "This does not seem to be relevant to the use of research software.")
+
+#### Pie chart #### 
+PieDonut(A3_summay, 
+         aes(A3, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+ggplot(A3_summay, aes(y=n, x=reorder(A3, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip()+
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
+
 ### B1 - What is your primary institutional affiliation? ######
 survey_B1_v1<- 
   survey_organized_spread %>% 
@@ -1896,3 +2025,95 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
   ylab("")
+
+### D12 - Do you have research software platforms and/or tools your research team has created but are no longer maintained? ######
+survey_D12_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D12) %>% 
+  unnest(D12) %>% 
+  filter(D12 == "No" | D12 == "Yes" | D12 == "Not sure") # n = 166
+
+D12_summay <- 
+  survey_D12_v1 %>% 
+  group_by(D12) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D12_summay, 
+         aes(D12, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+
+
+### D13 - Do you create/provide documentation for all of your software outputs? ######
+survey_D13_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D13) %>% 
+  unnest(D13) %>% 
+  unique()
+
+survey_D13_TC3 <- 
+  survey_D13_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() # n = 159
+
+
+##add percentage
+Workflow.D13 <- 
+  survey_D13_TC3 %>% 
+  unique() %>% 
+  rename(answer = D13) %>% 
+  mutate(order = ifelse(
+    answer == "Always", 1, ifelse(
+      answer == "Often", 2, ifelse(
+        answer == "Sometimes", 3, ifelse(
+          answer == "Rarely", 4, 5
+          )))))
+
+nHR <- filter(Workflow.D13, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #34
+nSE <- filter(Workflow.D13, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#90
+nSSH <- filter(Workflow.D13, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #35
+
+Workflow_Health <- filter(Workflow.D13, TC3=="Health Research") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D13, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D13, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plot - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
