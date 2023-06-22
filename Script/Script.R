@@ -2393,3 +2393,238 @@ PieDonut(D15_summay,
          color = "black",
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie1)
+
+### D16 - What type of research software do you develop? [refer to research software types from research software current state report] ######
+survey_D16_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D16")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_D16_v1$Question),'___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+
+#Bin tables
+survey_D16_v2 <- cbind(separete_v3, survey_D16_v1)
+
+#Clean the data
+survey_D16_v3 <- 
+  survey_D16_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Institutional policies__", "Institutional policies", ifelse(
+      Answer_q == "Funder policies_", "Funder policies", ifelse(
+        Answer_q == "Publisher policies__", "Publisher policies", ifelse(
+          Answer_q == "Research association_society_policies_", "Research association/society policies", ifelse(
+            Answer_q == "Research community_collaborators__expectation__", "Research community/collaborators' expectation", "Other"
+              )))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_D16_v3_tc3 <- 
+  survey_D16_v3 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+
+#summarize the data
+summary_D16_TC3<- 
+  survey_D16_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+##add percentage
+Workflow.D16 <- 
+  survey_D16_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D16, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #32
+nSE <- filter(Workflow.D16, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#79
+nSSH <- filter(Workflow.D16, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #30
+
+Workflow_Health <- filter(Workflow.D16, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D16, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D16, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3#### 
+
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+### D17 - Choose the 3 methods you most often use to share your research software. ######
+survey_D17_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D17) %>% 
+  unnest(D17) %>% 
+  rename(answer = D17)
+
+#Link to TC3
+survey_D17_v1_tc3 <- 
+  survey_D17_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+
+#summarize the data
+summary_D17_TC3<- 
+  survey_D17_v1_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+##add percentage
+Workflow.D17 <- 
+  survey_D17_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D17, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #28
+nSE <- filter(Workflow.D17, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#84
+nSSH <- filter(Workflow.D17, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #30
+
+Workflow_Health <- filter(Workflow.D17, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D17, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D17, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3#### 
+
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+
+### D18 - Is there a research publication that describes your research software? ######
+survey_D18_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D18") %>% 
+  drop_na() %>% 
+  filter(Answer == "Yes" | Answer == "No")
+
+
+survey_D18_v1_RS <- 
+  survey_organized %>% 
+  filter(Ques_num == "D18") %>% 
+  drop_na() %>% 
+  filter(!Answer == "Yes") %>% 
+  filter(!Answer == "No") %>% 
+  select(-Question)
+
+# write.csv(survey_D18_v1_RS, "D18_RS.csv")
+
+D18_summay <- 
+  survey_D18_v1 %>% 
+  group_by(Answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D18_summay, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+### D19 - Are you aware of the FAIR4RS Principles, and / or other related principles and best practices for research software development? ######
+survey_D19_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D19") %>% 
+  drop_na() %>% 
+  filter(Answer == "Yes" | Answer == "No")
+
+
+survey_D19_v1_RS <- 
+  survey_organized %>% 
+  filter(Ques_num == "D19") %>% 
+  drop_na() %>% 
+  filter(!Answer == "Yes") %>% 
+  filter(!Answer == "No") %>% 
+  select(-Question)
+
+# write.csv(survey_D19_v1_RS, "D19_comment.csv")
+
+D19_summay <- 
+  survey_D19_v1 %>% 
+  group_by(Answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D19_summay, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
