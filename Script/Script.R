@@ -386,6 +386,44 @@ PieDonut(A8_summay,
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie)
 
+### A9 - For how many years have you lived in Canada? ######
+survey_A9_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, A9) %>% 
+  unnest(A9)
+
+A9_summay <- 
+  survey_A9_v1 %>% 
+  group_by(A9) %>% 
+  count()
+
+
+### A10 - Do you identify as a person with a disability or as requiring accommodations in the workplace due to a functional limitation?* ######
+survey_A10_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, A10) %>% 
+  unnest(A10)
+
+A10_summay <- 
+  survey_A10_v1 %>% 
+  group_by(A10) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(A10_summay, 
+         aes(A10, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
 
 
 ### B ############################################################################################
@@ -2051,7 +2089,7 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   xlab("") + 
   ylab("")
 
-### D10 - WWhat type of research software do you develop? [refer to research software types from research software current state report] ######
+### D10 - What type of research software do you develop? [refer to research software types from research software current state report] ######
 survey_D10_v1 <- 
   survey_organized %>% 
   filter(Ques_num == "D10")
@@ -2274,3 +2312,84 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) +
   xlab("") + 
   ylab("")
 
+
+### D14 - Are you / your lab / collaborators the only users of your research software, or do you have external users? ######
+survey_D14_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D14")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_D14_v1$Question),'s__',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_D14_v2 <- cbind(separete_v3, survey_D14_v1)
+
+#Clean the data
+survey_D14_v3 <- 
+  survey_D14_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == " Mainly_internal_", "Mainly internal", ifelse(
+      Answer_q == " Mainly_external__", "Mainly external", "Delete"
+          ))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n) %>% 
+  filter(!answer == "Delete")
+
+D14_summay <- 
+  survey_D14_v3 %>% 
+  group_by(answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D14_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+
+### D15 - Are you / your team involved in the co-development of, or contribution to a research software platform? ######
+survey_D15_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D15") %>% 
+  drop_na() %>% 
+  filter(Answer == "Yes" | Answer == "No")
+
+D15_summay <- 
+  survey_D15_v1 %>% 
+  group_by(Answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D15_summay, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
