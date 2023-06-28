@@ -90,6 +90,12 @@ cbp_Cad <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
                  "#32322F", "darkturquoise", "#D55E00", "#CC79A7",
                  "green4", "lightslategrey"), 100)
 
+cbp_Cad1 <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
+                 "#32322F", "darkturquoise", "#D55E00", "#CC79A7",
+                 "green4", "lightslategrey", "#B7A6B3", "#32325F",
+                 "#D6DB00", "#A55E00", "red"), 100)
+
+
 # This to be used for yes, no, not sure                 
 cb_pie <- rep(c("#32322F","#FBFAFA", "#D6AB00","#00DBA7", "#B7B6B3",
                 "#0072B2", "#D55E00", "#CC79A7"), 100)
@@ -194,7 +200,7 @@ PieDonut(A2_summay,
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie)
 
-### A3 - WWhat type of research software do you develop? [refer to research software types from research software current state report] ######
+### A3 - What type of research software do you develop? [refer to research software types from research software current state report] ######
 survey_A3_v1 <- 
   survey_organized %>% 
   filter(Ques_num == "A3") %>% 
@@ -426,6 +432,66 @@ PieDonut(A10_summay,
 
 
 
+### A11 - Select all the type(s) of disability that applies to you. ######
+survey_A11_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "A11")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_A11_v1$Question),'u___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_A11_v2 <- cbind(separete_v3, survey_A11_v1)
+survey_A11_v2 <- 
+  survey_A11_v2 %>% 
+  filter(Answer == "Yes")
+
+survey_A11_v3 <- 
+  survey_A11_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Communications_", "Communications", ifelse(
+      Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Developmental_", "Developmental" , ifelse(
+        Answer_q ==  "Select_all_the_type_s__of_disability_that_applies_to_you___Dexterity_",  "Dexterity", ifelse(
+          Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Flexibility_", "Flexibility", ifelse(
+            Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Hearing_", "Hearing", ifelse(
+              Answer_q == "", "", ifelse(
+                Answer_q == "", "", ifelse(
+                  Answer_q == "", "", ifelse(
+                    Answer_q == "", "", ifelse(
+                      Answer_q == "", "", ifelse(
+                        Answer_q == "", "",""
+                        )))))))))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+#summarize the data
+summary_A11<- 
+  survey_A11_v3 %>% 
+  group_by(answer) %>% 
+  count() %>% 
+  print()
+
+#### Plot #### 
+ggplot(summary_A11, aes(y=n, x=reorder(answer, n))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip()+
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
 ### B ############################################################################################
 ### B1 - What is your primary institutional affiliation? ######
 survey_B1_v1<- 
@@ -564,7 +630,8 @@ survey_B3_v3 <-
   select(Internal.ID, Role)
 
 #Clean the data
-survey_B3_v4 <- 
+#Group the roles
+survey_B3_v4.1 <- 
   survey_B3_v3 %>% 
   filter(!Role == "Other") %>% 
   mutate(Role_n = ifelse(
@@ -595,37 +662,137 @@ survey_B3_v4 <-
                                                     Role == "Student (Doctoral)", "Student", Role
                                                     ))))))))))))))))))))))))))
 
-#### summary table - Roles ####
-roles_summary <-
-  survey_B3_v4 %>%
+#Roles not grouped
+survey_B3_v4.2 <- 
+  survey_B3_v3 %>% 
+  filter(!Role == "Other") %>% 
+  mutate(Role_n = ifelse(
+    Role == "staff in research support unit", "Other", ifelse(
+      Role == "Personnel de soutien", "Other", ifelse(
+        Role == "Bioinformatics", "Other", ifelse(
+          Role == "Program Manager", "Administrator", ifelse(
+            Role == "Director", "Other", ifelse(
+              Role == "Community Manager", "Other", ifelse(
+                Role == "User Support Analyst", "Other", ifelse(
+                  Role == "Sysadmin", "Other", ifelse(
+                    Role == "Data Steward", "Other", ifelse(
+                      Role == "Conseillere a la recherche", "Other", ifelse(
+                        Role == "Software Developer", "Research Software Developer", ifelse(
+                          Role == "Emeritus", "Faculty", ifelse(
+                              Role == "IT", "Administrator", ifelse(
+                                Role == "project manager", "Administrator", ifelse(
+                                  Role == "Faculty - Adjunct, emeritus, visiting, or limited-term", "Faculty", ifelse(
+                                    Role == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty - Professor", ifelse(
+                                      Role == "DG CCTT affilie cegep Ste-Foy", "Other", Role
+                                      ))))))))))))))))))
+
+#### summary table - Roles grouped ####
+roles_summary.1 <-
+  survey_B3_v4.1 %>%
   group_by(Role_n) %>%
   count() %>%
   arrange(-n) %>%
   drop_na() %>%
   print()
 
-roles_summary$Role_n[roles_summary$Role_n == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)"] <-  "Faculty - Professor"
+#### summary table - Roles not grouped ####
+roles_summary.2 <-
+  survey_B3_v4.2 %>%
+  group_by(Role_n) %>%
+  count() %>%
+  arrange(-n) %>%
+  drop_na() %>%
+  print()
 
-#### Bar plot ####
-PieDonut(roles_summary,
+roles_summary.1$Role_n[roles_summary.1$Role_n == "Research Software Developer"] <-  "Research Software\nDeveloper"
+
+#### Pie chart ####
+
+#Grouped
+PieDonut(roles_summary.1, 
+         aes(Role_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         title= "Respondents' roles", 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp_Cad)
+
+
+PieDonut(roles_summary.1,
          aes(Role_n, count= n),
          ratioByGroup = FALSE,
          showPieName=FALSE,
-         r0=0.25,r1=1,r2=1.4,start=pi/2,
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
          labelpositionThreshold=1,
          showRatioThreshold = F,
          title= "Respondents' roles",
-         titlesize = 5, pieAlpha = 1, donutAlpha = 1, color = "black")+ scale_fill_manual(values =  cbp_Cad) #+
+         titlesize = 7, pieAlpha = 1, donutAlpha = 1, color = "black")+
+  scale_fill_manual(values =  cbp_Cad) 
 
-ggplot(roles_summary, aes(y=n, x=reorder(Role_n, n))) + 
-  geom_bar(position="stack", stat="identity") +
-  scale_fill_manual(values =  cbp1) + 
-  coord_flip()+
-  guides(fill=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("")+
-  ylab("n")
+#Note grouped
+PieDonut(roles_summary.2,
+         aes(Role_n, count= n),
+         ratioByGroup = FALSE,
+         showPieName=FALSE,
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1,
+         showRatioThreshold = F,
+         title= "Respondents' roles",
+         titlesize = 7, pieAlpha = 1, donutAlpha = 1, color = "black")+
+  scale_fill_manual(values =  cbp_Cad1) 
+
+# ggplot(roles_summary, aes(y=n, x=reorder(Role_n, n))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp1) + 
+#   coord_flip()+
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
+
+### B5 - Please choose the option that best describes your current employment status. ######
+survey_B5_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, B5) %>% 
+  unnest(B5)
+
+survey_B5_v2 <- 
+  survey_B5_v1 %>% 
+  filter(!B5 == "Other") %>% 
+  mutate(Answer_n = ifelse(
+    B5 == "Poste 3 jours semaine et contrat 2 jours semaine pour combler ", "Other", ifelse(
+      B5 == "Regular full-time", "Other", ifelse(
+        B5 == "Regular full-time", "Other", ifelse(
+          B5 == "Retired", "Other", ifelse(
+            B5 == "full-time contract ", "Other", ifelse(
+              B5 == "on contract", "Other", ifelse(
+                B5 == "retired", "Other", B5
+                ))))))))
+
+B5_summay <- 
+  survey_B5_v2 %>% 
+  group_by(Answer_n) %>% 
+  count()
+
+B5_summay$Answer_n[B5_summay$Answer_n == "Full-time permanent position"] <- "Full-time permanent\nposition"
+
+#### Pie chart ####
+
+PieDonut(B5_summay, 
+         aes(Answer_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp1)
 
 ### B7 - Are you eligible to apply for and receive Tri-Council, CFI, or other research funding? ######
 survey_B7_v1<- 
@@ -720,6 +887,67 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
    ylab("")
 
 ### C ############################################################################################
+### C1 - Does the definition of research software meet your understanding of research software, and if not, how would you describe research software? ######
+survey_C1_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C1) %>% 
+  unnest(C1) %>% 
+  rename(answer = C1) # n = 294
+
+sort(unique(survey_C1_v1$answer))# to clean the data
+
+survey_C1_v2 <- 
+  survey_C1_v1 %>% 
+  mutate(answer_n = ifelse(
+    answer == "No", "No", ifelse(
+      answer == "Yes", "Yes", ifelse(
+        answer == "Not sure", "Not sure", "Other"))))
+
+survey_C1_v3 <- 
+  survey_C1_v2 %>% 
+  filter(!answer_n == "Other") # n = 254
+
+#Select other
+other <- 
+  survey_C1_v2 %>% 
+  filter(answer_n == "Other")
+
+# write.csv(other, "C1.csv")
+
+C1_summay <- 
+  survey_C1_v3 %>% 
+  group_by(answer_n) %>% 
+  count()
+
+# #Link to TC3
+# survey_C1_v3_tc3 <- 
+#   survey_C1_v3 %>% 
+#   left_join(domain1, by = "Internal.ID") %>% 
+#   drop_na()
+
+# #summarize the data
+# summary_C1_tc3 <- 
+#   survey_C1_v3_tc3 %>% 
+#   group_by(TC3, answer_n) %>% 
+#   count() %>% 
+#   print()
+
+
+#### Pie chart #### 
+PieDonut(C1_summay, 
+         aes(answer_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
 ### C2 - Do you consider the use of research software critical to your research? ######
 survey_C2_v1<- 
   survey_organized_spread %>% 
@@ -1031,7 +1259,7 @@ C6_summay <-
   group_by(answer) %>% 
   count()
 
-#Link to TC3
+#Link to TC3 and add soring
 survey_C6_v3_tc3 <- 
   survey_C6_v1 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
@@ -1040,8 +1268,54 @@ survey_C6_v3_tc3 <-
       answer == "Not important", 4, ifelse(
         answer == "Somewhat important", 2, ifelse(
           answer == "Very important", 1, 5
-        ))))) %>%
+          ))))) %>%
+  mutate(Sorting = ifelse(
+    order == 1, "A", ifelse(
+      order == 2, "B", ifelse(
+        order == 3, "C", ifelse(
+          order == 4, "D", "E"
+          ))))) %>% 
   drop_na()
+
+
+###likert graph
+#Select imporant columns
+C6_clean <- 
+  survey_C6_v3_tc3 %>% 
+  select(Internal.ID, TC3, Sorting, answer)
+
+#summarize the table
+Workfl <- 
+  C6_clean %>% 
+  group_by(TC3, answer, Sorting)%>%
+  summarize(n= n()) %>% 
+  drop_na() %>% 
+  as.tibble() %>% 
+  print()
+
+#Summarize n groups
+group_n <- 
+  Workfl %>% 
+  group_by(TC3) %>% 
+  summarise(sum(n)) %>% 
+  rename(group_n = `sum(n)`)
+
+#Merge n groups to summarized table
+Workfl1 <- 
+  Workfl %>% 
+  left_join(group_n, by = "TC3")
+
+#Add % for each observation
+TC3_Needs_sub <- Workfl1 %>% 
+  mutate("%" = (n/group_n)*100)
+
+#Round the %
+TC3_Needs_sub1 <- 
+  TC3_Needs_sub %>%
+  select(-n, -group_n)
+  # mutate(`%` = round(`%`))
+
+
 
 # #summarize the data
 # summary_C6_tc3 <- 
@@ -1080,7 +1354,7 @@ Workflow_SSH <- filter(Workflow.C6, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
-#### Bar plot - TC3 #### 
+#### Bar plot and Likert- TC3 #### 
 
 # #TC3
 # ggplot(summary_C6_tc3, aes(fill=TC3, y=n, x=reorder(answer_n, -order))) + 
@@ -1106,6 +1380,22 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer,`%`))) +
   xlab("") + 
   ylab("")
 
+#Add colors
+likert_color <- c("#2166AC", "#92C5DE", "#d3d3d3","#F4A582", "#B2182B")
+likert_color <- c("#B2182B", "#F4A582", "#d3d3d3", "#92C5DE", "#2166AC")
+
+#Plot likert
+ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= Sorting))+
+  geom_col()+
+  # facet_grid(rows=vars(TC3)) + 
+  scale_fill_manual(values =  likert_color) + 
+  geom_hline(yintercept = 50, linetype="dotted", color = "black", size=.75) +
+  coord_flip() +
+  geom_text(aes(label = round(`%`, digits = 1)), position = position_stack(vjust = .5)) +
+  theme_linedraw(base_size = 18) +
+  # ggtitle("Importance of cloud service to support research") +
+  xlab("Services") + 
+  ylab("") 
 
 ### C11 - Are there particular software platforms or software services you currently use which you feel would be valuable to be offered as a national service for all researchers to access? ######
 survey_C11_v1<- 
@@ -1596,25 +1886,46 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) +
 
 
 ### D6 - Who develops the software in your group? ######
+# survey_D6_v1 <- 
+#   survey_organized %>% 
+#   filter(Ques_num == "D6") %>% 
+#   mutate(answer_n = ifelse(
+#     Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty - Professor", ifelse(
+#       Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
+#         Question == "Who_develops_the_software_in_your_group___Administrator__", "Administrator", ifelse(
+#           Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Post Doctoral Fellow", ifelse(
+#             Question == "Who_develops_the_software_in_your_group___Research_Software_Engineer___Expert_", "Research Software Engineer Expert", ifelse(
+#               Question == "Who_develops_the_software_in_your_group___Research_Associate__"  , "Research Associate", ifelse(
+#                 Question == "Who_develops_the_software_in_your_group___Research_Staff__", "Research Staff", ifelse(
+#                   Question == "Who_develops_the_software_in_your_group___Student__Doctoral__", "Student Doctoral", ifelse(
+#                     Question == "Who_develops_the_software_in_your_group___Student__Masters___", "Student Masters", ifelse(
+#                       Question == "Who_develops_the_software_in_your_group___Student__Undergrad___", "Student Undergrad", ifelse(
+#                         Question == "Who_develops_the_software_in_your_group___Researcher_", "Researcher", ifelse(
+#                           Question == "Who_develops_the_software_in_your_group___Librarian_" , "Librarian", ifelse(
+#                             Question == "Who_develops_the_software_in_your_group___Other_", "Other", ifelse(
+#                               Question == "Who_develops_the_software_in_your_group___Research_Software_Developer_", "Research Software Developer", "?"
+#                               ))))))))))))))) %>% 
+  select(-Question)
+
 survey_D6_v1 <- 
   survey_organized %>% 
   filter(Ques_num == "D6") %>% 
   mutate(answer_n = ifelse(
-    Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty - Professor", ifelse(
-      Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
+    Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty/Librarian", ifelse(
+      Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty/Librarian", ifelse(
         Question == "Who_develops_the_software_in_your_group___Administrator__", "Administrator", ifelse(
-          Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Post Doctoral Fellow", ifelse(
-            Question == "Who_develops_the_software_in_your_group___Research_Software_Engineer___Expert_", "Research Software Engineer Expert", ifelse(
-              Question == "Who_develops_the_software_in_your_group___Research_Associate__"  , "Research Associate", ifelse(
-                Question == "Who_develops_the_software_in_your_group___Research_Staff__", "Research Staff", ifelse(
-                  Question == "Who_develops_the_software_in_your_group___Student__Doctoral__", "Student Doctoral", ifelse(
-                    Question == "Who_develops_the_software_in_your_group___Student__Masters___", "Student Masters", ifelse(
-                      Question == "Who_develops_the_software_in_your_group___Student__Undergrad___", "Student Undergrad", ifelse(
+          Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Researcher", ifelse(
+            Question == "Who_develops_the_software_in_your_group___Research_Software_Engineer___Expert_", "Research Software Developer", ifelse(
+              Question == "Who_develops_the_software_in_your_group___Research_Associate__"  , "Researcher", ifelse(
+                Question == "Who_develops_the_software_in_your_group___Research_Staff__", "Researcher", ifelse(
+                  Question == "Who_develops_the_software_in_your_group___Student__Doctoral__", "Student", ifelse(
+                    Question == "Who_develops_the_software_in_your_group___Student__Masters___", "Student", ifelse(
+                      Question == "Who_develops_the_software_in_your_group___Student__Undergrad___", "Student", ifelse(
                         Question == "Who_develops_the_software_in_your_group___Researcher_", "Researcher", ifelse(
-                          Question == "Who_develops_the_software_in_your_group___Librarian_" , "Librarian", ifelse(
+                          Question == "Who_develops_the_software_in_your_group___Librarian_" , "Faculty/Librarian", ifelse(
                             Question == "Who_develops_the_software_in_your_group___Other_", "Other", ifelse(
                               Question == "Who_develops_the_software_in_your_group___Research_Software_Developer_", "Research Software Developer", "?"
-                              ))))))))))))))) %>% 
+                            ))))))))))))))) %>% 
   select(-Question)
 
 #Clean the data
@@ -1749,10 +2060,16 @@ D7_you.domain <-
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() 
 
+#Link "Team" to role
+D7_team_role <- 
+  D7_team %>% 
+  left_join(survey_B3_v4, by = "Internal.ID") %>% 
+  drop_na() 
+
 #Link "You" to B3 (role)
 D7_you_role <- 
   D7_you %>% 
-  left_join(survey_B3_v3, by = "Internal.ID") %>% 
+  left_join(survey_B3_v4, by = "Internal.ID") %>% 
   drop_na() %>% 
   select(-question_n) %>%
   unique()
@@ -1783,6 +2100,48 @@ D7_team_summary <-
 D7_you_summary <- 
   D7_you.domain %>% 
   group_by(Answer, TC3) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of an FTE", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", "delete", ifelse(
+      Answer == "Between 1 and 2 FTEs", "delete", ifelse(
+        Answer == "Less than 1/4 of an FTE", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  arrange(-n) %>% 
+  filter(!answer_n == "delete") %>% 
+  print()
+
+#summary table - "Team" and Role
+D7_team_Role_summary <- 
+  D7_team_role %>% 
+  group_by(Answer, Role_n) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of an FTE", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", ">2", ifelse(
+      Answer == "Between 1 and 2 FTEs", "1 - 2", ifelse(
+        Answer == "Less than 1/4 of an FTE", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  print()
+
+
+#summary table - "You" and Role
+D7_you_Role_summary <- 
+  D7_you_role %>% 
+  group_by(Answer, Role_n) %>% 
   count() %>% 
   mutate(order = ifelse(
     Answer == "More than 2 FTEs", 5, ifelse(
@@ -1866,6 +2225,27 @@ ggplot(D7_you_summary, aes(fill=TC3, y=n, x= reorder(answer_n, order))) +
   geom_bar(position="stack", stat="identity") +
   scale_fill_manual(values =  cbp1) + 
   guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
+
+
+# #"Team" and Role
+# ggplot(D7_team_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp_Cad) + 
+#   guides(fill=guide_legend(title="Role"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("FTE")+
+#   ylab("n")
+
+#"You" and Role
+ggplot(D7_you_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp_Cad) + 
+  guides(fill=guide_legend(title="Role"))+
   theme_linedraw(base_size = 20) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   xlab("FTE")+
@@ -2255,6 +2635,7 @@ survey_D13_v1<-
   survey_organized_spread %>% 
   select(Internal.ID, D13) %>% 
   unnest(D13) %>% 
+  rename(answer = D13)
   unique()
 
 survey_D13_TC3 <- 
@@ -2267,13 +2648,69 @@ survey_D13_TC3 <-
 Workflow.D13 <- 
   survey_D13_TC3 %>% 
   unique() %>% 
-  rename(answer = D13) %>% 
   mutate(order = ifelse(
     answer == "Always", 1, ifelse(
       answer == "Often", 2, ifelse(
         answer == "Sometimes", 3, ifelse(
           answer == "Rarely", 4, 5
           )))))
+
+#Link to TC3 and add soring
+survey_D13_v3_tc3 <- 
+  survey_D13_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  mutate(order = ifelse(
+    answer == "Always", 1, ifelse(
+      answer == "Often", 2, ifelse(
+        answer == "Sometimes", 3, ifelse(
+          answer == "Rarely", 4, 5
+        ))))) %>%
+  mutate(Sorting = ifelse(
+    order == 1, "A", ifelse(
+      order == 2, "B", ifelse(
+        order == 3, "C", ifelse(
+          order == 4, "D", "E"
+        ))))) %>% 
+  drop_na()
+
+
+###likert graph
+#Select imporant columns
+D13_clean <- 
+  survey_D13_v3_tc3 %>% 
+  select(Internal.ID, TC3, Sorting, answer)
+
+#summarize the table
+Workfl <- 
+  D13_clean %>% 
+  group_by(TC3, answer, Sorting)%>%
+  summarize(n= n()) %>% 
+  drop_na() %>% 
+  as.tibble() %>% 
+  print()
+
+#Summarize n groups
+group_n <- 
+  Workfl %>% 
+  group_by(TC3) %>% 
+  summarise(sum(n)) %>% 
+  rename(group_n = `sum(n)`)
+
+#Merge n groups to summarized table
+Workfl1 <- 
+  Workfl %>% 
+  left_join(group_n, by = "TC3")
+
+#Add % for each observation
+TC3_Needs_sub <- Workfl1 %>% 
+  mutate("%" = (n/group_n)*100)
+
+#Round the %
+TC3_Needs_sub1 <- 
+  TC3_Needs_sub %>%
+  select(-n, -group_n)
+# mutate(`%` = round(`%`))
+
 
 nHR <- filter(Workflow.D13, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #34
 nSE <- filter(Workflow.D13, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#90
@@ -2299,7 +2736,7 @@ Workflow_SSH <- filter(Workflow.D13, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
-#### Bar plot - TC3 #### 
+#### Bar plot and likert- TC3 #### 
 ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
@@ -2312,7 +2749,22 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) +
   xlab("") + 
   ylab("")
 
+#Add colors
+likert_color <- c("#2166AC", "#92C5DE", "#d3d3d3","#F4A582", "#B2182B")
+# likert_color <- c("#B2182B", "#F4A582", "#d3d3d3", "#92C5DE", "#2166AC")
 
+#Plot likert
+ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= answer))+
+  geom_col()+
+  # facet_grid(rows=vars(TC3)) + 
+  scale_fill_manual(values =  likert_color) + 
+  geom_hline(yintercept = 50, linetype="dotted", color = "black", size=.75) +
+  coord_flip() +
+  geom_text(aes(label = round(`%`, digits = 1)), position = position_stack(vjust = .5)) +
+  theme_linedraw(base_size = 18) +
+  # ggtitle("Importance of cloud service to support research") +
+  xlab("Services") + 
+  ylab("") 
 ### D14 - Are you / your lab / collaborators the only users of your research software, or do you have external users? ######
 survey_D14_v1 <- 
   survey_organized %>% 
@@ -2627,4 +3079,354 @@ PieDonut(D19_summay,
          color = "black",
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie1)
+
+### D20 - How important is (or would be) such a service to your research? ######
+survey_D20_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D20) %>% 
+  unnest(D20) %>% 
+  rename(answer = D20)
+
+D20_summay <- 
+  survey_D20_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+#Link to TC3
+survey_D20_v3_tc3 <- 
+  survey_D20_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  mutate(order = ifelse(
+    answer == "Always", 1, ifelse(
+      answer == "Very often", 2, ifelse(
+        answer == "Sometimes", 3, ifelse(
+          answer == "Rarely", 4, 5
+        ))))) %>%
+  drop_na()
+
+##add percentage
+Workflow.D20 <- 
+  survey_D20_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D20, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #30
+nSE <- filter(Workflow.D20, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#81
+nSSH <- filter(Workflow.D20, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #27
+
+Workflow_Health <- filter(Workflow.D20, TC3=="Health Research") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D20, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D20, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
+#### Bar plot - TC3 #### 
+
+ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+
+### D21 - Are you able to measure the impact/use of your research software using other methods (e.g., number of users, number of downloads)? ######
+survey_D21_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D21") %>% 
+  drop_na() %>% 
+  filter(Answer == "Yes" | Answer == "No")
+
+
+survey_D21_v1_RS <- 
+  survey_organized %>% 
+  filter(Ques_num == "D21") %>% 
+  drop_na() %>% 
+  filter(!Answer == "Yes") %>% 
+  filter(!Answer == "No") %>% 
+  select(-Question)
+
+# write.csv(survey_D21_v1_RS, "D21_comment.csv")
+
+D21_summay <- 
+  survey_D21_v1 %>% 
+  group_by(Answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D21_summay, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+### D23 - Do you use version control tools (e.g., Git/GitHub) for software development? ######
+survey_D23_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D23) %>% 
+  unnest(D23) %>% 
+  rename(answer = D23) %>% 
+  filter(answer == "Yes" | answer == "No"| answer == "Don't know")
+
+
+D23_summay <- 
+  survey_D23_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(D23_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+### D24 - Do you leverage / use standards in your research software development (e.g., GA4GH, TEI, etc.)? ######
+survey_D24_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D24") %>% 
+  drop_na() %>% 
+  filter(Answer == "Yes" | Answer == "No")
+
+D24_summay <- 
+  survey_D24_v1 %>% 
+  group_by(Answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D24_summay, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+
+### D25 - Do you implement software security best practices in your development efforts? ######
+survey_D25_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D25") %>% 
+  drop_na() %>% 
+  filter(Answer == "Yes" | Answer == "No")
+
+D25_summay <- 
+  survey_D25_v1 %>% 
+  group_by(Answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D25_summay, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+
+### D26 - How would you describe your personal level of skills in programming/coding? ######
+survey_D26_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D26) %>% 
+  unnest(D26) %>% 
+  rename(answer = D26)
+
+#Link to TC3
+survey_D26_v1_tc3 <- 
+  survey_D26_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  mutate(order = ifelse(
+    answer == "Expert (recognized authority)", 1, ifelse(
+      answer == "Fundamental Awareness (basic knowledge)", 2, ifelse(
+        answer == "Advanced (applied theory)", 3, ifelse(
+          answer == "Intermediate (practical application)", 4, 5
+        ))))) %>%
+  drop_na()
+
+##add percentage
+Workflow.D26 <- 
+  survey_D26_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D26, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.D26, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#90
+nSSH <- filter(Workflow.D26, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+
+Workflow_Health <- filter(Workflow.D26, TC3=="Health Research") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D26, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D26, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
+#### Bar plot - TC3 #### 
+
+ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+
+### D27 - How much project time do you spend programming/coding on average per project (% of total project time)? ######
+survey_D27_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, D27) %>% 
+  unnest(D27) %>% 
+  rename(answer = D27) %>% 
+  mutate(answer = as.integer(answer),
+         percentage  = ifelse(
+           answer <25, "0-25", ifelse(
+             answer >24 & answer < 51, "25-50", ifelse(
+               answer > 50 & answer < 76, "50-75", "75-100"
+                 ))),
+         order = ifelse(
+           percentage == "0-25", 1, ifelse(
+             percentage == "25-50", 2, ifelse(
+               percentage == "50-75", 3, 4
+               ))))
+
+#Link to TC3
+survey_D27_v1_tc3 <- 
+  survey_D27_v1 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+
+##add percentage
+Workflow.D27 <- 
+  survey_D27_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.D27, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.D27, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#80
+nSSH <- filter(Workflow.D27, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #28
+
+Workflow_Health <- filter(Workflow.D27, TC3=="Health Research") %>%
+  group_by(TC3, percentage, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D27, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, percentage, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D27, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, percentage, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
+#### Bar plot - TC3 #### 
+
+ggplot(Workflow_Tri2, aes(x=reorder(percentage, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+
+### D28 - Are there factors preventing you from developing research software? ######
+survey_D28_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D28") %>% 
+  drop_na()
+
+D28_summay <- 
+  survey_D28_v1 %>% 
+  group_by(Answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(D28_summay, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
 
