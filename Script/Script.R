@@ -1873,7 +1873,16 @@ survey_D5_v3 <-
 D5.domain <- 
   survey_D5_v3 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
-  drop_na() # 
+  drop_na() %>% 
+  mutate(Order = ifelse(
+    answer_n == "Design", 1, ifelse(
+      answer_n == "Development", 2, ifelse(
+        answer_n == "Documentation", 3, ifelse(
+          answer_n == "Outreach", 4, ifelse(
+            answer_n == "Funding", 5, ifelse(
+              answer_n == "Quality Assurance", 6, ifelse(
+                answer_n == "Researcher/End-User", 7, 8
+              ))))))))
 
 #link to roles
 D5_TC3_roles <- 
@@ -1886,13 +1895,14 @@ D5_summary <-
   group_by(answer_n, TC3) %>% 
   count() %>% 
   arrange(-n) %>% 
+  mutate()
   print()
 
 
 #Link Domain - D5 and B3 (role)
 D5_B3 <- 
   survey_D5_v3 %>% 
-  left_join(survey_B3_v3, by = "Internal.ID") %>% 
+  left_join(survey_B3_v4.1, by = "Internal.ID") %>% 
   drop_na() %>% 
   select(-Ques_num) %>% 
   unique()
@@ -1903,10 +1913,16 @@ D5_B3_summary <-
   group_by(answer_n, Role_n) %>% 
   count()  %>% 
   mutate(Role_n = ifelse(
-    Role_n == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty - Professor", Role_n
-  )) %>% 
-  left_join(order, by = "answer_n") %>% 
-  print()
+    Role_n == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty - Professor", Role_n),
+    Order = ifelse(
+      answer_n == "Design", 1, ifelse(
+        answer_n == "Development", 2, ifelse(
+          answer_n == "Documentation", 3, ifelse(
+            answer_n == "Outreach", 4, ifelse(
+              answer_n == "Funding", 5, ifelse(
+                answer_n == "Quality Assurance", 6, ifelse(
+                  answer_n == "Researcher/End-User", 7, 8
+                ))))))))
 
 #select "Others"
 other <- 
@@ -1929,19 +1945,19 @@ nSE <- filter(Workflow.D5, TC3 == "Sciences and Engineering") %>% select(Interna
 nSSH <- filter(Workflow.D5, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #36
 
 Workflow_Health <- filter(Workflow.D5, TC3=="Health Research") %>%
-  group_by(TC3, answer_n) %>%
+  group_by(TC3, answer_n, Order) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.D5, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer_n) %>%
+  group_by(TC3, answer_n, Order) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.D5, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer_n) %>%
+  group_by(TC3, answer_n, Order) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
@@ -1951,22 +1967,22 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
 #### Bar plot #### 
 
 #D5 + B3 (roles) 
-ggplot(D5_B3_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
+ggplot(D5_B3_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, -Order))) + 
   geom_bar(position="stack", stat="identity") +
   coord_flip()+
-  # scale_fill_manual(values =  cbp_Cad) + 
+  scale_fill_manual(values =  cbp_Cad) +
   # ggtitle("") +
   guides(fill=guide_legend(title="Role"))+
   theme_linedraw(base_size = 20) +
   coord_flip() +
-  theme(legend.position = "right", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   xlab("Years of research software development experience")+
   ylab("n")
 
 
 
 #Percentage TC3
-ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
+ggplot(Workflow_Tri2, aes(x=reorder(answer_n, -Order))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
   coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
