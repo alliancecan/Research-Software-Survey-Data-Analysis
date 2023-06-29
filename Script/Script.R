@@ -37,16 +37,6 @@ survey <- read.csv("ID_Alliance_RS_Survey_EN_FR_20230612.csv",
 
 
 # Organizing data ----------------------------------------------------------------
-# # 
-# #Create unique ID per column, as raw data doesn't have unique ID
-# set.seed(5)#to generate the same numbers each time the code is run
-# randnum <- sample.int(1500,952)
-# 
-# 
-# #bind data to IDs
-# survey_ID <- survey %>% mutate(AB_ID = randnum)
-# write.csv(survey_ID, "ID_Alliance_RS_Survey_EN_FR_20230602.csv")
-
 
 ###Re-organize the data
 survey_gather <- 
@@ -85,7 +75,7 @@ survey_selected_data <-
 cbp1 <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
               "#32322F", "#FBFAFA", "#D55E00", "#CC79A7"), 100)
 
-#This to be used to plot the geographical location                      
+#This to be used to plot general Histograms                    
 cbp_Cad <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
                  "#32322F", "darkturquoise", "#D55E00", "#CC79A7",
                  "green4", "lightslategrey"), 100)
@@ -95,19 +85,15 @@ cbp_Cad1 <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
                  "green4", "lightslategrey", "#B7A6B3", "#32325F",
                  "#D6DB00", "#A55E00", "red"), 100)
 
-
 # This to be used for yes, no, not sure                 
-cb_pie <- rep(c("#32322F","#FBFAFA", "#D6AB00","#00DBA7", "#B7B6B3",
-                "#0072B2", "#D55E00", "#CC79A7"), 100)
+cb_pie <- rep(c("#32322F","#FBFAFA", "#D6AB00"), 100)
 
 # This is for mirror plots
 cb_pie1 <- rep(c("#32322F", "#D6AB00"), 100)
-cb_pie2 <- rep(c("#D6AB00","#32322F"), 100)
 
-# This to be used to plot the domains
-cb_pie_3 <- rep(c("#32322F","#B7B6B3", "#D6AB00"), 100)
-
-
+#For likert graphs
+likert_color <- c("#B2182B", "#F4A582", "#d3d3d3", "#92C5DE", "#2166AC")
+likert_color1 <- c("#2166AC", "#92C5DE", "#d3d3d3","#F4A582", "#B2182B")
 
 # A ############################################################################################
 ### A1 - Select the option that best describes your gender identity. ######
@@ -311,26 +297,6 @@ separete_v3 <- stringr::str_replace(separete_v2$X3, "_", " ")
 survey_A7_v2 <- cbind(separete_v3, survey_A7_v1)
 
 #Clean the data
-##This has longer names
-# survey_A7_v3 <- 
-#   survey_A7_v2 %>% 
-#   select(-Question) %>% 
-#   rename(Answer_q = separete_v3) %>% 
-#   drop_na() %>% 
-#   filter(!Answer == "No" | !Answer == NA) %>% 
-#   mutate(Answer_n = ifelse(
-#     Answer_q == " _Black_African__including_African_Canadian_American__Caribbean__", "Black/African (including African-Canadian/American, Caribbean)", ifelse(
-#       Answer_q == " _East_Asian__e_g___Chinese__Taiwanese__Japanese__Korean__", "East Asian (e.g. Chinese, Taiwanese, Japanese, Korean)" , ifelse(
-#         Answer_q ==  " _Indo_Caribbean__Indo_African__Indo_Fijian__or_West_Indian_",  "Indo-Caribbean, Indo- African, Indo-Fijian, or West-Indian", ifelse(
-#           Answer_q == " _Latin__South__or_Central_American_", "Latin, South, or Central American", ifelse(
-#             Answer_q == " _Pacific_Islanders_or_Polynesian_Melanesian_Micronesian__e_g___Cook_Island_Ma_ori__Hawaiian_Ma__oli__Fijians__Marquesan__Marshallese__Niuean__Samoans__Tahitian_Ma__ohi__Tongan__New_Zealand_Ma_ori__", "Pacific Islanders or Polynesian/Melanesian/Micronesian (e.g. Cook Island Māori, Hawaiian Mā'oli,Fijians, Marquesan, Marshallese, Niuean, Samoans, Tahitian, Maohi, Tongan, New-Zealand Maori)", ifelse(
-#               Answer_q == " _South_Asian__e_g___Bangladeshi__Pakistani__Indian__Sri_Lankan__Punjabi__", "South Asian .(e.g. Bangladeshi, Pakistani, Indian, Sri Lankan, Punjabi)", ifelse(
-#                 Answer_q == " _South_East_Asian__e_g___Cambodian__Filipino_a__Malaysian__Thai__Vietnamese__", "South East Asian (e.g. Cambodian, Filipino/a, Malaysian, Thai, Vietnamese)", ifelse(
-#                   Answer_q == " _West_Asian_or_North_African__e_g___Afghani__Armenian__Egyptian__Iranian__Iraqi__Israeli__Jordanian__Lebanese__Palestinian__Syrian__Yemeni___", "West Asian or North African (e.g. Afghani, Armenian, Egyptian, Iranian, Iraqi, Israeli, Jordanian, Lebanese, Palestinian, Syrian, Yemeni)", ifelse(
-#                     Answer_q == " _Prefer_not_to_answer__", "Prefer not to answer", "Other" )))))))))) %>%
-#   select(Internal.ID, Answer, Answer_n) %>% 
-#   rename(answer = Answer_n)
-
 survey_A7_v3 <- 
   survey_A7_v2 %>% 
   select(-Question) %>% 
@@ -349,6 +315,7 @@ survey_A7_v3 <-
                     Answer_q == " _Prefer_not_to_answer__", "Prefer not to answer", "Other" )))))))))) %>%
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
+
 #summarize the data
 summary_A7<- 
   survey_A7_v3 %>% 
@@ -366,6 +333,7 @@ ggplot(summary_A7, aes(y=n, x=reorder(answer, n))) +
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   xlab("")+
   ylab("n")
+
 ### A8 - Did you immigrate to Canada? ######
 survey_A8_v1<- 
   survey_organized_spread %>% 
@@ -410,6 +378,7 @@ survey_A10_v1<-
   select(Internal.ID, A10) %>% 
   unnest(A10)
 
+#Summarize
 A10_summay <- 
   survey_A10_v1 %>% 
   group_by(A10) %>% 
@@ -447,12 +416,14 @@ separete_v2 <-
 #Delete "_" from answers
 separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
 
-#Bin tables
+#Bind tables
 survey_A11_v2 <- cbind(separete_v3, survey_A11_v1)
+
 survey_A11_v2 <- 
   survey_A11_v2 %>% 
   filter(Answer == "Yes")
 
+#Clean data
 survey_A11_v3 <- 
   survey_A11_v2 %>% 
   select(-Question) %>% 
@@ -474,6 +445,7 @@ survey_A11_v3 <-
                         )))))))))))) %>%
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
+
 #summarize the data
 summary_A11<- 
   survey_A11_v3 %>% 
@@ -502,6 +474,7 @@ survey_B1_v1<-
 
 sort(unique(survey_B1_v1$Affiliation))# to clean the data
 
+#Clean data
 survey_B1_v2 <- 
   survey_B1_v1 %>% 
   mutate(Affiliation_n = ifelse(
@@ -527,6 +500,7 @@ domain_summary <-
   arrange(-n) %>% 
   print()
 
+#Edit names
 domain_summary_v1 <- domain_summary
 domain_summary_v1$Domain[domain_summary_v1$Domain== "Social sciences"] <- "Social sciences"
 domain_summary_v1$Domain[domain_summary_v1$Domain == "Agricultural and veterinary sciences"] <- "Agricultural and\nveterinary sciences"
@@ -552,15 +526,14 @@ domain <-
   left_join(domain_summary1, by = "Domain") %>% 
   select(-n) # n = 312
 
+#"Domain1" is used to group some questions by Tri-agency (TC3)
 domain1 <- 
   domain %>% 
   select(-Domain)
 
-b2.domain <- domain
-
 #group by domain
 b2.domain.summary <- 
-  b2.domain %>% 
+  domain %>% 
   group_by(TC3) %>% count() %>% drop_na()
 
 # #for esthethis purposes, we add "\n" to long TC3 names and to domains so they the names will fully appear in the pie charts
@@ -568,6 +541,7 @@ b2.domain.summary$TC3[b2.domain.summary$TC3 == "Social Sciences and Humanities"]
 b2.domain.summary$TC3[b2.domain.summary$TC3 == "Sciences and Engineering"] <- "Sciences and\nEngineering"
 #### Pie charts ####
 
+#All domains
 PieDonut(domain_summary_v1, 
          aes(Domain, count= n), 
          ratioByGroup = FALSE, 
@@ -710,19 +684,6 @@ roles_summary.1$Role_n[roles_summary.1$Role_n == "Research Software Developer"] 
 #### Pie chart ####
 
 #Grouped
-PieDonut(roles_summary.1, 
-         aes(Role_n, count= n), 
-         ratioByGroup = FALSE, 
-         showPieName=FALSE, 
-         r0=0.0,r1=1,r2=1.4,start=pi/2,
-         labelpositionThreshold=1, 
-         showRatioThreshold = F, 
-         title= "Respondents' roles", 
-         titlesize = 5,
-         pieLabelSize = 7)+
-  scale_fill_manual(values =  cbp_Cad)
-
-
 PieDonut(roles_summary.1,
          aes(Role_n, count= n),
          ratioByGroup = FALSE,
@@ -731,7 +692,7 @@ PieDonut(roles_summary.1,
          labelpositionThreshold=1,
          showRatioThreshold = F,
          title= "Respondents' roles",
-         titlesize = 7, pieAlpha = 1, donutAlpha = 1, color = "black")+
+         titlesize = 7,pieLabelSize =7,  pieAlpha = 1, donutAlpha = 1, color = "black")+
   scale_fill_manual(values =  cbp_Cad) 
 
 #Note grouped
@@ -744,17 +705,7 @@ PieDonut(roles_summary.2,
          showRatioThreshold = F,
          title= "Respondents' roles",
          titlesize = 7, pieAlpha = 1, donutAlpha = 1, color = "black")+
-  scale_fill_manual(values =  cbp_Cad1) 
-
-# ggplot(roles_summary, aes(y=n, x=reorder(Role_n, n))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   coord_flip()+
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
+  scale_fill_manual(values =  cbp_Cad1)
 
 ### B4 - Please provide the number of years since your first academic appointment. ######
 survey_B4_v1<- 
@@ -762,6 +713,7 @@ survey_B4_v1<-
   select(Internal.ID, B4) %>% 
   unnest(B4)
 
+#Clean data as we have answers in number of years (e.g., 27), and the year (e.g., 1997)
 survey_B4_v2 <- 
   survey_B4_v1 %>% 
   mutate(B4 = as.integer(B4),
@@ -769,6 +721,7 @@ survey_B4_v2 <-
            B4 < 1000, B4, 2023 - B4
          ))
 
+#Summarize
 B4_summay <- 
   survey_B4_v2 %>% 
   group_by(Answer_n) %>% 
@@ -1034,21 +987,9 @@ Workflow_SSH <- filter(Workflow.B9, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
-#### Bar plots#### 
+#### Bar plot and Pie chart#### 
 
-# #all
-# ggplot(summary_B9, aes(y=n, x= reorder(answer, n))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   coord_flip()+
-#   scale_fill_manual(values =  cbp1) + 
-#   # guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("Programming language")+
-#   ylab("n")
-
-
-#Percentage TC3
+#Bar plot Percentage TC3
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
@@ -1061,9 +1002,7 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   xlab("") + 
   ylab("")
 
-
-#### Pie chart ####
-
+#Pie chart
 PieDonut(summary_B9, 
          aes(answer, count= n), 
          ratioByGroup = FALSE, 
@@ -1083,8 +1022,7 @@ survey_C1_v1<-
   unnest(C1) %>% 
   rename(answer = C1) # n = 294
 
-sort(unique(survey_C1_v1$answer))# to clean the data
-
+#Clean the data
 survey_C1_v2 <- 
   survey_C1_v1 %>% 
   mutate(answer_n = ifelse(
@@ -1101,26 +1039,13 @@ other <-
   survey_C1_v2 %>% 
   filter(answer_n == "Other")
 
+# #Extract open text
 # write.csv(other, "C1.csv")
 
 C1_summay <- 
   survey_C1_v3 %>% 
   group_by(answer_n) %>% 
   count()
-
-# #Link to TC3
-# survey_C1_v3_tc3 <- 
-#   survey_C1_v3 %>% 
-#   left_join(domain1, by = "Internal.ID") %>% 
-#   drop_na()
-
-# #summarize the data
-# summary_C1_tc3 <- 
-#   survey_C1_v3_tc3 %>% 
-#   group_by(TC3, answer_n) %>% 
-#   count() %>% 
-#   print()
-
 
 #### Pie chart #### 
 PieDonut(C1_summay, 
@@ -1142,10 +1067,9 @@ survey_C2_v1<-
   survey_organized_spread %>% 
   select(Internal.ID, C2) %>% 
   unnest(C2) %>% 
-  rename(answer = C2) # n = 294
+  rename(answer = C2)
 
-sort(unique(survey_C2_v1$answer))# to clean the data
-
+#Clean data
 survey_C2_v2 <- 
   survey_C2_v1 %>% 
   mutate(answer_n = ifelse(
@@ -1162,6 +1086,7 @@ other <-
   survey_C2_v2 %>% 
   filter(answer_n == "Other")
 
+# #Extract open text
 # write.csv(other, "C2.csv")
 
 C2_summay <- 
@@ -1197,20 +1122,6 @@ PieDonut(C2_summay,
          color = "black",
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie)
-
-# #### Bar plot - TC3 #### 
-# 
-# ggplot(summary_C2_tc3, aes(fill=TC3, y=n, x=answer_n)) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-# 
-# 
 
 ### C3 - Do you consider the development of research software a primary output of your research? ######
 survey_C3_v1<- 
@@ -1313,19 +1224,6 @@ PieDonut(summary_C3_SCH,
          color = "black",
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cbp1)
-# #### Bar plot - TC3 #### 
-# 
-# ggplot(summary_C3_tc3, aes(fill=TC3, y=n, x=answer)) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-
-
 
 ### C4 - Do you have access to software development support? ######
 survey_C4_v1<- 
@@ -1373,18 +1271,6 @@ PieDonut(C4_summay,
          color = "black",
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie)
-
-# #### Bar plot - TC3 #### 
-# 
-# ggplot(summary_C4_tc4, aes(fill=TC3, y=n, x=answer)) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
 
 ### C5 - Who provides this support? ######
 
@@ -1470,20 +1356,6 @@ Workflow_SSH <- filter(Workflow.C5, TC3=="Social Sciences and Humanities") %>%
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
 #### Bar plot - TC3 #### 
-
-# #TC3
-# ggplot(C5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   coord_flip()+
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-
-#Percentage TC3
 ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
@@ -1561,17 +1433,6 @@ TC3_Needs_sub <- Workfl1 %>%
 TC3_Needs_sub1 <- 
   TC3_Needs_sub %>%
   select(-n, -group_n)
-  # mutate(`%` = round(`%`))
-
-
-
-# #summarize the data
-# summary_C6_tc3 <- 
-#   survey_C6_v3_tc3 %>% 
-#   group_by(TC3, answer_n) %>% 
-#   count() %>% 
-#   print()
-
 
 ##add percentage
 Workflow.C6 <- 
@@ -1604,18 +1465,6 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
 
 #### Bar plot TC3 + Likert + piechart #### 
 
-# #TC3
-# ggplot(summary_C6_tc3, aes(fill=TC3, y=n, x=reorder(answer_n, -order))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   coord_flip() +
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-
 #Percentage TC3
 ggplot(Workflow_Tri2, aes(x=reorder(answer,`%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
@@ -1628,12 +1477,8 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer,`%`))) +
   xlab("") + 
   ylab("")
 
-#Add colors
-likert_color <- c("#2166AC", "#92C5DE", "#d3d3d3","#F4A582", "#B2182B")
-likert_color <- c("#B2182B", "#F4A582", "#d3d3d3", "#92C5DE", "#2166AC")
-
 #Plot likert
-ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= Sorting))+
+ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= answer))+
   geom_col()+
   # facet_grid(rows=vars(TC3)) + 
   scale_fill_manual(values =  likert_color) + 
@@ -1695,6 +1540,7 @@ survey_C12_v1<-
 
 sort(unique(survey_C12_v1$C12))# to clean the data
 
+#Clean the data
 survey_C12_v2 <- 
   survey_C12_v1 %>% 
   mutate(C12_n = ifelse(
@@ -1711,6 +1557,7 @@ other <-
   survey_C12_v2 %>% 
   filter(C12_n == "Other")
 
+# #Export open text
 # write.csv(SS, "C12.csv")
 
 C12_summay <- 
@@ -1738,8 +1585,6 @@ survey_C13_v1<-
   survey_organized_spread %>% 
   select(Internal.ID, C13) %>% 
   unnest(C13)
-
-sort(unique(survey_C13_v1$C13))# to clean the data
 
 C13_summay <- 
   survey_C13_v1 %>% 
@@ -1879,6 +1724,7 @@ survey_D3_v1<-
 
 sort(unique(survey_D3_v1$D3))# to clean the data
 
+# #Export open text
 # write.csv(survey_D3_v1, "D3.csv")
 
 D3_other <- read.csv("D3.csv") %>% 
@@ -1941,13 +1787,6 @@ D4_B3_domain_clean <-
                       Years == "41-45", 10, 11
                       )))))))))))
 
-# #summary table 
-# D4_summary <-
-#   D4_B3_domain_clean %>%
-#   group_by(Years, Order) %>%
-#   count() %>%
-#   print()
-
 ##add percentage
 Workflow.D4 <- 
   D4_B3_domain_clean %>% 
@@ -1978,133 +1817,7 @@ Workflow_SSH <- filter(Workflow.D4, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
-  
-# #summary table - only experience (D4)
-# D4_summary <- 
-#   survey_D4_v1 %>% 
-#   group_by(D4) %>% 
-#   count() %>% 
-#   print()
-
-# #summary table - D4 and Role
-# D4_B3_summary <- 
-#   D4_B3_domain %>% 
-#   group_by(D4, Role_n) %>% 
-#   count() %>% 
-#   mutate(Role_n = ifelse(
-#     Role_n == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty - Professor", Role_n
-#   )) %>% 
-#   print()
-  
-# #summary table - D4 and TC3
-# D4_TC3_summary <- 
-#   D4_B3_domain %>% 
-#   group_by(D4, TC3) %>% 
-#   count() %>% 
-#   print()
-# 
-# #HR
-# D4_TC3_HR <- 
-#   D4_B3_domain %>% 
-#   filter(TC3 == "Health Research") %>% 
-#   group_by(D4) %>% 
-#   count() %>% 
-#   mutate(D4 = as.integer(as.character(D4))) %>%
-#   print()
-# 
-# D4 <- c(0.5, 8, 9, 12, 13, 14, 16, 18,19, 21,22,26, 23, 26, 28, 33, 35, 38, 40, 41, 45, 46 )
-# n <- rep(0, length(first_column))
-# ab <- as.data.frame(cbind(D4, n))
-# 
-# D4_TC3_HR1 <- rbind(D4_TC3_HR, ab)
-# 
-# #SE
-# D4_TC3_SE <- 
-#   D4_B3_domain %>% 
-#   filter(TC3 == "Sciences and Engineering") %>% 
-#   group_by(D4) %>% 
-#   count() %>% 
-#   mutate(D4 = as.integer(as.character(D4))) %>%
-#   print()
-# 
-# D4 <- c(0.5,4,8, 9, 13, 16, 18, 21, 24,27, 41, 46)
-# n <- rep(0, length(first_column))
-# ab <- as.data.frame(cbind(D4, n))
-# 
-# D4_TC3_SE1 <- rbind(D4_TC3_SE, ab)
-# 
-# #SSH
-# D4_TC3_SSH <- 
-#   D4_B3_domain %>% 
-#   filter(TC3 == "Social Sciences and Humanities") %>% 
-#   group_by(D4) %>% 
-#   count() %>%
-#   mutate(D4 = as.integer(as.character(D4))) %>%
-#   print()
-# 
-# D4 <- c(0.5, 1, 7, 11, 15, 16, 24, 27, 30, 40, 45, 33, 35, 38, 28, 26, 22, 19,12)
-# n <- rep(0, length(first_column))
-# ab <- as.data.frame(cbind(D4, n))
-# 
-# D4_TC3_SSH1 <- rbind(D4_TC3_SSH, ab)
-
 #### Bar plot #### 
-
-#Only D4
-# ggplot(D4_summary, aes(x= reorder(D4, n), y=n)) + 
-#   geom_bar(stat = "identity") +
-#   coord_flip() +
-#   theme_minimal(base_size = 20)+
-#   xlab("Years of research software development experience") + 
-#   ylab("n")
-
-# #D4 + B3 (roles) 
-# ggplot(D4_B3_summary, aes(fill=Role_n, y=n, x= reorder(D4, as.numeric(D4)))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   # scale_fill_manual(values =  cbp_Cad) + 
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Roles"))+
-#   theme_linedraw(base_size = 20) +
-#   coord_flip() +
-#   theme(legend.position = "right", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("Years of research software development experience")+
-#   ylab("n")
-
-#D4 + TC3
-
-##DEnsities
-#TC3
-# ggplot(D4_TC3_summary, aes(as.numeric(D4),color = TC3))+
-#   geom_density(alpha = 0.5, size = 1.5)+
-#   scale_color_manual(values = cbp1)+
-#   # scale_fill_manual(values =  cbp1)+
-#   guides(color=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 3), panel.grid.major.x = element_line(linetype = 3), panel.grid.minor.x = element_line(size = 0), panel.grid.minor.y = element_line(size = 0), panel.background = element_blank())+
-#   xlab("Years of research software development experience")+
-#   ylab("Density")
-# 
-# 
-# ggplot(D4_TC3_HR, aes(as.numeric(D4)))+
-#   geom_density(alpha = 0.5, size = 1.5, color = "#D6AB00", fill = "#D6AB00")+
-#   # scale_color_manual(values = cbp1)+
-#   # scale_fill_manual(values =  cbp1)+
-#   guides(color=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 3), panel.grid.major.x = element_line(linetype = 3), panel.grid.minor.x = element_line(size = 0), panel.grid.minor.y = element_line(size = 0), panel.background = element_blank())+
-#   xlab("Years of research software development experience")+
-#   ylab("Density")
-
-
-# ggplot(D4_TC3_summary, aes(fill=TC3, y=n, x= D4)) + 
-#   geom_density() #+
-#   scale_fill_manual(values =  cbp1) + 
-#   coord_flip() +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("Years of research software development experience")+
-#   ylab("n")
 
 #Percentage TC3
 ggplot(Workflow_Tri2, aes(x=reorder(Years,Order))) + 
@@ -2117,52 +1830,6 @@ ggplot(Workflow_Tri2, aes(x=reorder(Years,Order))) +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
   ylab("")
-
-### 3 histograms - 1 histogram per TC3
-
-cbp1 <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
-              "#32322F", "#FBFAFA", "#D55E00", "#CC79A7"), 100)
-
-# D4 HR
-# ggplot(D4_TC3_HR, aes(D4)) +
-#   geom_density() #TC3 for all and add the colors for the TC3
-# 
-
-# ggplot(D4_TC3_HR, aes(D4))+geom_freqpoly(binwidth = 400)
-  
-ggplot(D4_TC3_HR1, aes(fill = TC3, y=n, x= reorder(D4, as.numeric(D4)))) + 
-  geom_bar(position="stack", stat="identity", fill = "#B7B6B3") +
-  # scale_fill_manual(values =  cbp1) + 
-  # xlim(0,46) +
-  coord_flip() +
-  guides(fill=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("Years of research software development experience")+
-  ylab("n")
-
-#D4 SE
-ggplot(D4_TC3_SE1, aes(fill=TC3, y=n, x= reorder(D4, as.numeric(D4)))) + 
-  geom_bar(position="stack", stat="identity", fill = "#D6AB00") +
-  # scale_fill_manual(values =  cbp1) + 
-  coord_flip() +
-  # guides(fill=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("Years of research software development experience")+
-  ylab("n")
-
-#D4 SSH
-ggplot(D4_TC3_SSH1, aes(fill=TC3, y=n, x= reorder(D4, as.numeric(D4)))) + 
-  geom_bar(position="stack", stat="identity", fill = "#00DBA7") +
-  # scale_fill_manual(values =  cbp1) + 
-  coord_flip() +
-  # guides(fill=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("Years of research software development experience")+
-  ylab("n")
-
 
 ### D5 - What roles do you as an individual play on your software development team? ######
 survey_D5_v1 <- 
@@ -2208,6 +1875,11 @@ D5.domain <-
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() # 
 
+#link to roles
+D5_TC3_roles <- 
+  D5.domain %>% 
+  left_join(survey_B3_v3, by = )
+
 #summary table - D5 and TC3
 D5_summary <- 
   D5.domain %>% 
@@ -2224,14 +1896,6 @@ D5_B3 <-
   drop_na() %>% 
   select(-Ques_num) %>% 
   unique()
-
-# #to use to reorder the bars for roles
-# order <- 
-#   D5_B3 %>% 
-#   group_by(answer_n) %>% 
-#   count() %>% 
-#   rename(order = n) %>% 
-#   print()
   
 #summary table - D4 and Role
 D5_B3_summary <- 
@@ -2252,6 +1916,7 @@ other <-
   unique() %>% 
   print()
 
+# #Export open text
 # write.csv(other, "D5.csv")
 
 ##add percentage
@@ -2285,19 +1950,6 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
 
 #### Bar plot #### 
 
-# #D5 + TC3
-# ggplot(D5_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   coord_flip()+
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-
-
 #D5 + B3 (roles) 
 ggplot(D5_B3_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
   geom_bar(position="stack", stat="identity") +
@@ -2328,27 +1980,7 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) +
 
 
 ### D6 - Who develops the software in your group? ######
-# survey_D6_v1 <- 
-#   survey_organized %>% 
-#   filter(Ques_num == "D6") %>% 
-#   mutate(answer_n = ifelse(
-#     Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty - Professor", ifelse(
-#       Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
-#         Question == "Who_develops_the_software_in_your_group___Administrator__", "Administrator", ifelse(
-#           Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Post Doctoral Fellow", ifelse(
-#             Question == "Who_develops_the_software_in_your_group___Research_Software_Engineer___Expert_", "Research Software Engineer Expert", ifelse(
-#               Question == "Who_develops_the_software_in_your_group___Research_Associate__"  , "Research Associate", ifelse(
-#                 Question == "Who_develops_the_software_in_your_group___Research_Staff__", "Research Staff", ifelse(
-#                   Question == "Who_develops_the_software_in_your_group___Student__Doctoral__", "Student Doctoral", ifelse(
-#                     Question == "Who_develops_the_software_in_your_group___Student__Masters___", "Student Masters", ifelse(
-#                       Question == "Who_develops_the_software_in_your_group___Student__Undergrad___", "Student Undergrad", ifelse(
-#                         Question == "Who_develops_the_software_in_your_group___Researcher_", "Researcher", ifelse(
-#                           Question == "Who_develops_the_software_in_your_group___Librarian_" , "Librarian", ifelse(
-#                             Question == "Who_develops_the_software_in_your_group___Other_", "Other", ifelse(
-#                               Question == "Who_develops_the_software_in_your_group___Research_Software_Developer_", "Research Software Developer", "?"
-#                               ))))))))))))))) %>% 
-  select(-Question)
-
+#CLean data
 survey_D6_v1 <- 
   survey_organized %>% 
   filter(Ques_num == "D6") %>% 
@@ -2389,14 +2021,6 @@ D6.domain <-
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() # 
 
-# #summary table - D6 and TC3
-# D6_summary <- 
-#   D6.domain %>% 
-#   group_by(answer_n, TC3) %>% 
-#   count() %>% 
-#   arrange(-n) %>% 
-#   print()
-
 #select "Others"
 other <- 
   survey_D6_v2 %>% 
@@ -2405,6 +2029,7 @@ other <-
   unique() %>% 
   print()
 
+# #Export open text
 # write.csv(other, "D6.csv")
 
 ##add percentage
@@ -2437,17 +2062,6 @@ Workflow_SSH <- filter(Workflow.D6, TC3=="Social Sciences and Humanities") %>%
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
 #### Bar plot - TC3 #### 
-# ggplot(D6_summary, aes(fill=TC3, y=n, x= reorder(answer_n, n))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   coord_flip()+
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-
 #Percentage TC3
 ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
@@ -2601,11 +2215,6 @@ D7_you_Role_summary <-
   filter(!answer_n == "delete") %>% 
   print()
 
-# #Mirror ="Team and "you"
-# survey_D7_v3 <- survey_D7_v2
-# survey_D7_v3$question_n[survey_D7_v3$question_n == "You"] <- "Respondant"
-# survey_D7_v3$question_n[survey_D7_v3$question_n == "X35"] <- "Research team"
-
 #link to TC3
 survey_D7_v3_TC3 <- 
   survey_D7_v3 %>% 
@@ -2638,7 +2247,6 @@ survey_D7_v3_TC3.sum <-
   summarise(sum = sum(n))
 
 #merge sum table to summary table
-
 survey_D7_v3_TC3.merged <- 
   survey_D7_v3_TC3.summary %>% 
   left_join(survey_D7_v3_TC3.sum, by = "question_n") %>% 
@@ -2673,15 +2281,15 @@ ggplot(D7_you_summary, aes(fill=TC3, y=n, x= reorder(answer_n, order))) +
   ylab("n")
 
 
-# #"Team" and Role
-# ggplot(D7_team_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp_Cad) + 
-#   guides(fill=guide_legend(title="Role"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("FTE")+
-#   ylab("n")
+#"Team" and Role
+ggplot(D7_team_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) +
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp_Cad) +
+  guides(fill=guide_legend(title="Role"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
 
 #"You" and Role
 ggplot(D7_you_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
@@ -2692,26 +2300,6 @@ ggplot(D7_you_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) 
   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   xlab("FTE")+
   ylab("n")
-
-# #Mirror bar plots
-# ggplot(survey_D7_v3_TC3.sum.flip, aes(fill=question_n, y=new_n, x=reorder(Answer, -order))) + 
-#   geom_bar(position="stack", stat="identity")+
-#   coord_flip()+
-#   theme(plot.title = element_text(size = 18, face = "bold"),
-#         axis.title = element_text(size = 15),
-#         axis.text.x = element_text(size = 15),
-#         axis.text.y = element_text(size = 12),
-#         legend.text = element_text(size = 12),
-#         legend.title = element_text(size = 15))+
-#   xlab("Answer") + ylab("Proportion")+
-#   theme_linedraw(base_size = 18) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   # ggtitle("Commercial cloud vs Alliance Community cloud")+
-#   scale_fill_manual(values =  cb_pie2)+
-#   guides(fill=guide_legend(title="Group"))+
-#   ylim(-100,100)
-
-
 
 ### D8 - Approximately how many dollars (CDN) of research funds did your research group spend over the last calendar year on developing research software resources? ######
 survey_D8_v1<- 
@@ -2776,18 +2364,6 @@ Workflow_SSH <- filter(Workflow.D8, TC3=="Social Sciences and Humanities") %>%
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
 #### Bar plot - TC3 #### 
-
-# ggplot(summary_D8_tc3, aes(fill=TC3, y=n, x=reorder(answer, -order))) + 
-#   geom_bar(position="stack", stat="identity") +
-#   scale_fill_manual(values =  cbp1) + 
-#   # coord_flip() +
-#   # ggtitle("") +
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-
 #Percentage TC3
 ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
@@ -3037,7 +2613,7 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   coord_flip() +
   geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
@@ -3077,7 +2653,7 @@ survey_D13_v1<-
   survey_organized_spread %>% 
   select(Internal.ID, D13) %>% 
   unnest(D13) %>% 
-  rename(answer = D13)
+  rename(answer = D13) %>% 
   unique()
 
 survey_D13_TC3 <- 
@@ -3191,15 +2767,11 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) +
   xlab("") + 
   ylab("")
 
-#Add colors
-likert_color <- c("#2166AC", "#92C5DE", "#d3d3d3","#F4A582", "#B2182B")
-# likert_color <- c("#B2182B", "#F4A582", "#d3d3d3", "#92C5DE", "#2166AC")
 
 #Plot likert
-ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= answer))+
+ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= Sorting))+
   geom_col()+
-  # facet_grid(rows=vars(TC3)) + 
-  scale_fill_manual(values =  likert_color) + 
+  scale_fill_manual(values =  likert_color1) + 
   geom_hline(yintercept = 50, linetype="dotted", color = "black", size=.75) +
   coord_flip() +
   geom_text(aes(label = round(`%`, digits = 1)), position = position_stack(vjust = .5)) +
@@ -3207,6 +2779,7 @@ ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= answer))+
   # ggtitle("Importance of cloud service to support research") +
   xlab("Services") + 
   ylab("") 
+
 ### D14 - Are you / your lab / collaborators the only users of your research software, or do you have external users? ######
 survey_D14_v1 <- 
   survey_organized %>% 
@@ -3500,6 +3073,7 @@ survey_D19_v1_RS <-
   filter(!Answer == "No") %>% 
   select(-Question)
 
+# #Export open text
 # write.csv(survey_D19_v1_RS, "D19_comment.csv")
 
 D19_summay <- 
