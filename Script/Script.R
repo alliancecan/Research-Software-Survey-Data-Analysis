@@ -686,7 +686,7 @@ survey_B3_v4.2 <-
                                       Role == "DG CCTT affilie cegep Ste-Foy", "Other", Role
                                       ))))))))))))))))))
 
-#### summary table - Roles grouped ####
+### summary table - Roles grouped 
 roles_summary.1 <-
   survey_B3_v4.1 %>%
   group_by(Role_n) %>%
@@ -695,7 +695,7 @@ roles_summary.1 <-
   drop_na() %>%
   print()
 
-#### summary table - Roles not grouped ####
+### summary table - Roles not grouped
 roles_summary.2 <-
   survey_B3_v4.2 %>%
   group_by(Role_n) %>%
@@ -705,6 +705,7 @@ roles_summary.2 <-
   print()
 
 roles_summary.1$Role_n[roles_summary.1$Role_n == "Research Software Developer"] <-  "Research Software\nDeveloper"
+
 
 #### Pie chart ####
 
@@ -755,6 +756,34 @@ PieDonut(roles_summary.2,
 #   xlab("")+
 #   ylab("n")
 
+### B4 - Please provide the number of years since your first academic appointment. ######
+survey_B4_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, B4) %>% 
+  unnest(B4)
+
+survey_B4_v2 <- 
+  survey_B4_v1 %>% 
+  mutate(B4 = as.integer(B4),
+         Answer_n = ifelse(
+           B4 < 1000, B4, 2023 - B4
+         ))
+
+B4_summay <- 
+  survey_B4_v2 %>% 
+  group_by(Answer_n) %>% 
+  count()
+
+#### Histogram distribution ####
+ggplot(B4_summay, aes(x = Answer_n))+
+  geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) +
+  ggtitle("Distribution of number of years since first academic appointment") +
+  xlab("Years") + 
+  ylab("Density")+
+  # geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20)
+
+
 ### B5 - Please choose the option that best describes your current employment status. ######
 survey_B5_v1<- 
   survey_organized_spread %>% 
@@ -793,6 +822,7 @@ PieDonut(B5_summay,
          titlesize = 5,
          pieLabelSize = 7)+
   scale_fill_manual(values =  cbp1)
+
 
 ### B7 - Are you eligible to apply for and receive Tri-Council, CFI, or other research funding? ######
 survey_B7_v1<- 
@@ -842,7 +872,19 @@ B8_summary <-
 B8.domain <- 
   survey_B8_v1 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
-  print() ## n = 358 = unique(Internal.ID)
+  mutate(order = ifelse(
+    answer == "CIHR", 1, ifelse(
+      answer == "NSERC", 2, ifelse(
+        answer == "SSHRC", 3, ifelse(
+          answer == "CFI", 4, ifelse(
+            answer == "CANARIE", 5, ifelse(
+              answer == "Genome Canada", 6, ifelse(
+                answer == "Alliance", 7, ifelse(
+                  answer == "Provincial funding", 8, ifelse(
+                    answer == "Institutional", 9, ifelse(
+                      answer == "Industry grants", 10, ifelse(
+                        answer == "International funding", 11, 12
+                        ))))))))))))
 
 
 Workflow.B8 <- 
@@ -854,19 +896,19 @@ nSE <- filter(Workflow.B8, TC3 == "Sciences and Engineering") %>% select(Interna
 nSSH <- filter(Workflow.B8, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #73
 
 Workflow_Health <- filter(Workflow.B8, TC3=="Health Research") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, answer, order) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.B8, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, answer, order) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.B8, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, answer, order) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
@@ -875,7 +917,7 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
 
 # #### Plot funds source #### 
 
- ggplot(Workflow_Tri2, aes(x=reorder(answer,`%`))) + 
+ ggplot(Workflow_Tri2, aes(x=reorder(answer,-order))) + 
    geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
    scale_fill_manual(values =  cbp1) + 
    coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
@@ -885,6 +927,130 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
   guides(fill=guide_legend(title="Tri-agency"))+
    xlab("") + 
    ylab("")
+
+### B9 - Please choose the option that best describes your current employment status. ######
+survey_B9_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "B9")  
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_B9_v1$Question),'a___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", "")
+
+#Bin tables
+survey_B9_v2 <- cbind(separete_v3, survey_B9_v1)
+
+#Clean the data
+survey_B9_v3 <- 
+  survey_B9_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Privatesector_industry_", "Private sector/industry", ifelse(
+      Answer_q == "Publicsector_government_", "Public sector/government_", ifelse(
+        Answer_q == "Nonfor_profit_sector_", "Non-for-profit sector", "Consultant"
+        )))) %>% 
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#summarize the data
+summary_B9<-
+  survey_B9_v3 %>%
+  group_by(answer) %>%
+  count() %>%
+  print()
+
+#Link to TC3
+survey_B9_v3_tc3 <- 
+  survey_B9_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+#summarize the data
+summary_B9_TC3<- 
+  survey_B9_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  drop_na() %>% 
+  print()
+
+##add percentage
+Workflow.B9 <- 
+  survey_B9_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.B9, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.B9, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#91
+nSSH <- filter(Workflow.B9, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+
+Workflow_Health <- filter(Workflow.B9, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.B9, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.B9, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots#### 
+
+# #all
+# ggplot(summary_B9, aes(y=n, x= reorder(answer, n))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   coord_flip()+
+#   scale_fill_manual(values =  cbp1) + 
+#   # guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("Programming language")+
+#   ylab("n")
+
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+#### Pie chart ####
+
+PieDonut(summary_B9, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp1)
 
 ### C ############################################################################################
 ### C1 - Does the definition of research software meet your understanding of research software, and if not, how would you describe research software? ######
@@ -1354,7 +1520,7 @@ Workflow_SSH <- filter(Workflow.C6, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
-#### Bar plot and Likert- TC3 #### 
+#### Bar plot TC3 + Likert + piechart #### 
 
 # #TC3
 # ggplot(summary_C6_tc3, aes(fill=TC3, y=n, x=reorder(answer_n, -order))) + 
@@ -1396,6 +1562,21 @@ ggplot(TC3_Needs_sub1, aes(x=TC3, y= `%`, fill= Sorting))+
   # ggtitle("Importance of cloud service to support research") +
   xlab("Services") + 
   ylab("") 
+
+#Pie chart
+PieDonut(C6_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
 
 ### C11 - Are there particular software platforms or software services you currently use which you feel would be valuable to be offered as a national service for all researchers to access? ######
 survey_C11_v1<- 
@@ -1458,6 +1639,34 @@ C12_summay <-
 #### Pie chart #### 
 PieDonut(C12_summay, 
          aes(C12_n, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+### C13 - Are there particular software tools, platforms or software services you currently develop or co-develop which you feel would be valuable to be offered as a national service for all researchers to access? ######
+survey_C13_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, C13) %>% 
+  unnest(C13)
+
+sort(unique(survey_C13_v1$C13))# to clean the data
+
+C13_summay <- 
+  survey_C13_v1 %>% 
+  group_by(C13) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(C13_summay, 
+         aes(C13, count= n), 
          ratioByGroup = FALSE, 
          showPieName=F, 
          r0=0.0,r1=1,r2=1.4,start=pi/2,
