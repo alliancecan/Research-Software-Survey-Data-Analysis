@@ -1900,16 +1900,84 @@ survey_D4_v1<-
   unnest(D4) %>% 
   unique()
 
-#Link Domain - D4 and B3 (role)
-
+##Link Domain - D4 and B3 (role)
+#Role
 D4_B3 <- 
   survey_D4_v1 %>% 
   left_join(survey_B3_v3, by = "Internal.ID")
 
+#Domain - role and D4
 D4_B3_domain <- 
   D4_B3 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na()
+
+#Categorize the years of experience 0, 0-5, 6-10...
+D4_B3_domain_clean <- 
+  D4_B3_domain %>% 
+  mutate(D4 = as.integer(D4),
+         Years = ifelse(
+           D4 == 0, "0", ifelse(
+             D4 > 0 & D4 <= 5, "1-5", ifelse(
+               D4 > 5 & D4 <= 10, "6-10", ifelse(
+                 D4 > 10 & D4 <= 15, "11-15", ifelse(
+                   D4 > 15 & D4 <= 20, "16-20", ifelse(
+                     D4 > 20 & D4 <= 25, "21-25", ifelse(
+                       D4 > 25 & D4 <= 30, "26-30", ifelse(
+                         D4 > 30 & D4 <= 35, "31-35", ifelse(
+                           D4 > 35 & D4 <= 40, "36-40", ifelse(
+                             D4 > 40 & D4 <= 45, "41-45", "46-50"
+                             ))))))))))) %>% 
+  mutate(Order = ifelse(
+    Years == "0", 1, ifelse(
+      Years == "1-5", 2, ifelse(
+        Years == "6-10", 3, ifelse(
+          Years == "11-15", 4, ifelse(
+            Years == "16-20", 5, ifelse(
+              Years == "21-25", 6, ifelse(
+                Years == "26-30", 7, ifelse(
+                  Years == "31-35", 8, ifelse(
+                    Years == "36-40", 9, ifelse(
+                      Years == "41-45", 10, 11
+                      )))))))))))
+
+# #summary table 
+# D4_summary <-
+#   D4_B3_domain_clean %>%
+#   group_by(Years, Order) %>%
+#   count() %>%
+#   print()
+
+##add percentage
+Workflow.D4 <- 
+  D4_B3_domain_clean %>% 
+  select(-D4) %>% 
+  unique()
+
+nHR <- filter(Workflow.D4, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+nSE <- filter(Workflow.D4, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#93
+nSSH <- filter(Workflow.D4, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #39
+
+Workflow_Health <- filter(Workflow.D4, TC3=="Health Research") %>%
+  group_by(TC3, Years, Order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D4, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Years, Order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D4, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Years, Order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
   
 # #summary table - only experience (D4)
 # D4_summary <- 
@@ -1928,57 +1996,57 @@ D4_B3_domain <-
 #   )) %>% 
 #   print()
   
-#summary table - D4 and TC3
-D4_TC3_summary <- 
-  D4_B3_domain %>% 
-  group_by(D4, TC3) %>% 
-  count() %>% 
-  print()
-
-#HR
-D4_TC3_HR <- 
-  D4_B3_domain %>% 
-  filter(TC3 == "Health Research") %>% 
-  group_by(D4) %>% 
-  count() %>% 
-  mutate(D4 = as.integer(as.character(D4))) %>%
-  print()
-
-D4 <- c(0.5, 8, 9, 12, 13, 14, 16, 18,19, 21,22,26, 23, 26, 28, 33, 35, 38, 40, 41, 45, 46 )
-n <- rep(0, length(first_column))
-ab <- as.data.frame(cbind(D4, n))
-
-D4_TC3_HR1 <- rbind(D4_TC3_HR, ab)
-
-#SE
-D4_TC3_SE <- 
-  D4_B3_domain %>% 
-  filter(TC3 == "Sciences and Engineering") %>% 
-  group_by(D4) %>% 
-  count() %>% 
-  mutate(D4 = as.integer(as.character(D4))) %>%
-  print()
-
-D4 <- c(0.5,4,8, 9, 13, 16, 18, 21, 24,27, 41, 46)
-n <- rep(0, length(first_column))
-ab <- as.data.frame(cbind(D4, n))
-
-D4_TC3_SE1 <- rbind(D4_TC3_SE, ab)
-
-#SSH
-D4_TC3_SSH <- 
-  D4_B3_domain %>% 
-  filter(TC3 == "Social Sciences and Humanities") %>% 
-  group_by(D4) %>% 
-  count() %>%
-  mutate(D4 = as.integer(as.character(D4))) %>%
-  print()
-
-D4 <- c(0.5, 1, 7, 11, 15, 16, 24, 27, 30, 40, 45, 33, 35, 38, 28, 26, 22, 19,12)
-n <- rep(0, length(first_column))
-ab <- as.data.frame(cbind(D4, n))
-
-D4_TC3_SSH1 <- rbind(D4_TC3_SSH, ab)
+# #summary table - D4 and TC3
+# D4_TC3_summary <- 
+#   D4_B3_domain %>% 
+#   group_by(D4, TC3) %>% 
+#   count() %>% 
+#   print()
+# 
+# #HR
+# D4_TC3_HR <- 
+#   D4_B3_domain %>% 
+#   filter(TC3 == "Health Research") %>% 
+#   group_by(D4) %>% 
+#   count() %>% 
+#   mutate(D4 = as.integer(as.character(D4))) %>%
+#   print()
+# 
+# D4 <- c(0.5, 8, 9, 12, 13, 14, 16, 18,19, 21,22,26, 23, 26, 28, 33, 35, 38, 40, 41, 45, 46 )
+# n <- rep(0, length(first_column))
+# ab <- as.data.frame(cbind(D4, n))
+# 
+# D4_TC3_HR1 <- rbind(D4_TC3_HR, ab)
+# 
+# #SE
+# D4_TC3_SE <- 
+#   D4_B3_domain %>% 
+#   filter(TC3 == "Sciences and Engineering") %>% 
+#   group_by(D4) %>% 
+#   count() %>% 
+#   mutate(D4 = as.integer(as.character(D4))) %>%
+#   print()
+# 
+# D4 <- c(0.5,4,8, 9, 13, 16, 18, 21, 24,27, 41, 46)
+# n <- rep(0, length(first_column))
+# ab <- as.data.frame(cbind(D4, n))
+# 
+# D4_TC3_SE1 <- rbind(D4_TC3_SE, ab)
+# 
+# #SSH
+# D4_TC3_SSH <- 
+#   D4_B3_domain %>% 
+#   filter(TC3 == "Social Sciences and Humanities") %>% 
+#   group_by(D4) %>% 
+#   count() %>%
+#   mutate(D4 = as.integer(as.character(D4))) %>%
+#   print()
+# 
+# D4 <- c(0.5, 1, 7, 11, 15, 16, 24, 27, 30, 40, 45, 33, 35, 38, 28, 26, 22, 19,12)
+# n <- rep(0, length(first_column))
+# ab <- as.data.frame(cbind(D4, n))
+# 
+# D4_TC3_SSH1 <- rbind(D4_TC3_SSH, ab)
 
 #### Bar plot #### 
 
@@ -2006,26 +2074,26 @@ D4_TC3_SSH1 <- rbind(D4_TC3_SSH, ab)
 
 ##DEnsities
 #TC3
-ggplot(D4_TC3_summary, aes(as.numeric(D4),color = TC3))+
-  geom_density(alpha = 0.5, size = 1.5)+
-  scale_color_manual(values = cbp1)+
-  # scale_fill_manual(values =  cbp1)+
-  guides(color=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 3), panel.grid.major.x = element_line(linetype = 3), panel.grid.minor.x = element_line(size = 0), panel.grid.minor.y = element_line(size = 0), panel.background = element_blank())+
-  xlab("Years of research software development experience")+
-  ylab("Density")
-
-
-ggplot(D4_TC3_HR, aes(as.numeric(D4)))+
-  geom_density(alpha = 0.5, size = 1.5, color = "#D6AB00", fill = "#D6AB00")+
-  # scale_color_manual(values = cbp1)+
-  # scale_fill_manual(values =  cbp1)+
-  guides(color=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 3), panel.grid.major.x = element_line(linetype = 3), panel.grid.minor.x = element_line(size = 0), panel.grid.minor.y = element_line(size = 0), panel.background = element_blank())+
-  xlab("Years of research software development experience")+
-  ylab("Density")
+# ggplot(D4_TC3_summary, aes(as.numeric(D4),color = TC3))+
+#   geom_density(alpha = 0.5, size = 1.5)+
+#   scale_color_manual(values = cbp1)+
+#   # scale_fill_manual(values =  cbp1)+
+#   guides(color=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 3), panel.grid.major.x = element_line(linetype = 3), panel.grid.minor.x = element_line(size = 0), panel.grid.minor.y = element_line(size = 0), panel.background = element_blank())+
+#   xlab("Years of research software development experience")+
+#   ylab("Density")
+# 
+# 
+# ggplot(D4_TC3_HR, aes(as.numeric(D4)))+
+#   geom_density(alpha = 0.5, size = 1.5, color = "#D6AB00", fill = "#D6AB00")+
+#   # scale_color_manual(values = cbp1)+
+#   # scale_fill_manual(values =  cbp1)+
+#   guides(color=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 3), panel.grid.major.x = element_line(linetype = 3), panel.grid.minor.x = element_line(size = 0), panel.grid.minor.y = element_line(size = 0), panel.background = element_blank())+
+#   xlab("Years of research software development experience")+
+#   ylab("Density")
 
 
 # ggplot(D4_TC3_summary, aes(fill=TC3, y=n, x= D4)) + 
@@ -2038,6 +2106,17 @@ ggplot(D4_TC3_HR, aes(as.numeric(D4)))+
 #   xlab("Years of research software development experience")+
 #   ylab("n")
 
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(Years,Order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
 
 ### 3 histograms - 1 histogram per TC3
 
