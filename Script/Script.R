@@ -824,6 +824,29 @@ PieDonut(B5_summay,
   scale_fill_manual(values =  cbp1)
 
 
+### B6 - Please provide the number of years since your first appointment into this position. ######
+survey_B6_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, B6) %>% 
+  unnest(B6) %>% 
+  mutate(B6 = as.integer(B6))
+
+#summary table
+B6_summay <- 
+  survey_B6_v1 %>% 
+  group_by(B6) %>% 
+  count()
+
+#### Histogram distribution ####
+ggplot(B6_summay, aes(x = B6))+
+  geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.8) +
+  ggtitle("Distribution of the number of years since your first appointment into this position") +
+  xlab("Years") + 
+  ylab("Density")+
+  # geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20)
+
+
 ### B7 - Are you eligible to apply for and receive Tri-Council, CFI, or other research funding? ######
 survey_B7_v1<- 
   survey_organized_spread %>% 
@@ -1215,8 +1238,23 @@ summary_C3_tc3 <-
   count() %>% 
   print()
 
+#HR
+summary_C3_HR <- 
+  summary_C3_tc3 %>% 
+  filter(TC3 == "Health Research")
+
+#SE
+summary_C3_SE <- 
+  summary_C3_tc3 %>% 
+  filter(TC3 == "Sciences and Engineering")
+
+#SCH
+summary_C3_SCH <- 
+  summary_C3_tc3 %>% 
+  filter(TC3 == "Social Sciences and Humanities")
 
 #### Pie chart #### 
+#all
 PieDonut(summary_C3_tc3, 
          aes(answer, count= n), 
          ratioByGroup = FALSE, 
@@ -1231,6 +1269,50 @@ PieDonut(summary_C3_tc3,
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cbp1)
 
+#HR
+PieDonut(summary_C3_HR, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+#SE
+PieDonut(summary_C3_SE, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+#SCH
+PieDonut(summary_C3_SCH, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
 # #### Bar plot - TC3 #### 
 # 
 # ggplot(summary_C3_tc3, aes(fill=TC3, y=n, x=answer)) + 
@@ -1679,6 +1761,78 @@ PieDonut(C13_summay,
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cbp1)
 
+
+### D1 - Can you provide an estimate of the time you and your research team spend developing research software? ######
+survey_D1_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "D1") %>% 
+  mutate(question_n = ifelse(
+    Question == "Do_you_yourself_lead__or_have_you_previously_led__a_research_software_development_project____Currently_leading_", "Currently", "Previously"
+  )) %>% 
+  drop_na() %>% 
+  select(-Question)
+
+#Clean the data
+survey_D1_v2 <- 
+  survey_D1_v1 %>% 
+  drop_na() %>% 
+  unnest(Answer) %>% 
+  select(-Ques_num)
+
+#"Currently" data
+D1_Currently <- 
+  survey_D1_v2 %>% 
+  filter(question_n == "Currently")
+
+#"Previously" data
+D1_Previously <- 
+  survey_D1_v2 %>% 
+  filter(question_n == "Previously")
+
+#Summarize tables
+D1_Currently_sum <- 
+  D1_Currently %>% 
+  group_by(Answer) %>% 
+  count()
+
+D1_Previously_sum <- 
+  D1_Previously %>% 
+  group_by(Answer) %>% 
+  count()
+
+
+#### Bar plots#### 
+
+#"Currently"
+PieDonut(D1_Currently_sum, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+
+#"Previously"
+PieDonut(D1_Previously_sum, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
 
 ### D2 - Have you or your team received funding from a funding call that is specific to the development of research software (e.g. CANARIE Research Software, CFI Cyberinfrastructure Challenge I, Chan Zuckerberg Open Source Software)? ######
 survey_D2_v1<- 
