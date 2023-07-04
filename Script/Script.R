@@ -3529,7 +3529,7 @@ survey_E1_v1 <-
   filter(Ques_num == "E1")
 
 #Split column "Question" into two to separate the question from the answer
-separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E1_v1$Question),'____',fixed=TRUE)))
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E1_v1$Question),'h___',fixed=TRUE)))
 
 separete_v2 <- 
   separate_v1 %>% 
@@ -3547,66 +3547,36 @@ survey_E1_v3 <-
   select(-Question) %>% 
   rename(Answer_q = separete_v3) %>% 
   drop_na() %>% 
-  filter() %>% 
   filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
-    Answer_q == "Libraries that_are_used_by_other_research_software_tools__e_g__Numpy__", "Libraries that are used by other research software tools (e.g. Numpy)", ifelse(
-      Answer_q == "Tools that_are_run_by_researchers__e_g__OpenFoam__", "Tools that are run by researchers (e.g. OpenFoam)", ifelse(
-        Answer_q == "Services that_are_used_queried_by_researchers__e_g__MongoDB__", "Services that are used queried by researchers (e.g. MongoDB)", ifelse(
-          Answer_q == "Platforms that_are_used_by_end_users__e_g__FRDR__","Platforms that are use by end users (e.g. FRDR)", ifelse(
-            Answer_q == "Open source__e_g__GNU_Linux__", "Open source (e.g. GNU/Linux)", ifelse(
-              Answer_q == "Closed source__e_g__MATLAB__", "Closed source (e.g. MATLAB)", ifelse(
-                Answer_q == "Hybrid dual__or_multi_licensing__e_g__MySQL_AB_database__", "Hybrid dual or multi-licensing (e.g. MySQL AB database)", ifelse(
-                  Answer_q == "Source code__e_g__Python_code__", "Source code (e.g. Python_code)", ifelse(
-                    Answer_q == "Binary executable__package__e_g___exe_file__", "Binary executable, package (e.g. .exe file)", ifelse(
-                      Answer_q == "Container _e_g__Docker_container__", "Container (e.g. Docker container)", ifelse(
-                        Answer_q == "Virtual machine_image__e_g__VMware_Workstation__", "Virtual machine image (e.g. VMware Workstation)", ifelse(
-                          Answer_q == "Service _e_g__Slack__", "Service (e.g. Slack)", ifelse(
-                            Answer_q == "General _e_g__Numpy__", "General (e.g. Numpy)", ifelse(
-                              Answer_q == "Domain specific__e_g__Astropy__", "Domain-specific (e.g. Astropy)", ifelse(
-                                Answer_q == "Quantitative _e_g__R__", "Quantitative (e.g. R)", ifelse(
-                                  Answer_q == "Qualitative _e_g__NVivo__", "Qualitative (e.g. NVivo)", ifelse(
-                                    Answer_q == "Planning _e_g__Microsoft_Planner__", "Planning (e.g. Microsoft Planner)", ifelse(
-                                      Answer_q == "Analysis _e_g__SAS__", "Analysis (e.g. SAS)", ifelse(
-                                        Answer_q == "Computation _e_g__Mathematica__", "Computation e.g. Mathematica)", ifelse(
-                                          Answer_q == "Visualisation _e_g__MindManager__ParaView__", "Visualisation (e.g. MindManager, ParaView)", ifelse(
-                                            Answer_q == "Transfer _e_g__FTP__", "Transfer (e.g. FTP)", ifelse(
-                                              Answer_q == "Storage _e_g__Dropbox__", "Storage (e.g. Dropbox)", ifelse(
-                                                Answer_q == "Publishing _e_g__Zenodo__", "Publishing (e.g. Zenodo)", ifelse(
-                                                  Answer_q == "Curation preservation_of_data__e_g__Zenodo__", "Curation/preservationof data (e.g. Zenodo)", ifelse(
-                                                    Answer_q == "Curation preservation_of_software__e_g__Software_Heritage__Zenodo__", "Curation/preservation of software (e.g. Software Heritage, Zenodo)", ifelse(
-                                                      Answer_q == "Discovery _e_g__DataONE__", "Discovery (e.g. (DataONE)", "Other"
-                                                    ))))))))))))))))))))))))))) %>%
+    Answer_q == "Directly from_authors_collaborators_", "Directly from authors/collaborators", ifelse(
+      Answer_q == "Community experts___discipline_adoption_", "Community experts / discipline adoption", ifelse(
+        Answer_q == "From scholarly_publications__e_g___software_publication__supplementary_materials__", "From scholarly publications (e.g., software publication, supplementary materials)", ifelse(
+          Answer_q == "Courses _workshops__training_opportunities_", "Courses, workshops, training opportunities", ifelse(
+            Answer_q == "Conferences ", "Conferences", ifelse(
+              Answer_q == "Research software_author_s_website_", "Research software author's website", ifelse(
+                Answer_q == "Local regional_support_personnel_", "Local/regional support personnel", ifelse(
+                  Answer_q == "Software hosting_development_website__e_g___GitHub__", "Software hosting/development website (e.g., GitHub)", ifelse(
+                    Answer_q == "Software curation_preservation_repository__e_g___Figshare__Zenodo__", "Software curation/preservation repository (e.g., Figshare, Zenodo)", ifelse(
+                      Answer_q == "Domain specific_software_registry__e_g___Astrophysics_Source_Code_Library__", "Domain specific_software_registry (e.g., Astrophysics Source Code Library)", ifelse(
+                        Answer_q == "Science gateways___research_platforms___virtual_research_environments__VREs____or_web_application_services_", "Science gateways / research platforms / virtual research environments (VREs), or web application/services", "Other"
+                        )))))))))))) %>%
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
-
-#summarize the data
-summary_E1<- 
-  survey_E1_v3 %>% 
-  group_by(answer) %>% 
-  count() %>% 
-  print()
 
 #Link to TC3
 survey_E1_v3_tc3 <- 
   survey_E1_v3 %>% 
   left_join(domain1, by = "Internal.ID")
 
-#summarize the data
-summary_E1_TC3<- 
-  survey_E1_v3_tc3 %>% 
-  group_by(TC3, answer) %>% 
-  count() %>% 
-  print()
-
 ##add percentage
 Workflow.E1 <- 
   survey_E1_v3_tc3 %>% 
   unique()
 
-nHR <- filter(Workflow.E1, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #35
-nSE <- filter(Workflow.E1, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#92
-nSSH <- filter(Workflow.E1, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nHR <- filter(Workflow.E1, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.E1, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#84
+nSSH <- filter(Workflow.E1, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #39
 
 Workflow_Health <- filter(Workflow.E1, TC3=="Health Research") %>%
   group_by(TC3, answer) %>%
@@ -3628,21 +3598,7 @@ Workflow_SSH <- filter(Workflow.E1, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
-#### Bar plots#### 
-
-#all
-ggplot(summary_E1, aes(y=n, x= reorder(answer, n))) + 
-  geom_bar(position="stack", stat="identity") +
-  coord_flip()+
-  scale_fill_manual(values =  cbp1) + 
-  # guides(fill=guide_legend(title="Tri-agency"))+
-  theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-  xlab("Programming language")+
-  ylab("n")
-
-
-#Percentage TC3
+#### Bar plots - TC3 #### 
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
@@ -3654,3 +3610,4 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
   ylab("")
+
