@@ -4110,3 +4110,440 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   xlab("") + 
   ylab("")
 
+
+### E10 - Can you provide an estimate of the time you and your research team spend installing and supporting the research software that you use? ######
+survey_E10_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E10") %>% 
+  mutate(question_n = ifelse(
+    Question == "Can_you_provide_an_estimate_of_the_time_you_and_your_research_team_spend_installing_and_supporting_the_research_software_that_you_use____The_time_you_spend_installing_and_supporting_the_RS_that_you_use__" , "You", "Team"
+  )) %>% 
+  select(-Question)
+
+#Clean the data
+survey_E10_v2 <- 
+  survey_E10_v1 %>% 
+  drop_na() %>% 
+  unnest(Answer) %>% 
+  select(-Ques_num)
+
+#"Team" data
+E10_team <- 
+  survey_E10_v2 %>% 
+  filter(question_n == "Team")
+
+#"You" data
+E10_you <- 
+  survey_E10_v2 %>% 
+  filter(question_n == "You")
+
+E10_you <- 
+  E10_you %>% 
+  filter(!Answer == "Between 1 and 2 FTEs" & !Answer == "More than 2 FTEs")
+
+#Link "Team" to TC3
+E10_team.domain <- 
+  E10_team %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() 
+
+#Link "You" to TC3
+E10_you.domain <- 
+  E10_you %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() 
+
+#Link "Team" to role
+E10_team_role <- 
+  E10_team %>% 
+  left_join(survey_B3_v4, by = "Internal.ID") %>% 
+  drop_na() 
+
+#Link "You" to B3 (role)
+E10_you_role <- 
+  E10_you %>% 
+  left_join(survey_B3_v4, by = "Internal.ID") %>% 
+  drop_na() %>% 
+  select(-question_n) %>%
+  unique()
+
+##Summarize tables
+#summary table - "Team" and TC3
+E10_team_summary <- 
+  E10_team.domain %>% 
+  group_by(Answer, TC3) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", ">2", ifelse(
+      Answer == "Between 1 and 2 FTEs", "1 - 2", ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  print()
+
+
+#summary table - "You" and TC3
+E10_you_summary <- 
+  E10_you.domain %>% 
+  group_by(Answer, TC3) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", "delete", ifelse(
+      Answer == "Between 1 and 2 FTEs", "delete", ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  arrange(-n) %>% 
+  filter(!answer_n == "delete") %>% 
+  print()
+
+#summary table - "Team" and Role
+E10_team_Role_summary <- 
+  E10_team_role %>% 
+  group_by(Answer, Role_n) %>% 
+  count() %>% 
+  arrange(-n) %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", ">2", ifelse(
+      Answer == "Between 1 and 2 FTEs", "1 - 2", ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  print()
+
+
+#summary table - "You" and Role
+E10_you_Role_summary <- 
+  E10_you_role %>% 
+  group_by(Answer, Role_n) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", "delete", ifelse(
+      Answer == "Between 1 and 2 FTEs", "delete", ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>% 
+  arrange(-n) %>% 
+  filter(!answer_n == "delete") %>% 
+  print()
+
+#link to TC3
+survey_E10_v3_TC3 <- 
+  survey_E10_v2 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() 
+
+#summarize
+survey_E10_v3_TC3.summary <- 
+  survey_E10_v3_TC3 %>% 
+  group_by(question_n, Answer) %>% 
+  count() %>% 
+  mutate(order = ifelse(
+    Answer == "More than 2 FTEs", 5, ifelse(
+      Answer == "Between 1 and 2 FTEs", 4, ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", 1, ifelse(
+          Answer=="Between 1/2 and 1 FTE",3,2
+        ))))) %>% 
+  mutate(answer_n = ifelse(
+    Answer == "More than 2 FTEs", ">2", ifelse(
+      Answer == "Between 1 and 2 FTEs", "1 - 2", ifelse(
+        Answer == "Less than 1/4 of a full time equivalent position (an FTE)", "<1/4", ifelse(
+          Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
+        ))))) %>%  
+  drop_na()
+
+#sum
+survey_E10_v3_TC3.sum <- 
+  survey_E10_v3_TC3.summary %>% 
+  group_by(question_n) %>% 
+  summarise(sum = sum(n))
+
+#merge sum table to summary table
+survey_E10_v3_TC3.merged <- 
+  survey_E10_v3_TC3.summary %>% 
+  left_join(survey_E10_v3_TC3.sum, by = "question_n") %>% 
+  mutate(proportion = (n/sum)*100)
+
+#Add negative values to create the mirror barplot graph
+survey_E10_v3_TC3.sum.flip <- survey_E10_v3_TC3.merged %>% 
+  mutate(new_n = ifelse(question_n == "Respondant",
+                        -1*proportion, proportion))
+
+
+#### Bar plots#### 
+
+#"Team" and TC3
+ggplot(E10_team_summary, aes(fill=TC3, y=n, x= reorder(answer_n, order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
+
+#"You" and TC3
+ggplot(E10_you_summary, aes(fill=TC3, y=n, x= reorder(answer_n, order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp1) + 
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
+
+
+#"Team" and Role
+ggplot(E10_team_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) +
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp_Cad) + 
+  guides(fill=guide_legend(title="Role"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
+
+#"You" and Role
+ggplot(E10_you_Role_summary, aes(fill=Role_n, y=n, x= reorder(answer_n, order))) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_manual(values =  cbp_Cad) + 
+  guides(fill=guide_legend(title="Role"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("FTE")+
+  ylab("n")
+
+
+### E11 - ow does your group fund the research software that you use? ######
+survey_E11_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E11")
+
+#Clean the data
+survey_E11_v2 <-
+  survey_E11_v1 %>%
+  select(-Question) %>%
+  drop_na() 
+
+#Link to TC3
+survey_E11_V2_tc3 <- 
+  survey_E11_v2 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.E11 <- 
+  survey_E11_V2_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E11, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+nSE <- filter(Workflow.E11, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#70
+nSSH <- filter(Workflow.E11, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #36
+
+Workflow_Health <- filter(Workflow.E11, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E11, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E11, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(Answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+
+### E12 - Approximately how many dollars (CDN) were spent personally over the last calendar year on research software, or software used in research (e.g. Adobe Suite, Excel, Dropbox)? ######
+survey_E12_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E12) %>% 
+  unnest(E12) %>% 
+  rename(answer = E12)
+
+#Link to TC3
+survey_E12_v1_tc3 <- 
+  survey_E12_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() %>% 
+  mutate(order = ifelse(
+    answer == "$0 (None)", 1, ifelse(
+      answer == "$1 to less than $1000", 2, ifelse(
+        answer == "$1000 to less than $5000", 3, ifelse(
+          answer == "More than $5000", 4, ifelse(
+            answer == "Don’t know", 5, 6)))))) %>% 
+  filter(!order == 6) %>% 
+  print()
+
+#summarize the data
+summary_E12_tc3 <- 
+  survey_E12_v1_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+
+##add percentage
+Workflow.E12 <- 
+  survey_E12_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E12, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+nSE <- filter(Workflow.E12, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#80
+nSSH <- filter(Workflow.E12, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #39
+
+Workflow_Health <- filter(Workflow.E12, TC3=="Health Research") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E12, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E12, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plot - TC3 #### 
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+### E13 - Approximately how many dollars (CDN) were spent personally over the last calendar year on research software, or software used in research (e.g. Adobe Suite, Excel, Dropbox)? ######
+survey_E13_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E13) %>% 
+  unnest(E13) %>% 
+  rename(answer = E13)
+
+#Link to TC3
+survey_E13_v1_tc3 <- 
+  survey_E13_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() %>% 
+  mutate(order = ifelse(
+    answer == "$0 (None)", 1, ifelse(
+      answer == "$1 to less than $1000", 2, ifelse(
+        answer == "$1000 to less than $5000", 3, ifelse(
+          answer == "$5000 to less than $50K", 4, ifelse(
+            answer == "$50K to less than $100K", 5, ifelse(
+              answer == "$100K or more", 6, ifelse(
+                answer == "Don’t know", 7, 8
+                )))))))) %>% 
+  filter(!order == 8) %>% 
+  print()
+
+#summarize the data
+summary_E13_tc3 <- 
+  survey_E13_v1_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+
+##add percentage
+Workflow.E13 <- 
+  survey_E13_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E13, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #21
+nSE <- filter(Workflow.E13, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#59
+nSSH <- filter(Workflow.E13, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #27
+
+Workflow_Health <- filter(Workflow.E13, TC3=="Health Research") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E13, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E13, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plot - TC3 #### 
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
