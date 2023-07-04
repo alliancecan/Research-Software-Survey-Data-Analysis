@@ -3611,3 +3611,158 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   xlab("") + 
   ylab("")
 
+
+### E2 - Can you estimate the amount of time (% of your project time) you spend looking for the right research software for your research? ######
+survey_E2_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E2) %>% 
+  unnest(E2) %>% 
+  rename(answer = E2) %>% 
+  mutate(answer = as.integer(answer),
+         percentage  = ifelse(
+           answer <25, "0-25", ifelse(
+             answer >24 & answer < 51, "25-50", ifelse(
+               answer > 50 & answer < 76, "50-75", "75-100"
+             ))),
+         order = ifelse(
+           percentage == "0-25", 1, ifelse(
+             percentage == "25-50", 2, ifelse(
+               percentage == "50-75", 3, 4
+             ))))
+
+#Link to TC3
+survey_E2_v1_tc3 <- 
+  survey_E2_v1 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+
+##add percentage
+Workflow.E2 <- 
+  survey_E2_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E2, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #30
+nSE <- filter(Workflow.E2, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#73
+nSSH <- filter(Workflow.E2, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #26
+
+Workflow_Health <- filter(Workflow.E2, TC3=="Health Research") %>%
+  group_by(TC3, percentage, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E2, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, percentage, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E2, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, percentage, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
+#### Bar plot - TC3 #### 
+
+ggplot(Workflow_Tri2, aes(x=reorder(percentage, order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+
+
+### E3 - On which platform(s) do you use research software? ######
+survey_E3_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E3")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E3_v1$Question),'e___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_E3_v2 <- cbind(separete_v3, survey_E3_v1)
+
+#Clean the data
+survey_E3_v3 <- 
+  survey_E3_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Personal Desktop_laptop_computer_", "Personal Desktop/laptop computer", ifelse(
+      Answer_q == "Lab computers_", "Lab computers", ifelse(
+        Answer_q == "Remote ARC_resources__Former_Compute_Canada_Federation_Alliance__Provincial__Institutional__", "Remote ARC resources (Former Compute Canada Federation/Alliance, Provincial, Institutional)", ifelse(
+          Answer_q == "Remote Cloud_resources__Former_Compute_Canada_Federation_Alliance__Provincial__Institutional__", "Remote Cloud resources (Former Compute Canada Federation/Alliance, Provincia, Institutional)", ifelse(
+            Answer_q == "International ARC_resources__Access_US__EuroHPC_EU__", "International ARC resources (Access-US, EuroHPC-EU)", ifelse(
+              Answer_q == "International Cloud_resources__EOSC_EU__", "International Cloud resources (EOSC-EU)", ifelse(
+                Answer_q == "Commercial Cloud_resources__AWS__Azure__Google_Cloud_etc___", "Commercial Cloud resources (AWS, Azure, Google Cloud etc.)", ifelse(
+                  Answer_q == "Mobile device_", "Mobile device", "Other" 
+                  ))))))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_E3_v3_tc3 <- 
+  survey_E3_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.E3 <- 
+  survey_E3_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E3, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #34
+nSE <- filter(Workflow.E3, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#83
+nSSH <- filter(Workflow.E3, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+
+Workflow_Health <- filter(Workflow.E3, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E3, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E3, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
