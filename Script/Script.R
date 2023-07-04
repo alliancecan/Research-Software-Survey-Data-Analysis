@@ -4903,3 +4903,294 @@ PieDonut(summary_E20_3,
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie2)
 
+# F ############################################################################################
+### F1 - Have you ever received training* in using research software and/or developing research software? ######
+survey_F1_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, F1) %>% 
+  unnest(F1) %>% 
+  rename(answer = F1) 
+
+#summarize the data
+F1_summay <- 
+  survey_F1_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(F1_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+
+### F2 - Who on your team supports the research software you typically use? ######
+survey_F2_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "F2")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_F2_v1$Question),'training___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_F2_v2 <- cbind(separete_v3, survey_F2_v1)
+
+#Clean the data
+survey_F2_v3 <- 
+  survey_F2_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Self taught_", "Self-taught", ifelse(
+      Answer_q == "Student led_training_peer_training_", "Student-led training/peer training", ifelse(
+        Answer_q == "Extra curricular_courses_" , "Extra-curricular courses", ifelse(
+          Answer_q == "Degree in_a_related_domain_", "Degree in a related domain", ifelse(
+            Answer_q == "Local regional_service__e_g___through_libraries_or_IT__or_training_workshops_offered_at_local_or_regional_services__", "Local/regional service (e.g., through libraries or IT, or training/workshops\noffered at local or regional services)", ifelse(
+              Answer_q == "Online resources__e_g___Software_Carpentry__StackOverflow__", "Online resources (e.g., Software Carpentry, StackOverflow)", "Other"
+              )))))))%>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_F2_v3_tc3 <- 
+  survey_F2_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.F2 <- 
+  survey_F2_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.F2, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #26
+nSE <- filter(Workflow.F2, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#60
+nSSH <- filter(Workflow.F2, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+
+Workflow_Health <- filter(Workflow.F2, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.F2, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.F2, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+### F4 - Would you or your team take advantage of courses in the use and development of research software? ######
+survey_F4_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, F4) %>% 
+  unnest(F4) %>% 
+  rename(answer = F4) %>% 
+  filter(answer == "Yes" | answer == "No")
+
+#summarize the data
+F4_summay <- 
+  survey_F4_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(F4_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+### F5 - Are you a member of professional research software development groups such as the Research Software Engineering Association? ######
+survey_F5_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, F5) %>% 
+  unnest(F5) %>% 
+  rename(answer = F5) %>% 
+  filter(answer == "Yes" | answer == "No")
+
+#summarize the data
+F5_summay <- 
+  survey_F5_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(F5_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+
+
+### F6 - Would you be interested in joining a research software community, organisation or program if one was formed in Canada (e.g., CANRSe– Canadian Research Software Expert)? ######
+survey_F6_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, F6) %>% 
+  unnest(F6) %>% 
+  filter(F6 == "Yes" | F6 == "No" | F6 == "Maybe")
+
+
+
+F6_summay <- 
+  survey_F6_v1 %>% 
+  group_by(F6) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(F6_summay, 
+         aes(F6, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+
+
+### F7 - Who on your team supports the research software you typically use? ######
+survey_F7_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "F7")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_F7_v1$Question),'nisation___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_F7_v2 <- cbind(separete_v3, survey_F7_v1)
+
+#Clean the data
+survey_F7_v3 <- 
+  survey_F7_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Software development_collaboration__", "Software development collaboration", ifelse(
+      Answer_q == "Research collaboration_", "Research collaboration", ifelse(
+        Answer_q == "Networking " , "Networking", ifelse(
+          Answer_q == "Job opportunities_", "Job opportunities", ifelse(
+            Answer_q == "Software best_practices__", "Software best practices", ifelse(
+              Answer_q == "Software development_support__help_developing_software_for_your_project__", "Software development support (help developing\nsoftware for your project)", ifelse(
+                Answer_q == "Training and_education_","Training and education" , "Other"
+                ))))))))%>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_F7_v3_tc3 <- 
+  survey_F7_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.F7 <- 
+  survey_F7_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.F7, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #24
+nSE <- filter(Workflow.F7, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#58
+nSSH <- filter(Workflow.F7, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #23
+
+Workflow_Health <- filter(Workflow.F7, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.F7, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.F7, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
