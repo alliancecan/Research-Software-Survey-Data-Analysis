@@ -4683,3 +4683,223 @@ PieDonut(E15_summay,
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cbp1)
 
+
+### E16 - How do you cite or reference other people’s research software? ######
+survey_E16_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E16")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E16_v1$Question),'e___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_E16_v2 <- cbind(separete_v3, survey_E16_v1)
+
+survey_E16_v3 <- 
+  survey_E16_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Cite or_reference_the_research_software_directly__", "Cite or reference the research software directly", ifelse(
+      Answer_q == "Cite or_reference_publication_s__describing_the_research_software_", "Cite or reference publication(s) describing\nthe research software", "Other"))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+
+
+E16_summay <- 
+  survey_E16_v3 %>% 
+  group_by(answer) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(E16_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+
+### E17 - Do you participate in the ongoing development and/or support of the research software? ######
+survey_E17_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E17) %>% 
+  unnest(E17) %>% 
+  rename(answer = E17)
+
+#summarize the data
+E17_summay <- 
+  survey_E17_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(E17_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+
+
+### E18 - Are you sometimes prevented from re-using research software because you lack the resources to install, use, or support it? ######
+survey_E18_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E18) %>% 
+  unnest(E18) %>% 
+  rename(answer = E18) 
+
+survey_E18_v2 <- 
+  survey_E18_v1 %>% 
+  filter(answer == "Yes" | answer == "No")
+
+survey_E18_v2_open <- 
+  survey_E18_v1 %>% 
+  filter(!answer == "Yes") %>% 
+  filter(!answer == "No")
+
+# write.csv(survey_E18_v2_open, "q18.csv")
+
+#summarize the data
+E18_summay <- 
+  survey_E18_v2 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(E18_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
+
+### E20 - Do your research software needs include storing or processing controlled or sensitive data (i.e. data owned by First Nations, Métis, or Inuit communities, personal data, data subject to ethics protocols, a data sharing agreement or specific security requirements)? ######
+survey_E20_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E20") %>% 
+  mutate(question_n = ifelse(
+    Question == "Do_your_research_software_needs_include_storing_or_processing_controlled_or_sensitive_data__i_e__data_owned_by_First_Nations__Métis__or_Inuit_communities__personal_data__data_subject_to_ethics_protocols__a_data_sharing_agreement_or_specific_security_requirements_____Data_collected_by_or_about_Indigenous_communities_" , 1, ifelse(
+      Question == "Do_your_research_software_needs_include_storing_or_processing_controlled_or_sensitive_data__i_e__data_owned_by_First_Nations__Métis__or_Inuit_communities__personal_data__data_subject_to_ethics_protocols__a_data_sharing_agreement_or_specific_security_requirements_____Data_containing_personal_information_about_individuals_", 2, 3
+    )
+  )) %>% 
+  select(-Question)
+
+#Clean the data
+survey_E20_v2 <- 
+  survey_E20_v1 %>% 
+  drop_na() %>% 
+  unnest(Answer) %>% 
+  select(-Ques_num)
+
+# "Data collected by or about Indigenous communities" = 1
+E20_1 <- 
+  survey_E20_v2 %>% 
+  filter(question_n == 1)
+
+# "Data containing personal information about individuals" = 2 
+E20_2 <- 
+  survey_E20_v2 %>% 
+  filter(question_n == 2)
+
+# "Data requiring a high level of security for other reasons" = 3
+E20_3 <- 
+  survey_E20_v2 %>% 
+  filter(question_n == 3)
+
+#Summarize data
+
+summary_E20_1 <- 
+  E20_1 %>% 
+  group_by(Answer) %>% count()
+
+summary_E20_2 <- 
+  E20_2 %>% 
+  group_by(Answer) %>% count()
+
+summary_E20_3 <- 
+  E20_3 %>% 
+  group_by(Answer) %>% count()
+
+#### Pie charts #### 
+
+#1
+PieDonut(summary_E20_1, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+
+#2
+PieDonut(summary_E20_2, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+
+#3
+PieDonut(summary_E20_3, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+
