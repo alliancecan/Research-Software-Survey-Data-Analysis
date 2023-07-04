@@ -5188,9 +5188,412 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   coord_flip() +
   geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+# G ############################################################################################
+### G1 - What are the most important technical challenges you face when using other people's research software? ######
+survey_G1_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "G1") %>% 
+  select(-Ques_num, -Question) %>% 
+  drop_na()
+
+
+#Link to TC3
+survey_G1_v1_tc3 <- 
+  survey_G1_v1 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.G1 <- 
+  survey_G1_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.G1, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+nSE <- filter(Workflow.G1, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#73
+nSSH <- filter(Workflow.G1, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #39
+
+Workflow_Health <- filter(Workflow.G1, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.G1, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.G1, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(Answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+
+### G2 - What are the most important technical challenges you face when using other people's research software? ######
+survey_G2_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "G2") %>% 
+  select(-Ques_num, -Question) %>% 
+  drop_na()
+
+
+#Link to TC3
+survey_G2_v1_tc3 <- 
+  survey_G2_v1 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.G2 <- 
+  survey_G2_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.G2, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+nSE <- filter(Workflow.G2, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#69
+nSSH <- filter(Workflow.G2, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #37
+
+Workflow_Health <- filter(Workflow.G2, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.G2, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.G2, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+Workflow_Tri2$Answer[Workflow_Tri2$Answer == "Concerned about committing time to software that may not be maintained and available in the future (lack of research reproducibility)"] <- "Concerned about committing time to software that may not be maintained\nand available in the future (lack of research reproducibility)"
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(Answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
   theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
   ylab("")
 
+### G3 - Give your knowledge of the software sustainability topics below (provide examples where possible): ######
+survey_G3_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "G3")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_G3_v1$Question),'possible____',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_G3_v2 <- cbind(separete_v3, survey_G3_v1)
+
+#Clean the data
+survey_G3_v3 <- 
+  survey_G3_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Software curation_preservation__making_sure_the_software_has_been_packaged_for_long_term_use_access__", "Software curation/preservation (making sure the software has been packaged for long-term use/access)", ifelse(
+      Answer_q == "Maintenance _", "Maintenance", "Sustainability"
+      )))%>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(Question = Answer_n)
+
+# write.csv(survey_G3_v3, "G3.csv")
+
+
+
+### G4 - Whose responsibility do you think software sustainability should be? ######
+survey_G4_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "G4") %>% 
+  select(-Ques_num, -Question) %>% 
+  drop_na()
+
+
+#Link to TC3
+survey_G4_v1_tc3 <- 
+  survey_G4_v1 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.G4 <- 
+  survey_G4_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.G4, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #30
+nSE <- filter(Workflow.G4, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#73
+nSSH <- filter(Workflow.G4, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+
+Workflow_Health <- filter(Workflow.G4, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.G4, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.G4, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(Answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+### G5 - What do you feel is the most important outcome from research software sustainability? ######
+survey_G5_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "G5") %>% 
+  select(-Ques_num, -Question) %>% 
+  drop_na()
+
+
+#Link to TC3
+survey_G5_v1_tc3 <- 
+  survey_G5_v1 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.G5 <- 
+  survey_G5_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.G5, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #30
+nSE <- filter(Workflow.G5, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#73
+nSSH <- filter(Workflow.G5, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+
+Workflow_Health <- filter(Workflow.G5, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.G5, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.G5, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(Answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+### G6 - Have you benefited from access to preserved research software (e.g., software that is no longer actively developed or maintained, but is still accessible)? ######
+survey_G6_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, G6) %>% 
+  unnest(G6) %>% 
+  filter(G6 == "Yes" | G6 == "No" | G6 == "Don't know")
+
+
+
+G6_summay <- 
+  survey_G6_v1 %>% 
+  group_by(G6) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(G6_summay, 
+         aes(G6, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+
+
+### G9 - Do you think that preserving research software is valuable? ######
+survey_G9_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, G9) %>% 
+  unnest(G9) %>% 
+  rename(answer = G9) %>% 
+  filter(answer == "Yes" | answer == "No")
+
+#summarize the data
+G9_summay <- 
+  survey_G9_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(G9_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie1)
+
+
+
+### G10 - Have you used any of the following software curation/preservation services? ######
+survey_G10_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "G10")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_G10_v1$Question),'services____',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_G10_v2 <- cbind(separete_v3, survey_G10_v1)
+
+#Clean the data
+survey_G10_v3 <- 
+  survey_G10_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Software Heritage_Archive_", "Software Heritage Archive", ifelse(
+      Answer_q == "Institutional Software_Repositories_", "Institutional Software Repositories", ifelse(
+        Answer_q == "Generalist Software_Repositories__e_g___Zenodo__Figshare__" , "Generalist Software Repositories (e.g., Zenodo, Figshare)", ifelse(
+          Answer_q == "Software Development_Repositories__e_g___GitHub__BitBucket__etc___", "Software Development Repositories (e.g., GitHub, BitBucket, etc.)", ifelse(
+            Answer_q == "Software Container_Repositories__e_g___DockerHub__", "Software Container Repositories (e.g., DockerHub)", "Other"
+            ))))))%>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_G10_v3_tc3 <- 
+  survey_G10_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.G10 <- 
+  survey_G10_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.G10, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #23
+nSE <- filter(Workflow.G10, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#57
+nSSH <- filter(Workflow.G10, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #23
+
+Workflow_Health <- filter(Workflow.G10, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.G10, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.G10, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
