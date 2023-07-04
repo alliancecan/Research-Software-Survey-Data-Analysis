@@ -4547,3 +4547,139 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) +
   xlab("") + 
   ylab("")
 
+
+### E14 - What factors do you consider in choosing which research software to use? ######
+survey_E14_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E14")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E14_v1$Question),'e_____',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_E14_v2 <- cbind(separete_v3, survey_E14_v1)
+
+#Clean the data
+survey_E14_v3 <- 
+  survey_E14_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Ease of_use__", "Ease of use", ifelse(
+      Answer_q == "Cost _", "Cost", ifelse(
+        Answer_q == "Scalability _", "Scalability", ifelse(
+          Answer_q == "Performance ___", "Performance", ifelse(
+            Answer_q == "Vendor Agnostic_features__", "Vendor Agnostic features", ifelse(
+              Answer_q == "Open source_" , "Open source", ifelse(
+                Answer_q == "Sustainability _will_be_around_for_a_long_time__", "Sustainability (will be around for a long time)", ifelse(
+                  Answer_q == "Reputation __Citations_", "Reputation / Citations", ifelse(
+                    Answer_q == "Documentation ", "Documentation", ifelse(
+                      Answer_q == "Support ", "Support", ifelse(
+                        Answer_q == "Securely handle_data_", "Securely handle data", ifelse(
+                          Answer_q == "State of_the_art___leading_edge_", "State-of-the-art / leading edge", ifelse(
+                            Answer_q == "Interoperability ", "Interoperability", ifelse(
+                              Answer_q == "Other ", "Other", "Delete"
+                              ))))))))))))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#summarize the data
+summary_E14<- 
+  survey_E14_v3 %>% 
+  group_by(answer) %>% 
+  count() %>% 
+  print()
+
+#Link to TC3
+survey_E14_v3_tc3 <- 
+  survey_E14_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+#summarize the data
+summary_E14_TC3<- 
+  survey_E14_v3_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+##add percentage
+Workflow.E14 <- 
+  survey_E14_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E14, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.E14, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#77
+nSSH <- filter(Workflow.E14, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #40
+
+Workflow_Health <- filter(Workflow.E14, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E14, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E14, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3#### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+### E15 - Do you list and/or cite the research software you use in your research outputs? ######
+survey_E15_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E15) %>% 
+  unnest(E15) %>% 
+  rename(answer = E15)
+
+#summarize the data
+E15_summay <- 
+  survey_E15_v1 %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#### Pie chart #### 
+PieDonut(E15_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
+
