@@ -87,7 +87,7 @@ cbp_Cad1 <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
 
 # This to be used for yes, no, not sure                 
 cb_pie <- rep(c("#32322F","#FBFAFA", "#D6AB00"), 100)
-
+cb_pie2 <- rep(c("#FBFAFA","#32322F", "#D6AB00"), 100)
 # This is for mirror plots
 cb_pie1 <- rep(c("#32322F", "#D6AB00"), 100)
 
@@ -3765,4 +3765,175 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
   ylab("")
+
+
+### E4 - How do you run software and/or access the resources mentioned in the previous question to perform your research? ######
+survey_E4_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E4")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E4_v1$Question),'h___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_E4_v2 <- cbind(separete_v3, survey_E4_v1)
+
+#Clean the data
+survey_E4_v3 <- 
+  survey_E4_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Run desktop_research_software_on_personal_computer_or_laptop_", "Run desktop research software on personal computer or laptop", ifelse(
+      Answer_q == "Run desktop_research_software_on_lab_computers__", "Run desktop research software on lab computers", ifelse(
+        Answer_q == "Run research_software_from_the_command_line_via_a_remote_SSH_terminal_connection_", "Run research software from the command line via\na remote SSH/terminal connection", ifelse(
+          Answer_q == "Run research_software_from_the_command_line_via_a_remote_connection_to_a_Graphical_desktop__virtual_desktop__remote_desktop__etc____", "Run research software from the command line via a remote connection\nto a Graphical desktop (virtual desktop, remote desktop, etc.)", ifelse(
+            Answer_q == "Run research_software_using_a_Graphical_User_Interface_via_a_remote_connection_to_a_Graphical_desktop__virtual_desktop__remote_desktop__etc____", "Run research software using a Graphical User Interface via a remote connection\nto a Graphical desktop (virtual desktop, remote desktop, etc.)", ifelse(
+              Answer_q == "Use research_software_through_web_based_science_gateways__research_platforms__virtual_research_environments__VRE__", "Use research software through web based science gateways,\nresearch platforms, virtual research environments (VRE)", "Other"
+              ))))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_E4_v3_tc3 <- 
+  survey_E4_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.E4 <- 
+  survey_E4_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E4, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.E4, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#82
+nSSH <- filter(Workflow.E4, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+
+Workflow_Health <- filter(Workflow.E4, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E4, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E4, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+### E5 - Do you use the research software installed and maintained on Canadian ARC resources (e.g., the software installed on ARC platforms such as Cedar, Graham, Niagara, etc.)? ######
+survey_E5_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E5) %>% 
+  unnest(E5) %>% 
+  filter(E5 == "Yes" | E5 == "No" | E5 == "Don't know")
+
+
+
+E5_summay <- 
+  survey_E5_v1 %>% 
+  group_by(E5) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(E5_summay, 
+         aes(E5, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+### E6 - Do you use research management services (e.g., CCDB, DMP Assistant) provided/supported by the Alliance? ######
+survey_E6_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E6) %>% 
+  unnest(E6) %>% 
+  filter(E6 == "Yes" | E6 == "No" | E6 == "Don't know")
+
+
+
+E6_summay <- 
+  survey_E6_v1 %>% 
+  group_by(E6) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(E6_summay, 
+         aes(E6, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+### E7 - Do you use one of the research software platforms (e.g., FRDR, Canadian Writing Research Collaboratory (CWRC), VirusSeq) funded/supported/maintained by the Alliance? ######
+survey_E7_v1<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E7) %>% 
+  unnest(E7) %>% 
+  filter(E7 == "Yes" | E7 == "No" | E7 == "Don't know")
+
+
+
+E7_summay <- 
+  survey_E7_v1 %>% 
+  group_by(E7) %>% 
+  count()
+
+#### Pie chart #### 
+PieDonut(E7_summay, 
+         aes(E7, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie2)
+
 
