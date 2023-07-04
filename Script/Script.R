@@ -3937,3 +3937,176 @@ PieDonut(E7_summay,
   scale_fill_manual(values =  cb_pie2)
 
 
+### E8 - What type of software/tools do you most often use within your research project workflows? ######
+survey_E8_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E8")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E8_v1$Question),'s___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_E8_v2 <- cbind(separete_v3, survey_E8_v1)
+
+#Clean the data
+survey_E8_v3 <- 
+  survey_E8_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Cloud collaboration_platforms__e_g___OSF__", "Cloud collaboration platforms (e.g., OSF)", ifelse(
+      Answer_q == "Commercial data_software__e_g___ESRI__NVIVO__Tableau__", "Commercial data software (e.g., ESRI, NVIVO, Tableau)", ifelse(
+        Answer_q == "Commercial storage_provider__e_g___Google_Drive__Dropbox__", "Commercial storage provider (e.g., Google Drive, Dropbox)", ifelse(
+          Answer_q == "Continuous integration_platforms__e_g___Travis_CI__Circle_CI__GitHub_Actions__", "Continuous integration platforms (e.g., Travis-CI, Circle-CI, GitHub Actions)", ifelse(
+            Answer_q == "Electronic lab_notebooks__e_g___LabArchives__", "Electronic lab notebooks (e.g., LabArchives)", ifelse(
+              Answer_q == "MS Office_or_equivalent_", "MS Office or equivalent", ifelse(
+                Answer_q == "Open source_data_software__e_g___NumPy__Cesium_ML__OpenRefine__", "Open source data software (e.g., NumPy, Cesium ML, OpenRefine)", ifelse(
+                  Answer_q == "Project management_tools__e_g___EMDESK__Asana__", "Project management tools (e.g., EMDESK, Asana)", ifelse(
+                    Answer_q == "Secure data_capture_software__e_g___REDCap__", "Secure data capture software (e.g., REDCap)", ifelse(
+                      Answer_q == "Version control_software__e_g___Git__Subversion__", "Version control software (e.g., Git, Subversion)", ifelse(
+                        Answer_q == "None ", "None", "Other"
+                        ))))))))))))%>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_E8_v3_tc3 <- 
+  survey_E8_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.E8 <- 
+  survey_E8_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E8, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.E8, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#83
+nSSH <- filter(Workflow.E8, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #40
+
+Workflow_Health <- filter(Workflow.E8, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E8, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E8, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+
+### E9 - Who on your team supports the research software you typically use? ######
+survey_E9_v1 <- 
+  survey_organized %>% 
+  filter(Ques_num == "E9")
+
+#Split column "Question" into two to separate the question from the answer
+separate_v1 <- data.frame(do.call('rbind', strsplit(as.character(survey_E9_v1$Question),'e___',fixed=TRUE)))
+
+separete_v2 <- 
+  separate_v1 %>% 
+  select(X2)
+
+#Delete "_" from answers
+separete_v3 <- stringr::str_replace(separete_v2$X2, "_", " ")
+
+#Bin tables
+survey_E9_v2 <- cbind(separete_v3, survey_E9_v1)
+
+#Clean the data
+survey_E9_v3 <- 
+  survey_E9_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Me ", "Me", ifelse(
+      Answer_q == "A student__undergraduate_graduate__", "A student (undergraduate/graduate)", ifelse(
+        Answer_q == "A postdoctoral_fellow_", "A postdoctoral fellow", ifelse(
+          Answer_q == "A sysadmin_on_my_team_", "A sysadmin on my team", ifelse(
+            Answer_q == "A sysadmin_from_my_institution_", "A sysadmin from my institution", ifelse(
+              Answer_q == "A sysadmin_from_the_Alliance_", "A sysadmin from the Alliance", ifelse(
+                Answer_q == "Regional Compute_Organization__e_g__Compute_Ontario__Calcul_Québec__", "Regional Compute Organization (e.g. Compute Ontario, Calcul Québec)", "Other"
+                ))))))))%>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
+#Link to TC3
+survey_E9_v3_tc3 <- 
+  survey_E9_v3 %>% 
+  left_join(domain1, by = "Internal.ID")
+
+##add percentage
+Workflow.E9 <- 
+  survey_E9_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.E9, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.E9, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#82
+nSSH <- filter(Workflow.E9, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+
+Workflow_Health <- filter(Workflow.E9, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.E9, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.E9, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plots - TC3 #### 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
