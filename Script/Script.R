@@ -620,13 +620,13 @@ survey_B3_v4.1 <-
                     Role == "Data Steward", "Other", ifelse(
                       Role == "Conseillere a la recherche", "Other", ifelse(
                         Role == "Software Developer", "Research Software Developer", ifelse(
-                          Role == "Emeritus", "Faculty/Librarian", ifelse(
+                          Role == "Emeritus", "Faculty", ifelse(
                             Role == "DG CCTT affilie cegep Ste-Foy", "Other", ifelse(
                               Role == "IT", "Administrator", ifelse(
                                 Role == "project manager", "Administrator", ifelse(
-                                  Role == "Faculty - Adjunct, emeritus, visiting, or limited-term", "Faculty/Librarian", ifelse(
-                                    Role == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty/Librarian", ifelse(
-                                      Role == "Librarian", "Faculty/Librarian", ifelse(
+                                  Role == "Faculty - Adjunct, emeritus, visiting, or limited-term", "Faculty", ifelse(
+                                    Role == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty", ifelse(
+                                      Role == "Librarian", "Librarian", ifelse(
                                         Role == "Research Software Engineer / Expert", "Research Software Developer", ifelse(
                                           Role == "Research Associate", "Researcher", ifelse(
                                             Role == "Research Staff", "Researcher", ifelse(
@@ -932,7 +932,7 @@ survey_B9_v3 <-
   filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
     Answer_q == "Privatesector_industry_", "Private sector/industry", ifelse(
-      Answer_q == "Publicsector_government_", "Public sector/government_", ifelse(
+      Answer_q == "Publicsector_government_", "Public sector/government", ifelse(
         Answer_q == "Nonfor_profit_sector_", "Non-for-profit sector", "Consultant"
         )))) %>% 
   select(Internal.ID, Answer, Answer_n) %>% 
@@ -1178,7 +1178,7 @@ PieDonut(summary_C3_tc3,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 #HR
 PieDonut(summary_C3_HR, 
@@ -1193,7 +1193,7 @@ PieDonut(summary_C3_HR,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 #SE
 PieDonut(summary_C3_SE, 
@@ -1208,7 +1208,7 @@ PieDonut(summary_C3_SE,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 #SCH
 PieDonut(summary_C3_SCH, 
@@ -1223,7 +1223,7 @@ PieDonut(summary_C3_SCH,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 ### C4 - Do you have access to software development support? ######
 survey_C4_v1<- 
@@ -1529,7 +1529,7 @@ PieDonut(C11_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 
 ### C12 - Would you be interested in sharing success stories with the Alliance? If yes, please provide your contact information and the URL of the software platform. ######
@@ -1578,7 +1578,7 @@ PieDonut(C12_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 ### C13 - Are there particular software tools, platforms or software services you currently develop or co-develop which you feel would be valuable to be offered as a national service for all researchers to access? ######
 survey_C13_v1<- 
@@ -1604,7 +1604,7 @@ PieDonut(C13_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 
 # D ############################################################################################
@@ -2136,13 +2136,13 @@ D7_you.domain <-
 #Link "Team" to role
 D7_team_role <- 
   D7_team %>% 
-  left_join(survey_B3_v4, by = "Internal.ID") %>% 
+  left_join(survey_B3_v4.1, by = "Internal.ID") %>% 
   drop_na() 
 
 #Link "You" to B3 (role)
 D7_you_role <- 
   D7_you %>% 
-  left_join(survey_B3_v4, by = "Internal.ID") %>% 
+  left_join(survey_B3_v4.1, by = "Internal.ID") %>% 
   drop_na() %>% 
   select(-question_n) %>%
   unique()
@@ -2185,7 +2185,7 @@ D7_you_summary <-
       Answer == "Between 1 and 2 FTEs", "delete", ifelse(
         Answer == "Less than 1/4 of an FTE", "<1/4", ifelse(
           Answer=="Between 1/2 and 1 FTE","1/2 - 1", "1/4 - 1/2"
-        ))))) %>% 
+        ))))) #%>% 
   arrange(-n) %>% 
   filter(!answer_n == "delete") %>% 
   print()
@@ -2234,7 +2234,7 @@ D7_you_Role_summary <-
 
 #link to TC3
 survey_D7_v3_TC3 <- 
-  survey_D7_v3 %>% 
+  survey_D7_v2 %>% 
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() 
 
@@ -3020,6 +3020,8 @@ Workflow_SSH <- filter(Workflow.D17, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
+Workflow_Tri2$answer[Workflow_Tri2$answer == "As components of science gateways, research platforms, virtual research environments (VRE) by external users"] <- "As components of science gateways, research platforms, virtual research\nenvironments (VRE) by external users"
+
 #### Bar plots - TC3#### 
 
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
@@ -3559,7 +3561,7 @@ survey_E1_v3 <-
                   Answer_q == "Software hosting_development_website__e_g___GitHub__", "Software hosting/development website (e.g., GitHub)", ifelse(
                     Answer_q == "Software curation_preservation_repository__e_g___Figshare__Zenodo__", "Software curation/preservation repository (e.g., Figshare, Zenodo)", ifelse(
                       Answer_q == "Domain specific_software_registry__e_g___Astrophysics_Source_Code_Library__", "Domain specific_software_registry (e.g., Astrophysics Source Code Library)", ifelse(
-                        Answer_q == "Science gateways___research_platforms___virtual_research_environments__VREs____or_web_application_services_", "Science gateways / research platforms / virtual research environments (VREs), or web application/services", "Other"
+                        Answer_q == "Science gateways___research_platforms___virtual_research_environments__VREs____or_web_application_services_", "Science gateways / research platforms / virtual research environments (VREs), or\nweb application/services", "Other"
                         )))))))))))) %>%
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
@@ -4156,13 +4158,13 @@ E10_you.domain <-
 #Link "Team" to role
 E10_team_role <- 
   E10_team %>% 
-  left_join(survey_B3_v4, by = "Internal.ID") %>% 
+  left_join(survey_B3_v4.1, by = "Internal.ID") %>% 
   drop_na() 
 
 #Link "You" to B3 (role)
 E10_you_role <- 
   E10_you %>% 
-  left_join(survey_B3_v4, by = "Internal.ID") %>% 
+  left_join(survey_B3_v4.1, by = "Internal.ID") %>% 
   drop_na() %>% 
   select(-question_n) %>%
   unique()
@@ -4681,7 +4683,7 @@ PieDonut(E15_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 
 ### E16 - How do you cite or reference other people’s research software? ######
@@ -4764,7 +4766,7 @@ PieDonut(E17_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 
 
@@ -4806,7 +4808,7 @@ PieDonut(E18_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 
 ### E20 - Do your research software needs include storing or processing controlled or sensitive data (i.e. data owned by First Nations, Métis, or Inuit communities, personal data, data subject to ethics protocols, a data sharing agreement or specific security requirements)? ######
@@ -4931,7 +4933,7 @@ PieDonut(F1_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cbp1)
+  scale_fill_manual(values =  cb_pie1)
 
 
 ### F2 - Who on your team supports the research software you typically use? ######
