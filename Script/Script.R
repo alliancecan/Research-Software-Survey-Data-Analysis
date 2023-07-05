@@ -22,13 +22,6 @@ library(likert)
 library(ggthemes)
 
 ###Load the data
-
-#survey data, english and french versions merged together
-# survey <- read.csv("Alliance_RS_Survey_EN_FR_20230602.csv",
-#                    header = T,
-#                    encoding = "UTF-8",
-#                    na.strings=c("","NA"))
-
 survey <- read.csv("ID_Alliance_RS_Survey_EN_FR_20230612.csv",
                    header = T,
                    encoding = "UTF-8",
@@ -431,17 +424,17 @@ survey_A11_v3 <-
   drop_na() %>% 
   filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
-    Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Communications_", "Communications", ifelse(
-      Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Developmental_", "Developmental" , ifelse(
-        Answer_q ==  "Select_all_the_type_s__of_disability_that_applies_to_you___Dexterity_",  "Dexterity", ifelse(
-          Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Flexibility_", "Flexibility", ifelse(
-            Answer_q == "Select_all_the_type_s__of_disability_that_applies_to_you___Hearing_", "Hearing", ifelse(
-              Answer_q == "", "", ifelse(
-                Answer_q == "", "", ifelse(
-                  Answer_q == "", "", ifelse(
-                    Answer_q == "", "", ifelse(
-                      Answer_q == "", "", ifelse(
-                        Answer_q == "", "",""
+    Answer_q == "Communications ", "Communications", ifelse(
+      Answer_q == "Developmental ", "Developmental" , ifelse(
+        Answer_q ==  "Dexterity ",  "Dexterity", ifelse(
+          Answer_q == "Flexibility ", "Flexibility", ifelse(
+            Answer_q == "Hearing ", "Hearing", ifelse(
+              Answer_q == "Learning ", "Learning", ifelse(
+                Answer_q == "Memory ", "Memory", ifelse(
+                  Answer_q == "Mental Health_related__", "Mental Health related", ifelse(
+                    Answer_q == "Mobility ", "Mobility", ifelse(
+                      Answer_q == "Pain related_", "Pain related", ifelse(
+                        Answer_q == "Seeing ", "Seeing","Prefer not to answer"
                         )))))))))))) %>%
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
@@ -484,6 +477,23 @@ survey_B1_v2 <-
           Affiliation == "  ", NA, Affiliation
           )))))
 
+#summarize the data
+summary_B1<- 
+  survey_B1_v2 %>% 
+  group_by(Affiliation_n) %>% 
+  count() %>% 
+  print()
+
+#### Plot #### 
+# ggplot(summary_B1, aes(y=n, x=reorder(Affiliation_n, n))) + 
+#   geom_bar(position="stack", stat="identity") +
+#   scale_fill_manual(values =  cbp1) + 
+#   coord_flip()+
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
 
 ### B2 - Please choose your primary research domain based on the Canadian Research and Development Classification (CRDC) 2020. ######
 Domain_Breakdown<- 
@@ -1647,7 +1657,7 @@ D1_Previously_sum <-
   count()
 
 
-#### Bar plots#### 
+#### Pie charts #### 
 
 #"Currently"
 PieDonut(D1_Currently_sum, 
@@ -1728,12 +1738,13 @@ sort(unique(survey_D3_v1$D3))# to clean the data
 # #Export open text
 # write.csv(survey_D3_v1, "D3.csv")
 
-D3_other <- read.csv("D3.csv") %>% 
-  group_by(D3_n) %>% count() %>% 
+D3_other <- read.csv("Open_answers_EN_FR_20230705.csv") %>% 
+  filter(Question_number == "D3") %>% 
+  group_by(answer_n) %>% count() %>% 
   drop_na()
 
 #### Bar plot #### 
-ggplot(D3_other, aes(x= reorder(D3_n, n), y=n)) + 
+ggplot(D3_other, aes(x= reorder(answer_n, n), y=n)) + 
   geom_bar(stat = "identity") +
   coord_flip() +
   theme_minimal(base_size = 20)+
@@ -4786,7 +4797,7 @@ survey_E18_v2_open <-
   filter(!answer == "Yes") %>% 
   filter(!answer == "No")
 
-# write.csv(survey_E18_v2_open, "q18.csv")
+# write.csv(survey_E18_v2_open, "E18.csv")
 
 #summarize the data
 E18_summay <- 

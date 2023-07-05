@@ -1,0 +1,904 @@
+Question_number,Internal.ID,answer,answer_n,Question
+C1,21,"This is not clear enough. It should be more focused on what the software does. What stakeholders does it serve? What functions does it perform? What is its utility? Not sure if 'broad perspective as an emerging and complex intersection of tools, disciplines, services, platforms, hardware, resources, and people"" does that.",Other,
+C1,30,"I don't see how research software can be defined as hardware.
+Likewise, I don't think that software can be defined as people.
+
+Software is a tool that provides functions needed by the research group.",Other,
+C1,31,Logiciel qui permet l'execution de travaux de recherche. ,Other,
+C1,35,"The phrases ""data science"", ""machine learning', and 'artificial intelligence"" are not in your definition, but I write code in these areas every day and they are fundamental to  my research. So really, your definition is weak.",Other,
+C1,40,"Software is not disciplines, hardware, or people.",Other,
+C1,45,This definition is so broad i wonder how useful it is. Is there anything that doesn't meet this definition of research software?,Other,
+C1,46,"This seems too broad to me.  I would take research software as ""software developed during the course of research and/or used in research activities"".  While services, people, etc ARE critical for the creation, use, maintenance of research software, I would consider them to be part of the broader ""research software ecosystem"".  I would distinguish the difference.",Other,
+C1,49,"Too many words yet not specific enough.
+
+""Research software directly serves science for the public good.""",Other,
+C1,52,"The definition seems too broad to me, especially the inclusion of people.",Other,
+C1,58,Kind of skips over the fact that software is fundamentally code.  A bit odd that you fold in 'hardware'.  Not sure what you mean by 'tools' in this context -- software can be a tool of sorts.  What do you mean here?,Other,
+C1,59,"wow that's general and vague. No relationship to either software or research? it's basically saying that research software is anything that involves the intersection of any two or more of tools, disciplines, services, platforms, hardware, resources and people? I can think of a lot of things that meet that definition that are related to neither research nor software.
+
+I'd define it as something more like digital tools used to conduct, enable, or facilitate some aspect of research, plus (maybe) the supports and services required to enable them to be used. 
+
+I understand that you didn't want to exclude anything, but a definition that includes more things that don't belong to the specified domain than ones that do is not at all useful. 
+
+Definitions need to exclude as well as include.  Or maybe you do mean to say that a hammer being used by a person as part of a home-repair service is research software?
+",Other,
+C1,72,"I don't agree with the term emerging, as some software e.g. BLAS and LAPACK is decades old and would still qualify as research software.
+
+On the other hand rsync for example started out as research software but would not be qualified as tooling, in that case &quot;emerging&quot; is more applicable.",Other,
+C1,95,La phrase est inutilement alambiquee. On doit la lire 3 fois pour comprendre qu'elle ne veut rien dire.,Other,
+C1,99,"I agree with almost all the wording but do suggest removing the word ""hardware"" from the above definition, since this is about ""Research SOFTWARE"".",Other,
+C1,110,"add at the end: ""... for academic research purpose.""",Other,
+C1,112,Il me semble qu'un logiciel c'est un assemblage de libraries et de code afin de resaliser une ou plusieurs taches. La definition presentee me semble plus proche de ressource informationnelle ou outils de recherche.,Other,
+C1,126,"My comprehension of ""research software"": research (adjective) software (noun), therefore its definition should include the things that lives digitally and must exclude the aforementioned hardware, and people.
+
+My comprehension of ""software research"": software (adjective) research (noun), in this case, it is the research itself and it should include the people, the activities, etc.
+
+It makes sense to me to show a file, a process, or even a concept and tell that this is a research software, or this is part of a research software.
+But it does not make sense to point at a disk, a cable or a person and tell that this is part of a research software. Software and hardware are concepts that were defined in opposition and to include one into the other would only cause confusion to an external observer.",Other,
+C1,127,Might be worth including to the definition that the aim of this complex intersection is to support research.,Other,
+C1,136,Les mots calculs et ordinateurs sont absents. Ils ont au coeur du logiciel.,Other,
+C1,139,"En toute franchise cette definition est epouvantable. Je suis developpeur logiciel et j'ai de la difficulte a comprendre votre definition.
+
+Suggestion: Logiciels specialises utilises dans le cadre de recherche scientifique. ",Other,
+C1,143,Je definirais logiciel de recherche plus simplement. Le logiciel (outil ou plateforme) de recherche permet a son utilisateur.trice de traiter des donnees de recherches.,Other,
+C1,145,"That's not a definition!  It's not ""from a broad perspective"".  Research software is software generated during research, or used during research.",Other,
+C1,148,My understanding of research software is software or tools used by researchers for conducting their academic research.,Other,
+C1,149,"This definition is so broad it doesn't convey any meaning. For fun, I removed the word ""research software"" and asked ChatGPT 10 possible words or expressions to fill the gap, its answer were:
+
+Technology
+Innovation
+Digital ecosystem
+Information technology landscape
+Tech industry
+Cyberworld
+Emerging technologies
+Digital infrastructure
+Tech landscape
+Technological frontier
+",Other,
+C1,179,I had to change the answer to the previous question. It never occurred to me that software would include hardware and people.,Other,
+C1,189,"Research software is actual software -- computer code and executable programs necessary to complete research.   It doesn't not include people even though people may be needed to create, use and maintain it.",Other,
+C1,196,definition above would also apply to digital research infrastructure in general,Other,
+C1,201,"This definition is impossible to understand.
+
+Research software is software used by people to perform research.",Other,
+C1,205,"I am happy to accept your definition but normally, I would consider the second half (the people) as distinct and separate category.",Other,
+C1,207,"The purpose of this broad range of items is missing.
+In other words, I would add something at the end of the sentence like at least: to support research. If not 'to support research capacities and projects'",Other,
+C1,212,"This seems quite broad: what wouldn't count as research software under this definition? Is the Microsoft Office suite I use to draft my research paper ""research software""?",Other,
+C1,223,I don't include people in my definition,Other,
+C1,235,My interpretation of RS is software that is used to carry out research. ,Other,
+C1,238,"Software is software. It is not hardware or people. 
+A research software community would include people.
+When software is deployed on a hardware system it may run as a platform or provide a service.
+By your definition ""research software"" is practically everything so it means nothing.",Other,
+C1,249,Not sure why research software would have to be 'emerging' and 'complex'.  It also doesn't include 'people'.,Other,
+C1,253,"Research software is that which is needed for collecting, processing and manipulating research data across the research lifecycle.",Other,
+C1,266,i don't consider people to be software. ,Other,
+C1,267,Se sont des aides afin de parvenir  ,Other,
+C1,272,"Research software is written to support and carry out research, for examples simulation codes, data analysis and machine learning applications and libraries, automation scripts, and web portals for collaborative research and data sharing.  Research software experts combine software expertise with research knowledge to create or maintain research software defined in this way.   The definition of research software should thus not include other digital research technologies that it interacts with, e.g. it should not include hardware nor non-research specific software such as contact  management systems, communications systems, or account management.",Other,
+C1,274,"How can hardware be a subset of software? One can build software into hardware, but hardly the other way around. Software is a mathematical construct to process data and fit models, primarily, one would hope.",Other,
+C1,288,"I would define research software as digital programs installed on your computer/licensed used to conduct research (e.g. NVivo). If I was pushed to extend it more broadly, I might include research tools/platforms (e.g. the DMP Assistant) which are browser-based. I'm not sure whether I would count platforms (or the content on platforms) that are being used as research materials (e.g. Twitter/tweets on twitter) as part of this definition.",Other,
+C1,292,"There is no question that a variety of resources are needed to carry out computational research, but the term software becomes meaningless if it includes hardware, human resources, etc.",Other,
+C1,300,"To me, software refers exclusively to code, not to hardware, and not to people developing or using the code (those are software developers or software users).",Other,
+C1,323,"Pourrait être plus global, je n'associe pas logiciel et plateforme ou infrastructure de donnees de recherche avec logiciel",Other,
+C1,324,"Data processing, simulation and analysis to generate patterns and scientific insights that otherwise would be hidden from us.",Other,
+C1,326,I would not include the people as software,Other,
+C1,338,Research software is any software that researchers develop to help further their research projects.,Other,
+C1,349,"This definition is, extremely, far too vague.",Other,
+C1,367,"I would rather not include directly hardware, knowing though that all softwares run on some sort of hardware.",Other,
+C1,376,"I wouldn't have included people in the definition of software. They are within the ecosystem of the software, but not software itself.",Other,
+C1,381,"- an &quot;emerging and complex intersection&quot; is vague
+- disciplines and hardware are not &quot;software&quot;
+- people are not &quot;software&quot;",Other,
+C1,401,"Seems accurate. I would have expected mention of ""computers,"" ""computing,"" ""digital"" though.",Other,
+C1,406,"I normally wouldn't have included hardware, but I suppose the hardware should be included to the extent that it is needed to run the software. I also typically do not include the people, but open to this definition...",Other,
+C1,407,"This is too ambiguous, non-sense, full of big and trendy words, total non-sense",Other,
+C1,417,Missing: algorithms,Other,
+C1,418,I was pleased to see that you include users and software creators in your definition software itself.,Other,
+C1,423,This is perhaps overly broad.,Other,
+C1,425,"I would prefer a strict definition of ""software"" that confines it to program code to be executed on a computer system.",Other,
+C1,433,"As far as I can tell, this definition is meaningless. I would define research software as `computer programs used for scientific research`. In particular, including `people` and `hardware` in the definition of `research software` is nonsensical.",Other,
+C1,441,"Comment: that is the most vague description I have ever seen.
+
+My definition: the programs/apps used by a computer to facilitate research",Other,
+C1,442,"I find there is no clear definition of what research software is. Broadly speaking, it is a subset of software explicitly used to support research development and outreach. ",Other,
+C1,445,You seem to confuse SOFTware with HARDware and the rest. Software is a very well defined word that does not need a re-definition. And I say this from the point of view of a computer scientist and software engineer. ,Other,
+C1,452,"to me, research software is code that is run by a computer for research purposes",Other,
+C1,458,"I think many people, and myself in years past, would have identified research software as only software — SPSS as an example, and would not have included platforms, tools, and people. ",Other,
+C1,471,"I thought yes, but going further into the survey I'm now very confused.",Other,
+C1,473,"I would define it as software supporting a research project to improve its quality, effectiveness, reliability, and/or costs. ",Other,
+C1,476,"The definition is too broad and doesn't detail what research software actually is. It's a list,",Other,
+C1,483,Too vague,Other,
+C1,486,Terrible definition. What is NOT included here?  Stakeholders and hardware = RS?     Seems similar to the definition of DRI  - but at least that includes the word DIGITAL ,Other,
+C1,489,"Definition peu comprehensible. ""intersection emergente et complexes d'outils ... ???",Other,
+C1,497,"If the term is ""research software"" then by definition that must exclude disciplines, hardware, and people. It might also exclude ""resources"" depending on how that word is used. If keeping the definition above is a goal, then you need to use a different phrase than ""research software"" Rather, one way that I might define research software would be: ""The digital tools, applications, services, or platforms designed to enable specialized research objectives.""",Other,
+C1,503,"I would not include hardware in the definition of a term including the word software - to me they are not the same. I consider research software to be the actual software programs used to conduct research or data analysis such as SPSS, NVivo, Excel, etc. I think the term defined breading is referring to Research Assets or Research Ecosystems inclusive of software, hardware, tools, and people.",Other,
+C1,507,I don't think in terms of research software. I think in terms of libraries for R and Python.,Other,
+C1,512,"I would not include the word emerging. Yes there is new research software being developed, however there is a wealth of existing software that is not contemplated if ""emerging"" is added. Or, could state ""existing and emerging""",Other,
+C1,514,"I don't think this is a definition.  Remove the fluff and you're saying it's ""an intersection of tools"".  ""An emerging and complex intersection of tools, disciplines, services, platforms, hardware, and resources developed and used by people in various roles and disciplines to conduct or enable research.""",Other,
+C1,523,"Cette definition represente le contexte d’utilisation et de creation des logiciels de recherche mais ne definit ni le terme logiciel, ni le terme recherche.",Other,
+C1,524,Les logiciels de recherche devraient contenir egalement les outils techniques developpes par les chercheurs comme acteurs et non pas juste comme consommateur,Other,
+C1,526,Research Software is Software developed specifically for the purposes of supporting research applications. ,Other,
+C1,539,"In the end, this definition seems off. Software is software. If it doesn't have code, it isn't software. There are a lot of peripheral things, but research software is about code that does research, and/or is used by researchers to do (possibly in a guidance or interpretative way) research.",Other,
+C1,542,"To me, Research Software refers more to custom-developed code to serve a particular requirement.  It does not really include commercial software, or open source software commonly available. ",Other,
+C2,21,"As a research software developer and one that believes this should be delivered as a Software-as-a-Service (SaaS) service to all researchers, I'm answering yes.",Other,
+C2,30,My research depends almost entirely on software use and development.,Other,
+C2,35,"Yes, but ""research software"" based on my extended definition above.",Other,
+C2,40,Genomics analysis is all software.,Other,
+C2,46,We develop software on an ongoing basis; use existing research software.,Other,
+C2,52,"Yes, but I wish we had more dedicated research software, not making do with MS Windows applications.",Other,
+C2,59,"Given that definition it's hard to say, but I need to use survey software, analysis software, several programming tools and environments, and so on.
+
+Do I develop research software? I have written code that is used by others, But who knows.",Other,
+C2,72,"it's critical to the research of the people I support, not my own.",Other,
+C2,105,ABSOLUETLY. IT IS AN ESSENTIAL PART CURRENTLY,Other,
+C2,112,"En etant que je suis informaticien au support a la recherche pour toute l'universite. La reponse serait : pour la majorite de la communaute de recherche oui, les logiciels de recherche sont essentiels mais pas pour tous.",Other,
+C2,113,"Je ne fais pas de recherche, je suis analyste en soutien.",Other,
+C2,127,"My role do not include research, research Software is however critical to my work.",Other,
+C2,137,not applicable,Other,
+C2,181,"My research is entirely computational/ theoretical, and hence based on research software that either exists (usually) or is developed by us (sometimes)",Other,
+C2,189,"By either definitions -- software (code) and all the necessary supports for that code (hardware, people, etc....) are critical to my research",Other,
+C2,196,depends on what is meant with research software,Other,
+C2,201,Absolutely. Custom written software is integral to all parts of our research projects.,Other,
+C2,205,Research software as defined above is foundational to my work without which I would not be able to do what I do.,Other,
+C2,207,research software as defined upper is crucial for real large collaboration between researchers; sharing information and discoveries; it's a leverage,Other,
+C2,248,Pour mon poste il s'agit surtout de soutenir l'utilisation des logiciels de recherche.,Other,
+C2,253,"Yes, without it research are reliant on standard software and manual workflows that block innovation.",Other,
+C2,274,"If one has data, usually one requires software to treat them.",Other,
+C2,330,"Our research is focussed on a continually developing numerical model for our applications, with associated scripts, and then the needed analysis and visualization tools.",Other,
+C2,338,Our entire research program would not run if not for research software,Other,
+C2,376,My job is to develop research software.,Other,
+C2,406,"I am not doing research, but rather facilitating research. But it is essential to do that. ",Other,
+C2,423,"Everything is digital, therefore everything requires software. Bu the above definition, it is almost impossible to conceive of a scenario where I would answer No.",Other,
+C2,433,"Examples of software critical to my research are perfsonar, openstack, and xrootd.",Other,
+C2,458,"With the more comprehensive definition, research software is fundamentally important to my research. ",Other,
+C2,469,Essential,Other,
+C2,473,"My team generally doesn't have access to them. Thus, we don't know how different it would be to have one available. I am sure it would help, though. ",Other,
+C2,486,Well - when your definition is that broad - anybody who actually does research  will have to say YES.  Writing a paper with a word processor and emailing it to the journal apparently qualifies as using RS,Other,
+C2,489,pas uniquement logiciel mais egalement le developpement du code en tant que tel. Le logiciel etant l'ensemble de l'œuvre.,Other,
+C2,493,It's very important. It impacts the quality and efficiency of the work ,Other,
+C2,503,And I would consider it even more critical if the expansive definition presented were the accepted definition. ,Other,
+C2,507,"See above. Computational analysis of texts is essential but we don't use ""software"" per se.",Other,
+C2,508,We're an analytical research group so use of software (particularly open-source) is extremely important.,Other,
+C2,514,"NA, I do not conduct research, I am an RSE",Other,
+C2,515,I don't do research? I work purely on infrastructure,Other,
+C2,524,Il est necessaire d'en reutiliser mais surtout d'en construire dans ma recherche,Other,
+C12,3,"hng1@queensu.ca
+
+https://geodynamics.org/resources/specfem3dgeotech
+
+I am also one of the main developers of these software packages:
+https://geodynamics.org/resources/specfem3d
+https://geodynamics.org/resources/specfem3dcartesian
+
+We are preparing to release our ambitious software package called SPECFEM-X.",Other,
+C12,21,"myLaminin has brought a blockchain-enabled research data-sharing service to market that was researcher-designed. A product of a 3-month pilot with Queen's University at Kingston, it has been very well received and addresses many of the operational requirements mentioned above. 
+
+A case study summarizing that pilot initiative can be found here: https://www.mylaminin.net/downloads
+
+Queen's has now committed to a 12-month user validation phase that will no doubt enhance the service and give an opportunity to further increase the value proposition.
+
+We are an Ontario-based, Canadian company. Our contact information is:
+
+Ash Bassili
+ash@myLaminin.net
+www.myLaminin.net
++14438243081",Other,
+C12,22,"Jeffery Antoniuk <jeffery.antoniuk@ualberta.ca>
+(1) https://www.islandora.ca/",Other,
+C12,31,"Maxime Boissonneault, maxime.boissonneault@calculquebec.ca
+https://github.com/ComputeCanada/magic_castle",Other,
+C12,37,"Well, mine obviously. But I write all of it.",Other,
+C12,53,"https://voyant-tools.org/
+",Other,
+C12,73,www.pmcobe.ca,Other,
+C12,81,Geodisy/Lunaris was originally based in UBC,Other,
+C12,91,We developed a platform in the Research Software program under CANARIE and it has been publicized,Other,
+C12,105,"We develop 3D Slicer (www.slicer.org) for medical image analysis. The effort had been funded by Canarie.  The resource has been used worldwide, through over 1M downloads. ",Other,
+C12,109,We created an internal solution to provide automation to our REB processes using Salesforce. ,Other,
+C12,110,"https://github.com/hep-gc/cloudscheduler
+https://indico.cern.ch/event/1222948/contributions/5321031/attachments/2621040/4531571/HEPiX-032023-CSV2.pdf
+https://indico.jlab.org/event/459/contributions/11481/attachments/9688/14133/CHEP_CSV2.pdf
+",Other,
+C12,112,https://www.ogsl.ca/en/home-slgo/,Other,
+C12,152,"Voyant Tools (voyant-tools.org) is widely used around the world. It has over 200,000 users a year. My contact information is Geoffrey Rockwell (grockwel@ualberta.ca)",Other,
+C12,161,"adam.rankin@uwo.ca, 3D Slicer at https://www.slicer.org/",Other,
+C12,164,MAX3D (https://max3d.mcmaster.ca/) is a 3D visualization software used to visualize x-ray diffraction in reciprocal space. It's been sponsored by Sharcnet under its DP program.,Other,
+C12,177,"Scientific data management and workflow management services such as rucio, panda.",Other,
+C12,191,This already is a national service but OpenStack has been amazing and has catalyzed a lot of research.  Also the CANFAR services https://www.canfar.net/en/ have been instrumental to my research.,Other,
+C12,204,https://www.canfar.net/science-portal/,Other,
+C12,207,"I was planning to prepare to form to appear on the Navigator as soon as the SD4Health platform will be ready
+Nathalie.aerens@mcgill.ca",Other,
+C12,212,Voyant Tools is an often-used and often cited piece of research software that has enabled new frontiers in humanities research.,Other,
+C12,218,"https://paradim.science/
+philippe.despres@phy.ulaval.ca",Other,
+C12,233,"CANFAR 
+https://www.canfar.net/en/",Other,
+C12,238,kubernetes,Other,
+C12,290,https://bhklab.ca/,Other,
+C12,291,"Nous avons perdu recemment l'appui financier de l'institution, de l'equipe de developpement de logiciels de recherche (et du fond CANARIE non renouvele/lable) donc le logiciel est encore a l'etat de prototype...",Other,
+C12,297,World-wide implementation of the UltraScan Science Gateway.,Other,
+C12,310,"Our pilot project (https://omero.med.ualberta.ca/index/) is tool for all canadian scientists using light microscopy.  Raw data can be be visualized (an essential aspect for imaging data.  Metadata and code are linked to the raw and analyzed data.  The research software we developped, assist users for the generation of the metadata for the entire data life cycle.  The tool also has the intrinsic ability to connect to advanced research computing clusters for data processing and analysis.",Other,
+C12,324,xxia@uottawa.ca,Other,
+C12,327,You already host my Umple research software: https://www.umple.org,Other,
+C12,329,"Everyone knows the good computing facilities are vital. We should stop having to justify this. If the present government considers things like AI, quantum-computing reserach, the design of ""green"" technology, and other things, to be important for Canada's future, they should be told by their scientific advisors that none of this can be done without good computing facilities.",Other,
+C12,330,"Working on sharing ocean general circulation model code, forcing and output among the community - works now to some level, but could be done more efficiently.",Other,
+C12,336,http://faculty.cbu.ca/jgerrie/Home/Type-in-Mania.html,Other,
+C12,338,RStudio: https://posit.co/products/open-source/rstudio/,Other,
+C12,363,"Catherine Jardine, Birds Canada cjardine@birdscanada.org
+NatureCounts data collection app: https://naturecounts.ca/nc/default/nc_app.jsp
+NatureCounts Open Access Data Platform: https://naturecounts.ca/nc/default/explore.jsp#download
+Motus Wildlife Tracking System: https://motus.org/
+",Other,
+C12,364,CANFAR ARCADES has been absolutely amazing https://www.canfar.net/en/,Other,
+C12,381,"Michael Hoffman &lt;michael.hoffman@utoronto.ca&gt;
+https://usegalaxy.org/",Other,
+C12,390,DICE software package,Other,
+C12,392,"Sure, but not at this moment,",Other,
+C12,401,"AWS cloud, specifically CloudFormation, Batch, StepFunctions, Cognito, IAM, ECS, EC2. Cloud databases would be great too, but not on the AWS model (e.g., Dynamo). Maybe something more like Big Table or managed Postgres instances.",Other,
+C12,408,https://www.snowflake.com/en/,Other,
+C12,424,"leme.library.utoronto.ca and leme.utoronto.ca
+",Other,
+C12,425,https://www.openlayers.org,Other,
+C12,447,IrisBG,Other,
+C12,473,The REDcap platform has been very useful for our research team over the last three years. ,Other,
+C12,474,"I use the Wolfram Language (Mathematica) for my own research and for development in small teams of digital humanists. I also teach it to undergrads from across the university. I have an open-access, open-source, open-content course on digital research methods available here https://williamjturkel.net/digital-research-methods-with-mathematica/",Other,
+C12,475,https://posit.co/products/open-source/shinyserver/,Other,
+C12,479,"hng1@queensu.ca
+
+https://geodynamics.org/resources/specfem3dgeotech
+
+I am also one of the main developers of these software packages:
+https://geodynamics.org/resources/specfem3d
+https://geodynamics.org/resources/specfem3dcartesian
+
+We are preparing to release our ambitious software package called SPECFEM-X.",Other,
+C12,497,"myLaminin has brought a blockchain-enabled research data-sharing service to market that was researcher-designed. A product of a 3-month pilot with Queen's University at Kingston, it has been very well received and addresses many of the operational requirements mentioned above. 
+
+A case study summarizing that pilot initiative can be found here: https://www.mylaminin.net/downloads
+
+Queen's has now committed to a 12-month user validation phase that will no doubt enhance the service and give an opportunity to further increase the value proposition.
+
+We are an Ontario-based, Canadian company. Our contact information is:
+
+Ash Bassili
+ash@myLaminin.net
+www.myLaminin.net
++14438243081",Other,
+C12,498,"Jeffery Antoniuk <jeffery.antoniuk@ualberta.ca>
+(1) https://www.islandora.ca/",Other,
+C12,507,"Maxime Boissonneault, maxime.boissonneault@calculquebec.ca
+https://github.com/ComputeCanada/magic_castle",Other,
+C12,513,"Well, mine obviously. But I write all of it.",Other,
+C12,529,"https://voyant-tools.org/
+",Other,
+C12,549,www.pmcobe.ca,Other,
+C12,557,Geodisy/Lunaris was originally based in UBC,Other,
+C12,567,We developed a platform in the Research Software program under CANARIE and it has been publicized,Other,
+C12,581,"We develop 3D Slicer (www.slicer.org) for medical image analysis. The effort had been funded by Canarie.  The resource has been used worldwide, through over 1M downloads. ",Other,
+C12,585,We created an internal solution to provide automation to our REB processes using Salesforce. ,Other,
+C12,586,"https://github.com/hep-gc/cloudscheduler
+https://indico.cern.ch/event/1222948/contributions/5321031/attachments/2621040/4531571/HEPiX-032023-CSV2.pdf
+https://indico.jlab.org/event/459/contributions/11481/attachments/9688/14133/CHEP_CSV2.pdf
+",Other,
+C12,588,https://www.ogsl.ca/en/home-slgo/,Other,
+C12,628,"Voyant Tools (voyant-tools.org) is widely used around the world. It has over 200,000 users a year. My contact information is Geoffrey Rockwell (grockwel@ualberta.ca)",Other,
+C12,637,"adam.rankin@uwo.ca, 3D Slicer at https://www.slicer.org/",Other,
+C12,640,MAX3D (https://max3d.mcmaster.ca/) is a 3D visualization software used to visualize x-ray diffraction in reciprocal space. It's been sponsored by Sharcnet under its DP program.,Other,
+C12,653,"Scientific data management and workflow management services such as rucio, panda.",Other,
+C12,667,This already is a national service but OpenStack has been amazing and has catalyzed a lot of research.  Also the CANFAR services https://www.canfar.net/en/ have been instrumental to my research.,Other,
+C12,680,https://www.canfar.net/science-portal/,Other,
+C12,683,"I was planning to prepare to form to appear on the Navigator as soon as the SD4Health platform will be ready
+Nathalie.aerens@mcgill.ca",Other,
+C12,688,Voyant Tools is an often-used and often cited piece of research software that has enabled new frontiers in humanities research.,Other,
+C12,694,"https://paradim.science/
+philippe.despres@phy.ulaval.ca",Other,
+C12,709,"CANFAR 
+https://www.canfar.net/en/",Other,
+C12,714,kubernetes,Other,
+C12,766,https://bhklab.ca/,Other,
+C12,767,"Nous avons perdu recemment l'appui financier de l'institution, de l'equipe de developpement de logiciels de recherche (et du fond CANARIE non renouvele/lable) donc le logiciel est encore a l'etat de prototype...",Other,
+C12,773,World-wide implementation of the UltraScan Science Gateway.,Other,
+C12,786,"Our pilot project (https://omero.med.ualberta.ca/index/) is tool for all canadian scientists using light microscopy.  Raw data can be be visualized (an essential aspect for imaging data.  Metadata and code are linked to the raw and analyzed data.  The research software we developped, assist users for the generation of the metadata for the entire data life cycle.  The tool also has the intrinsic ability to connect to advanced research computing clusters for data processing and analysis.",Other,
+C12,800,xxia@uottawa.ca,Other,
+C12,803,You already host my Umple research software: https://www.umple.org,Other,
+C12,805,"Everyone knows the good computing facilities are vital. We should stop having to justify this. If the present government considers things like AI, quantum-computing reserach, the design of ""green"" technology, and other things, to be important for Canada's future, they should be told by their scientific advisors that none of this can be done without good computing facilities.",Other,
+C12,806,"Working on sharing ocean general circulation model code, forcing and output among the community - works now to some level, but could be done more efficiently.",Other,
+C12,812,http://faculty.cbu.ca/jgerrie/Home/Type-in-Mania.html,Other,
+C12,814,RStudio: https://posit.co/products/open-source/rstudio/,Other,
+C12,839,"Catherine Jardine, Birds Canada cjardine@birdscanada.org
+NatureCounts data collection app: https://naturecounts.ca/nc/default/nc_app.jsp
+NatureCounts Open Access Data Platform: https://naturecounts.ca/nc/default/explore.jsp#download
+Motus Wildlife Tracking System: https://motus.org/
+",Other,
+C12,840,CANFAR ARCADES has been absolutely amazing https://www.canfar.net/en/,Other,
+C12,857,"Michael Hoffman &lt;michael.hoffman@utoronto.ca&gt;
+https://usegalaxy.org/",Other,
+C12,866,DICE software package,Other,
+C12,868,"Sure, but not at this moment,",Other,
+C12,877,"AWS cloud, specifically CloudFormation, Batch, StepFunctions, Cognito, IAM, ECS, EC2. Cloud databases would be great too, but not on the AWS model (e.g., Dynamo). Maybe something more like Big Table or managed Postgres instances.",Other,
+C12,884,https://www.snowflake.com/en/,Other,
+C12,900,"leme.library.utoronto.ca and leme.utoronto.ca
+",Other,
+C12,901,https://www.openlayers.org,Other,
+C12,923,IrisBG,Other,
+C12,949,The REDcap platform has been very useful for our research team over the last three years. ,Other,
+C12,950,"I use the Wolfram Language (Mathematica) for my own research and for development in small teams of digital humanists. I also teach it to undergrads from across the university. I have an open-access, open-source, open-content course on digital research methods available here https://williamjturkel.net/digital-research-methods-with-mathematica/",Other,
+C12,951,https://posit.co/products/open-source/shinyserver/,Other,
+D3,22,"CANARIE, Mellon Foundation",CANARIE,
+D3,22,"CANARIE, Mellon Foundation",Mellon Foundation,
+D3,35,CANARIE,CANARIE,
+D3,42,"CANARIE, CFI Cyber I, Genome Canada",CANARIE,
+D3,42,"CANARIE, CFI Cyber I, Genome Canada",CFI,
+D3,42,"CANARIE, CFI Cyber I, Genome Canada",Genome Canada,
+D3,46,CANARIE,CANARIE,
+D3,49,Yes.,NA,
+D3,67,"CFI, CIHR, UBC, OICR",CFI,
+D3,67,"CFI, CIHR, UBC, OICR",CIHR,
+D3,67,"CFI, CIHR, UBC, OICR",UBC,
+D3,67,"CFI, CIHR, UBC, OICR",OICR,
+D3,81,CANARIE,CANARIE,
+D3,84,"CFI, SSHRC",CFI,
+D3,84,"CFI, SSHRC",SSHRC,
+D3,91,CANARIE Research Software,CANARIE,
+D3,105,"Canarie
+Chan Zuckerberg Open Source Software",CANARIE,
+D3,111,CANARIE,CANARIE,
+D3,125,Canarie,CANARIE,
+D3,138,CANARIE,CANARIE,
+D3,148,CANARIE Research Software,CANARIE,
+D3,151,CANARIE Research Software,CANARIE,
+D3,152,CFI,CFI,
+D3,161,I was partially funded by a CANARIE grant,CANARIE,
+D3,174,Both CANARIE and CFI,CANARIE,
+D3,174,Both CANARIE and CFI,CFI,
+D3,191,"CANARIE, CFI",CANARIE,
+D3,191,"CANARIE, CFI",CFI,
+D3,192,CANARIE,CANARIE,
+D3,201,CFI,CFI,
+D3,218,"CANARIE (mais au final c'est l'Universite qui a reçu l'argent, et je n'ai pas pu en profiter)
+Societe canadienne du cancer (Data Transformation Grant)
+FRQS (appel bilateral avec Baviere)",CANARIE,
+D3,231,"CFI within a larger infrastructure application, NSERC",CFI,
+D3,231,"CFI within a larger infrastructure application, NSERC",NSERC,
+D3,235,CANARIE Research Software,CANARIE,
+D3,238,Canarie,CANARIE,
+D3,273,CANARIE and CFI,CANARIE,
+D3,273,CANARIE and CFI,CFI,
+D3,275,CRSNG - RDA,CRSNG,
+D3,290,Canadian Cancer Society Data Transformation grant,Canadian Cancer Society Data Transformation grant,
+D3,291,CANARIE (par l'equipe de Developpement de Logiciels de Recherche) de mon Universite (Ottawa),CANARIE,
+D3,307,CANARIE,CANARIE,
+D3,310,"Chan Zuckerberg,
+Tanenbaum Open Science Institute
+Molson Family Foundation
+Center for Open Science",CZI,
+D3,310,"Chan Zuckerberg,
+Tanenbaum Open Science Institute
+Molson Family Foundation
+Center for Open Science",Tanenbaum Open Science Institute,
+D3,310,"Chan Zuckerberg,
+Tanenbaum Open Science Institute
+Molson Family Foundation
+Center for Open Science",Molson Family Foundation,
+D3,310,"Chan Zuckerberg,
+Tanenbaum Open Science Institute
+Molson Family Foundation
+Center for Open Science",Center for Open Science,
+D3,330,MEOPAR NCE,MEOPAR NCE,
+D3,338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",CZI,
+D3,338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",NIH,
+D3,338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",CFI,
+D3,338,"CZI, NIH, CFI Cyberinfrastructure, Genome Canada technology development",Genome Canada,
+D3,341,CANARIE,CANARIE,
+D3,363,CANARIE,CANARIE,
+D3,406,CANARIE,CANARIE,
+D3,435,CFI,CFI,
+D3,482,CANARIE Research Software,CANARIE,
+D3,483,CANARIE and CFI,CANARIE,
+D3,483,CANARIE and CFI,CFI,
+D3,495,CFI,CFI,
+D3,500,"CANARIE, CFI, CIHR/EU",CANARIE,
+D3,500,"CANARIE, CFI, CIHR/EU",CFI,
+D3,500,"CANARIE, CFI, CIHR/EU",CIHR,
+D3,508,"CIHR, The Alliance (Data Champion and COVID-19 Data Curation grants)",CIHR,
+D3,508,"CIHR, The Alliance (Data Champion and COVID-19 Data Curation grants)",The Alliance,
+D3,518,CFI,CFI,
+D3,523,FCI pour le premier defi de l'Initiative sur la cyberinfrastructure,CFI,
+D3,528,CANARIE,CANARIE,
+D3,535,CFI and I believe CANARIE (at least indirectly,CFI,
+D3,535,CFI and I believe CANARIE (at least indirectly,CANARIE,
+D3,539,Canarie,CANARIE,
+D3,541,CANARIE,CANARIE,
+D3,542,CANARIE,CANARIE,
+D5,21,CEO,Other,
+D5,35,machine learning,Other,
+D5,58,Manager,Other,
+D5,59,Support and archiving of data and code,Other,
+D5,73,gestion,Other,
+D5,105,"Dissemination, Training, Knowledge transfer",Other,
+D5,112,services conseils,Other,
+D5,137,coordination,Other,
+D5,165,Aucun,Other,
+D5,205,Oversight/Director,Other,
+D5,207,Management,Other,
+D5,242,None,Other,
+D5,275,Gestion,Other,
+D5,291,Formation des etudiants,Other,
+D5,297,commercialization,Other,
+D5,323,direction,Other,
+D5,327,Project management,Other,
+D5,329,Physical and mathematical  theory that is implemented in the software tool.,Other,
+D5,406,Requirements,Other,
+D5,435,User Experience,Other,
+D5,445,I cover the full-stackdevelopment cycle and pretty much everything else.,Other,
+D6,21,Internal software development team,Other,
+D6,29,Contractors,Other,
+D6,76,Collaborators,Other,
+D6,127,Student Interns,Other,
+D6,165,Aucun,Other,
+D6,206,ITS,Other,
+D6,239,Software vendors,Other,
+D6,242,None,Other,
+D6,275,etudiant collegial,Other,
+D6,291,Je ne comprends pas l'acronyme ETP dans la question suivante...,Other,
+D6,337,Consultant,Other,
+D6,445,volunteers,Other,
+D18,3,We have published the research articles.,,
+D18,20,"km: https://www.life-science-alliance.org/content/2/4/e201900336
+et au moins 3 autres projets en cours de publications.",,
+D18,21,"Our website, www.myLaminin.net, has quite a bit of information and several blog articles that describe what our software does. ",,
+D18,22,Unsure.,,
+D18,31,"https://dl.acm.org/doi/10.1145/3332186.3332210
+",,
+D18,37,"https://arxiv.org/abs/2109.03120, https://cdnsciencepub.com/doi/full/10.1139/cjp-2019-0611, https://arxiv.org/abs/2111.14530",,
+D18,67,"https://doi.org/10.1038/s41587-019-0360-3
+https://doi.org/10.1186/1755-8794-6-S2-S3
+https://doi.org/10.1371/journal.pcbi.1001114
+https://doi.org/10.1186/1471-2105-10-S1-S60
+https://doi.org/10.1186/gb-2005-6-12-r106
+https://doi.org/10.1186/1471-2105-6-34
+https://doi.org/10.1186/1471-2105-5-40
+https://doi.org/10.1093/bioinformatics/btg139
+https://doi.org/10.1093/bioinformatics/18.8.1034
+
+",,
+D18,81,"There too many, list here - https://directory.library.ubc.ca/people/view/622",,
+D18,84,"10.1162/qss_a_00228
+",,
+D18,91,It is currently under 2nd review in Environmental Modelling and Software and should be published in the next few months.,,
+D18,105,"https://doi.org/10.1016/j.mri.2012.05.001
+https://doi.org/10.1109/TBME.2014.2322864
+https://doi.org/10.1002/rcs.274
+https://doi.org/10.1118/1.4754659
+https://doi.org/10.1109/TBME.2012.2219307",,
+D18,107,you are kidding - there are ~40-50 papers we've published that describe software tools.,,
+D18,110,"https://link.springer.com/content/pdf/10.1007/s41781-020-0036-1.pdf
+http://heprc.phys.uvic.ca/#publications
+",,
+D18,111,10.3138/cart-2021-0006 ,,
+D18,112,je ne sais pas,,
+D18,121,"https://doi.org/10.1063/1.5144261
+https://doi.org/10.1016/j.cpc.2019.107042",,
+D18,126,10.1093/gigascience/giz037,,
+D18,138,"Jensen, Graham, Alyssa Arbuckle, Caroline Winter, Talya Jesperson, Tyler Fontenot, and Ray Siemens, with the ETCL and INKE Research Groups. 2023. “Fostering Digital Communities of Care: Safety, Security, and Trust in the Canadian Humanities and Social Sciences Commons.” IDEAH 3 (2): n.p. https://ideah.pubpub.org/pub/h7927ugt
+Jesperson, Talya, Graham Jensen, Caroline Winter, Alyssa Arbuckle, and Ray Siemens, with the INKE Research Group. 2022. “Open, Collaborative Commons: Web3, Blockchain, and Next Steps for the Canadian Humanities and Social Sciences Commons.” Pop! Public. Open. Participatory. 4. 10.54590/pop.2022.003
+Winter, Caroline, Tyler Fontenot, Luis Meneses, Alyssa Arbuckle, Ray Siemens, and the ETCL and INKE Research Groups. “Foundations for the Canadian Humanities and Social Sciences Commons: Exploring the Possibilities of Digital Research Communities.” Pop! Public. Open. Participatory 2: n.p. DOI: 10.48404/pop.2020.05",,
+D18,143,Sauf celui en cours de developpement.,,
+D18,152,"Rockwell, G. and S. Sinclair. (2016) Hermeneutica: Computer-Assisted Interpretation in the Humanities. Cambridge, MA: MIT Press. ",,
+D18,161,10.1016/j.mri.2012.05.001,,
+D18,162,https://joss.theoj.org/papers/10.21105/joss.02444,,
+D18,174,Software and computing in big science,,
+D18,181,"10.1021/acs.jctc.6b00410 and ""to be published""",,
+D18,186,10.1093/mnras/stad1254 ,,
+D18,189,Gasoline2:     10.1093/mnras/stx1643,,
+D18,191,doi:10.1093/mnras/stx1671,,
+D18,192,an example: https://doi.org/10.1093/bioadv/vbac069,,
+D18,195,"ATOCA: 10.1088/1538-3873/ac8a77
+STARSHIPS: 10.1093/mnras/stad1247",,
+D18,203,Publications are forthcoming within the next 1-2 years.,,
+D18,205,My group's priority is scientific output.  That's what will earn my graduate students favourable postdoc positions.  That's where I choose to invest my limited resources.,,
+D18,231,"10.1186/s12859-015-0581-5
+10.1093/bioinformatics/btad136",,
+D18,235,"https://doi.org/10.1111/imr.12666
+https://doi.org/10.3389/fdata.2020.00022",,
+D18,249,"http://dx.doi.org/10.1139/v07-069
+https://doi.org/10.1016/j.ssnmr.2019.07.004
+http://dx.doi.org/10.1016/j.ssnmr.2012.05.002",,
+D18,273,https://academic.oup.com/gigascience/article/8/6/giz037/5513895,,
+D18,274,"Not current, but the software is described in dozens of publications along with applications. One general example:  DOI 10.1007/978-1-4419-0699-1",,
+D18,290,"10.1093/bioinformatics/btv693
+10.1093/nar/gkx911.
+10.1093/nar/gkab1084
+10.1093/bioinformatics/btt383
+10.1093/bioinformatics/btr511.
+10.1093/nar/gkaa390
+10.1093/nar/gkaa421
+10.1158/0008-5472.CAN-19-0349",,
+D18,291,"https://www.atala.org/sites/default/files/MyAnnotator_June_2017NS.pdf
+https://doi.org/10.4000/alsic.5550
+
+",,
+D18,297,"Too many to list. Check ""demeler, b"" on PubMed",,
+D18,300,"PyJAMAS - doi: 10.1093/bioinformatics/btab589
+SIeStA - doi: 10.1088/1478-3975/8/4/045005",,
+D18,310,"https://www.nature.com/collections/djiciihhjh
+https://www.nature.com/articles/s41592-021-01315-z
+https://www.nature.com/articles/s41592-021-01290-5
+https://www.nature.com/articles/s41592-021-01166-8
+https://arxiv.org/abs/2302.07005",,
+D18,324,"https://doi.org/10.1093/jhered/92.4.371
+https://doi.org/10.1093/molbev/msy073
+https://doi.org/10.1093/jhered/esx033
+https://doi.org/10.1093/bioinformatics/17.6.569
+https://doi.org/10.3390/v13091790
+https://doi.org/10.1111/geb.12914
+https://doi.org/10.1534%2Fg3.117.300271",,
+D18,327,10.1016/j.scico.2021.102665,,
+D18,330,"https://www.nemo-ocean.eu/  is  a webpage, not a doi, but it is the underlying home of the model we use. Documentation is more variable on tools.",,
+D18,336,"""A Plea for the Preservation of Early BASIC Game Programs."" Canadian Journal of Media Studies/Revue Canadienne d'etudes des medias,18(1) 2022, pp. 90-113",,
+D18,338,"We have dozens of such publications. Some recent examples are:
+https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btad031/6988031
+
+https://www.nature.com/articles/s41592-022-01616-x
+
+https://www.sciencedirect.com/science/article/pii/S0022283622001838
+
+https://elifesciences.org/articles/68292
+
+https://joss.theoj.org/papers/10.21105/joss.03756#
+
+https://aclanthology.org/2021.acl-long.72/",,
+D18,341,"The Motus Wildlife Tracking System: a collaborative research network to enhance the understanding of wildlife movement  https://doi.org/10.5751/ACE-00953-120108
+
+One is currently under development for NatureCounts",,
+D18,363,"Motus: https://doi.org/10.5751/ACE-00953-120108 
+
+A NatureCounts publication has been drafted and will be submitted in the coming year. ",,
+D18,364,"doi:10.3389/fspas.2018.00014
+http://ascl.net/1805.014",,
+D18,379,Scientific Computing World,,
+D18,381,too many to list,,
+D18,404,10.26508,,
+D18,406,10.3389/fmars.2022.806452,,
+D18,417,"https://doi.org/10.1111/1755-0998.13613
+https://doi.org/10.1038/s41437-023-00595-9",,
+D18,424,See site,,
+D18,425,http://digitalhumanities.org/dhq/vol/17/1/000668/000668.html,,
+D18,433,https://doi.org/10.1007/s41781-020-0036-1,,
+D18,445,multiple publications,,
+D18,469,It is outdated,,
+D18,475,"There will be, still working on it.",,
+D18,482,10.3389/fmars.2022.806452,,
+D18,483,https://joss.theoj.org/papers/10.21105/joss.05415,,
+D18,485, https://doi-org.acces.bibl.ulaval.ca/10.1111/ele.13994,,
+D18,500,https://doi.org/10.1111/imr.12666,,
+D18,501,doi: 10.2196/32613,,
+D18,508,Cited in our Github page per repository,,
+D18,517,see https://www.marieodilejunker.ca/publications-by-topic/,,
+D18,518,10.1016/j.neuroimage.2022.119261 ,,
+D18,524,doi: 10.3233/SHTI210182.,,
+D18,529,https://iopscience.iop.org/article/10.1088/1538-3873/acc973/meta,,
+D18,535,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3696923/,,
+D18,539,"There are several packages that have been published as papers, as clearly documented on the web site. I'll give two examples: ",,
+D18,541,"Some example publications from colleagues in the community that discuss the use of Islandora:
+Strategies for Preserving Digital Scholarship / Humanities Projects
+https://journal.code4lib.org/articles/16370
+Simplifying ARK ID management for persistent access to digital objects
+https://journal.code4lib.org/articles/16774
+Visualizing Fedora-managed TEI and MEI documents within Islandora
+https://journal.code4lib.org/articles/14532
+Islandoracon 2022 - presentations from the last conference
+https://2022.islandora.ca/schedule/
+Islandora Foundation Youtube Channel
+https://www.youtube.com/@islandorafoundation9224/videos
+",,
+D19,21,"Yes...we designed our solution with these principles in mind. To that end, research and supporting research data is easily 'findable, accessible, interoperable, reusable' using our platform...but also under the control of the Principal Investigator (PI). The PI is able to manage access to research data or subsets of it as well as seamlessly manage any required agreements (such as data-sharing/publication agreements) using eSignature capabilities.",,
+D19,29,Also this group: https://fair-software.nl/,,
+D19,112,la plupart des chercheurs ne cconnaissent pas bien les principes FAIR. Il y a beaucoup de sensibilisation a faire,,
+D19,113,Ça va prendre des formations de ça.,,
+D19,203,"While I personally have some basic familiarity with the principles, the project PIs may not be and there have been no discussions of these principles within our development team.",,
+D19,204,a little,,
+D19,205,I was not aware of FAIR4RS but there basic assertion is common sense.,,
+D19,235,The iReceptor Gateway was built on and adheres to FAIR principles,,
+D19,310,TOTALLY!,,
+D19,324,I don't know FIAR4US and therefore cannot answer the following question.,,
+D19,330,"When a large CFD model produces 10's of TB of output, it is difficult to properly share as most repositories can't deal with that size of output. But we can't just point to the data on Alliance systems...",,
+D19,338,"I am aware of FAIR, but not FAIR4RS",,
+D19,341,"We apply FAIR principles to our data, primarily, but we also attempt to release open-source software whenever possible.",,
+D19,363,"Yes, we have incorporated the FAIR Principles into our strategic plans for NatureCounts and Motus. ",,
+D19,406,We intend to work towards following guidance along these lines for software used to produce or manipulate data.,,
+D19,424,we use Creative Commons,,
+D19,469,Very limited,,
+D19,495,The software also tries to follow CARE and OCAP principles,,
+D19,501,"Hope to share that way after we complete development, test the platform, and then know what we can contribute. ",,
+D19,503,I am not involves in software development. ,,
+D19,508,Aware of FAIR principles but not specific to research software,,
+D19,523,"Nous connaissons les principes FAIR mais pas specifiquement FAIR4RS, leur application aux logiciels de recherche.",,
+D19,539,"10.1002/jcc.26468
+https://doi.org/10.1016/j.cpc.2022.108334",,
+D21,11,">1,000 active users (from across the globe) - used in 150 projects involving over  600,000 assessments to date in limited access release. ",,
+D21,20,https://pypistats.org/ pour epcy et km-walk,,
+D21,21,"We will be able to do so shortly. As we approach commercialization at scale, we are fully prepared to do that.",,
+D21,22,"Yes, via the number of research projects adding content to the repository platform, the number of people access the content and the size of the content.",,
+D21,29,When hosted on code repositories only.,,
+D21,42,many hundreds of users used genap.ca over the years,,
+D21,67,"No, but I would today.",,
+D21,84,"Downloads, installations",,
+D21,91,Users need accounts for access to the PAVICS-Hydro platform. Users using the ravenpy python package are not traceable though.,,
+D21,110,Download goes through repositories which do not track users. ,,
+D21,111,"Pour l'instant, l'impact est mesurable par le nombre de projets pour lesquels il est utilise, mais nous sommes en train de mettre en place un processus d'evaluation plus systematique. ",,
+D21,121,"- Articles qui citent les articles principaux d'ABINIT, ceux mentionnes plus haut.
+- nombres de participant du forum.",,
+D21,152,We use Google Analytics to track number of users and where they come from. We do not track those that use mirror sites run by others or those who download Voyant to run on their own.,,
+D21,161,We track primarily by number of downloads,,
+D21,177,"Number of users, number of container pulls",,
+D21,203,"For our most successful public package, we get some feedback in the form of Github visit/download numbers, and by seeing who contributes bug reports (if it's people we don't know, we know the software is spreading broadly through the community).",,
+D21,207,not yet,,
+D21,235,"We track number of users, number/size of downloads, and institutional/geographic information on users.",,
+D21,249,"citations, and previously we counted downloads",,
+D21,291,pas encore,,
+D21,297,"installations worldwide. Registrations, publications, and support contracts",,
+D21,324,Number of citations in scientific papers.,,
+D21,327,"We track number of user sessions and commands executed (although it can also be used privately, and unique users are not tracked). Additional tracking includes Github forks and stars.",,
+D21,336,Google Analytics,,
+D21,337,"Yes, but it's very incomplete (mostly GitHUb metrics)",,
+D21,341,"Both Motus and NatureCounts platform users are using logins, and we track various usage metrics.",,
+D21,363,"Yes, our Key Performance indicators and Milestones are outlined in the Motus strategic plan: https://motus.org/strategy/
+
+A draft strategic plan for NatureCounts is in review and KPIs include:
+Number of users submitting data through NatureCounts
+Number of validated data records stored in NatureCounts 
+Number of contributing programs and/or partnerships supported
+Number of R package users (advanced users)
+Number of scientific publications supported by Birds Canada data and expertise
+Number of external data requests received for research and conservation
+Number of records shared
+Number of unique visitors to NatureCounts website
+Number of target users reached with online and in-person NatureCounts tutorials
+
+
+
+
+",,
+D21,364,Citations in publications/conference talks,,
+D21,376,We aren't at this stage yet and are working on ways to measure impact.,,
+D21,381,The numbers of downloads reported by package repositories seem unreasonably large,,
+D21,404,"Nombre d'utilisateurs dans le cas de portail
+Nombre de tele-chargements dans le cas de repertoire de codes",,
+D21,406,We use metrics of number of downloads versus number of datasets published to give a measure of the utility of what we are providing.,,
+D21,425,"Downloads, forks, requests for help, etc.",,
+D21,433,We can measure the number of jobs processed using Cloudscheduler.,,
+D21,445,This is particularly easy when we release open access software powered by web applications where I manage the server. Anything else is a hassle.,,
+D21,469,Too early,,
+D21,472,WPStatistics,,
+D21,474,"I haven't bothered, other than through interactions with people who contact me",,
+D21,500,"Normal web stats, authenticated logins, number of users, number of user accounts, downloads, etc.",,
+D21,508,However we can count the number of references to our publications related to software,,
+D21,518,8 users around the world have requested access to the software,,
+D21,523,"Nombre d’utilisateurs annuels du portail national d’articles scientifiques
+Nombre d’articles produits chaque annee
+",,
+D21,535,~10000 registered user accounts,,
+D21,539,"Not really. We're free and open source, so we only hear about things anecdotally. ",,
+G3,3,Version control. Proper documentation.,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,11,low,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,21,Advanced in the sense that we are maintaining our software for commercial delivery in a SaaS paradigm.,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,59,"um, pretty high? I have a computer science degree and have been the person packaging and archiving",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,91,"Medium, delegated to others on team",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,111,"La base, mais je comprends l'importance",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,113,assurance que le logiciel est conçu pour une utilisation a long terme,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,126,"Versioning, code reviewing, documentation, availability in recommended repositories",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,139,Documentation technique!,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,143,rien,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,152,Putting source on github. Supporting mirrors at other institutions,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,161,"Our projects are used by thousands of people to develop cutting edge medical research, we have to keep old versions accessible as some people have to lock in a version due to a specific regulation",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,165,Rien,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,189,moderate,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,203,Limited knowledge (of version control),,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,206,none,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,231,I'm not sure I understand the question. I have a pretty good knowledge. My software has dependancies so I am aware it might not be avaiable for long-term use if I stop maintenance..,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,235,low,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,248,Il existe des bibliotheques de version,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,272,"Sorry, what does ""Give your knowledge"" mean?  Yes?",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,274,The Wilson-Devinney program has been developed and maintained over 5 decades and continues to be supported ...,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,277,minimal,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,288,"github, research data respositories (for long-term preservation of code)",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,297,25+ years of supporting the same software,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,310,https://github.com/,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,324,good,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,327,High,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,330,low,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,341,"We mainly use Git for our software, and try to publish most of it on public repositories",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,363,High ,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,406,Paying attention to working groups for software publication so that we can follow these practices in coming years,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,418,X,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,421,low,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,425,http://digitalhumanities.org/dhq/vol/17/1/000668/000668.html,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,433,"I don't quite know what you're looking for here. I know this is an important topic, and as concerns the software my group develops, we try to ensure it continues to run on modern operating systems and with modern versions of its dependencies.",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,445,not clear what you need,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,472,"Familiar with some of the issues, looking for commitment from institutional and government agencies",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,482,"we use atlassian products - bitbucket and jira, and use CI via Jenkins",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,483,Who wrote that survey ?,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,485,none,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,497,"very big problem. Not only do the system preserving it have to be very well thought-out to prevent ""decay"" at a bit level but there will be associated problems for proprietary software especially in conjunction with legal frameworks around what is acceptable to make copies of. File formats, languages, protocols etc. should preferably be open source and standards-based. ",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,500,"Versions are published from GitHub to Zenodo, acquiring a DOI for software citation",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,501,github,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,508,Familiar,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,510,none,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,523,"le code source du logiciel est libre et une bonne documentation est disponible, notamment sur les dependances et l’installation",,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,535,limited,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,539,pretty familiar with this; at least with best practices.,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,541,We use github to share our code and documentation.,,Software curation/preservation (making sure the software has been packaged for long-term use/access)
+G3,3,Bug fixing. Support. New features.,,Maintenance
+G3,11,low,,Maintenance
+G3,21,Advanced in the sense that we are maintaining our software for commercial delivery in a SaaS paradigm.,,Maintenance
+G3,59,"know about, rarely do",,Maintenance
+G3,91,"high, delegated to others on team",,Maintenance
+G3,111,"La base, mais je comprends l'importance",,Maintenance
+G3,112,"les updates des logiciels, et les updates des infrastructures associees",,Maintenance
+G3,113,Facilite a modifier,,Maintenance
+G3,126,"Keep the software up to date to serve current requirements, usage and platforms",,Maintenance
+G3,139,Ça prend des fonds et de la redondance dans la connaissance technique du projet.,,Maintenance
+G3,143,rien,,Maintenance
+G3,152,Providing contact information. Having a programmer to fix things and add features.,,Maintenance
+G3,161,"Bugs occur, and new features are always needed, so maintenance is essential",,Maintenance
+G3,165,Rien,,Maintenance
+G3,189,moderate,,Maintenance
+G3,203,Limited (I can solve bug reports as they come in),,Maintenance
+G3,206,none,,Maintenance
+G3,231,I am currently maintaining my software in both R-CRAN and on GitHub,,Maintenance
+G3,235,low,,Maintenance
+G3,272,Yes,,Maintenance
+G3,274,... and maintained,,Maintenance
+G3,275,Les problemes et compatibilite du logiciel vont être resolus.,,Maintenance
+G3,277,minimal,,Maintenance
+G3,310,https://github.com/,,Maintenance
+G3,324,good,,Maintenance
+G3,327,High,,Maintenance
+G3,330,medium,,Maintenance
+G3,363,High ,,Maintenance
+G3,418,X,,Maintenance
+G3,421,low,,Maintenance
+G3,425,http://digitalhumanities.org/dhq/vol/17/1/000668/000668.html,,Maintenance
+G3,433,See above,,Maintenance
+G3,445,not clear what you need,,Maintenance
+G3,472,as above,,Maintenance
+G3,475,Responding to issues and keeping it working when dependencies change,,Maintenance
+G3,482,bitbucket,,Maintenance
+G3,485,none,,Maintenance
+G3,497,Ongoing regular checks on storage are required. Regular preservaion and distribution system updates and security maintenance needed along with organization of the physical systems. Maintaining understanding and procedures around relevant privacy issues is necessary too.,,Maintenance
+G3,508,Familiar,,Maintenance
+G3,510,none,,Maintenance
+G3,523,"un logiciel perenne est maintenu par une communaute d’utilisateurs et est regulierement mis a jour, ne serait-ce que pour suivre l’evolution des dependances et du langage de programmation",,Maintenance
+G3,535,moderate,,Maintenance
+G3,539,painfully aware of this,,Maintenance
+G3,541,"We have a process for the submission of new code, patches, updates, etc. We continually update the underlying software (Drupal) as updates and security patches are provided.",,Maintenance
+G3,3,Less resource consuming. Efficient. Adaptable. Reproducibility.,,Sustainability
+G3,11,low,,Sustainability
+G3,12,Yes,,Sustainability
+G3,21,Advanced in the sense that we are designing our software for commercial delivery in a SaaS paradigm for both institutional researchers as well as independent researchers..,,Sustainability
+G3,59,"know about, rarely do",,Sustainability
+G3,91,"Medium, delegated to others on team",,Sustainability
+G3,111,"La base, mais je comprends l'importance",,Sustainability
+G3,112,que le systeme et ses donnees durent dans le temps sans rupture technologique,,Sustainability
+G3,113,Disponibilite et soutien a long terme,,Sustainability
+G3,126,"Make sure the software perrenity in time, to have a long-term active developper or at least an expert to answer questions and requests",,Sustainability
+G3,139,Ça prend des fonds.,,Sustainability
+G3,143,rien,,Sustainability
+G3,152,Getting ongoing support for documentation and programming,,Sustainability
+G3,161,"Sustainability is always a problem due to funding. Ultimately sustainability takes work-hours to complete the various programming and documentation tasks, which takes funding to support",,Sustainability
+G3,165,Rien,,Sustainability
+G3,189,moderate,,Sustainability
+G3,203,"Limited (I've observed patterns in my code that are difficult to work with, and have worked to refactor my own codes to be more readable and versatile)",,Sustainability
+G3,206,none,,Sustainability
+G3,231,I probably don't know enough about this but sustaining the maintenance is difficult with staff turnover,,Sustainability
+G3,235,low,,Sustainability
+G3,248,Les differentes versions entrainent des problemes de retrocompatibilite des fichiers/donnees.,,Sustainability
+G3,272,Yes,,Sustainability
+G3,274,... and sustained. ,,Sustainability
+G3,277,minimal,,Sustainability
+G3,310,https://github.com/,,Sustainability
+G3,324,good,,Sustainability
+G3,327,High,,Sustainability
+G3,330,medium,,Sustainability
+G3,363,Medium,,Sustainability
+G3,406,Vital for RDM aspects like preservation and persistent DOI infrastructures,,Sustainability
+G3,418,X,,Sustainability
+G3,421,low,,Sustainability
+G3,425,http://digitalhumanities.org/dhq/vol/17/1/000668/000668.html,,Sustainability
+G3,433,See above,,Sustainability
+G3,445,not clear what you need,,Sustainability
+G3,472,as above,,Sustainability
+G3,475,"Persistent URLs, persistent funding",,Sustainability
+G3,485,none,,Sustainability
+G3,497,"both from an ecological perspective (e.g. power consumption), financial perspective for hardware, service, personnel costs, and usage aspects. old software may require libraries, languages, OSes, etc. at various versions that are no always available or compatible in the future, especially when they're not free and open source",,Sustainability
+G3,508,Familiar,,Sustainability
+G3,510,none,,Sustainability
+G3,520,"Use of open source, no propriatory tools, documentation, minimum number of dependencies.",,Sustainability
+G3,522,Endings Project,,Sustainability
+G3,523,"le logiciel est mis a jour regulierement, au minimum pour s’adapter a l’evolution de son environnement technologique (dependances, langage de programmation, securite…); une feuille de route (roadmap) des releases est disponible; mieux, certaines versions sont “long term support” (LTS)",,Sustainability
+G3,535,limited,,Sustainability
+G3,539,"know a good bit about best practices, and try to keep this in mind when we develop.",,Sustainability
+G3,541,"We have a core group of code committers that we are continually trying to add members to.  We leverage software that has a very large community. Not all the modules we use are updated to the latest versions, so that can be a challenge.",,Sustainability
+G11,3,None,,Institutional support
+G11,20,Non,,Institutional support
+G11,21,Librarians should be able to engage and advise researchers in this regard in a seamless manner.,,Institutional support
+G11,22,no,,Institutional support
+G11,59,I am the support,,Institutional support
+G11,104,Non,,Institutional support
+G11,143,non,,Institutional support
+G11,161,Yes,,Institutional support
+G11,165,Non,,Institutional support
+G11,291,x,,Institutional support
+G11,292,The software was just placed in the repository and indexed.,,Institutional support
+G11,330,"Yes, helped explain process and get things set up",,Institutional support
+G11,379,Yes,,Institutional support
+G11,381,"none, we're on our own",,Institutional support
+G11,405,through our Library Services and through IT Support,,Institutional support
+G11,406,"Within our organization we have established software development processes, end-to-end, but need to evolve with software publication standards pertaining to research data outputs.",,Institutional support
+G11,425,Institution provides server hosting for repositories.,,Institutional support
+G11,452,director of data research centre at institution,,Institutional support
+G11,475,Some help with documenting data resources published in a institutional data repository,,Institutional support
+G11,501,great support ,,Institutional support
+G11,517,no,,Institutional support
+G11,3,None,,Research discipline/community support
+G11,20,Non,,Research discipline/community support
+G11,22,no,,Research discipline/community support
+G11,104,Oui,,Research discipline/community support
+G11,143,non,,Research discipline/community support
+G11,161,Yes,,Research discipline/community support
+G11,165,Non,,Research discipline/community support
+G11,203,"Minimal -- I have a research colleague who is knowledable about curation, so he has advised me on good practice.",,Research discipline/community support
+G11,235,iReceptor Team/AIRR Community,,Research discipline/community support
+G11,330,Technical support,,Research discipline/community support
+G11,381,"none, we're on our own",,Research discipline/community support
+G11,425,The TEI community helps to maintain the TEI software and Guidelines.,,Research discipline/community support
+G11,483,PyOpenSci,,Research discipline/community support
+G11,517,no,,Research discipline/community support
+G11,3,None,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,20,Non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,22,no,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,91,Yes,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,104,Non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,143,non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,165,Non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,191,GitHub provides no-cost support for professional accounts for researchers,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,201,A bunch of advice from a colleague who works as a software editor at a learned society gave a lot of useful suggestions for preserving code in Zenodo.,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,381,"none, we're on our own",,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,406,Exploring these options,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,425,Publications and presentations are up on Zenodo.,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,482,online docs,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,517,no,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,3,None,,Other
+G11,21,Platforms should be able to guide researchers to accurately curate their research data.,,Other
+G11,73,Code Ocean,,Other
+G11,165,Non,,Other
+G11,274,n.a.,,Other
+G11,297,"NIH, NSF",,Other
+G11,381,"none, we're on our own",,Other
+G11,469,Alliance support,,Other
+G11,483,FRDR,,Other
+G11,508,Following open source licensing guidelines and publishing best practices,,Other
+E18,21,This is the obvious advantage of SaaS solutions. They are simply there and deliver flexible subscriptions that can be tailored to accommodate different size research projects and institutions.,,
+E18,22,"Often documentation is lacking or support is unavailable or no longer run or is secure (e.g., no longer maintained and no resources available to bring up to date)",,
+E18,67,"mostly because not findable, doesn't compile, or licencing issues.",,
+E18,111,Voir question precedente relative a la version 3 d'Atlascine,,
+E18,112,"les delais sont parfois trop long, par manque de personnel",,
+E18,127,Some software lack support and we cannot update them reliably on top of our own software.,,
+E18,143,Des logiciels d'exploration de fichiers edf.,,
+E18,203,"There are mountains of software packages in astronomy that are effectively dead because they can no longer be installed on modern OSs, and the maintainers have moved on in their careers.",,
+E18,238,time,,
+E18,248,Absence de licence d'utilisation,,
+E18,274,"Well, I no longer have a grant, or, as a consequence, and office and lab. Why I have no grant one has to take up with NSERC and the Harper government who abolished the Space and Astronomy subcommittee requiring my applications to be evaluated by physicists unfamiliar with my work and my field. So it goes. Presumably others were able to benefit from this mischance. At this point I am more interested merely to use reliable software to analyze data. 
+",,
+E18,327,Not available in consistent ways; version changes result in too much work to adapt to new version,,
+E18,341,"Probably. Many of our needs are domain specific. Using other people research software is often hampered by the lack of fit for our use, and we tend to adopt more generic software tools and platforms that we can leverage into our work own flows.",,
+E18,423,"My institutional computing resources, for instance, are so locked down by security needs that it is often not worth it.",,
+E18,439,licensing updates,,
+E18,473,Specially Statistical Packages ,,
+E18,474,"At the beginning of my career, I lost the ability to use ESRI GIS for a number of years because my university didn't have a site license. I basically abandoned geospatial work, and vowed that I would never again put my ability to do research in the hands of administrators who make descisions based on bottom line costs.",,
+E18,485,it is mainly maintenance or the software is deprecated. ,,
+E18,512,IMIT needs to review/approve. Low priority for research as we are a Health Authority,,
+E18,541,Some new platforms require Docker or similar and those require resources often beyond those provided by the desktop.,,
