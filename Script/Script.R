@@ -3853,9 +3853,28 @@ survey_E3_v3 <-
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
 
+survey_E3_v4 <- 
+  survey_E3_v2 %>% 
+  select(-Question) %>% 
+  rename(Answer_q = separete_v3) %>% 
+  drop_na() %>% 
+  filter(!Answer == "No" | !Answer == NA) %>% 
+  mutate(Answer_n = ifelse(
+    Answer_q == "Personal Desktop_laptop_computer_", "Desktop, Lab", ifelse(
+      Answer_q == "Lab computers_", "Desktop, Lab", ifelse(
+        Answer_q == "Remote ARC_resources__Former_Compute_Canada_Federation_Alliance__Provincial__Institutional__", "Remote ARC, International ARC", ifelse(
+          Answer_q == "Remote Cloud_resources__Former_Compute_Canada_Federation_Alliance__Provincial__Institutional__", "Remote Cloud, Commercial Cloud, International Cloud", ifelse(
+            Answer_q == "International ARC_resources__Access_US__EuroHPC_EU__", "Remote ARC, International ARC", ifelse(
+              Answer_q == "International Cloud_resources__EOSC_EU__", "Remote Cloud, Commercial Cloud, International Cloud", ifelse(
+                Answer_q == "Commercial Cloud_resources__AWS__Azure__Google_Cloud_etc___", "Remote Cloud, Commercial Cloud, International Cloud", ifelse(
+                  Answer_q == "Mobile device_", "Mobile device", "Other" 
+                ))))))))) %>%
+  select(Internal.ID, Answer, Answer_n) %>% 
+  rename(answer = Answer_n)
+
 #Link to TC3
 survey_E3_v3_tc3 <- 
-  survey_E3_v3 %>% 
+  survey_E3_v4 %>% 
   left_join(domain1, by = "Internal.ID")
 
 ##add percentage
@@ -3887,18 +3906,72 @@ Workflow_SSH <- filter(Workflow.E3, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
-#### Bar plots - TC3 #### 
+SSH <- Workflow_Tri2 %>% 
+  filter(TC3 == "Social Sciences and Humanities")
+
+SE <- Workflow_Tri2 %>% 
+  filter(TC3 == "Sciences and Engineering")
+
+HR <- Workflow_Tri2 %>% 
+  filter(TC3 == "Health Research")
+
+#### Bar plot - TC3 and Pie charts #### 
+
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
-  coord_flip() +
-  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
   theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
   ylab("")
+
+#SSh
+PieDonut(SSH, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp_Cad)
+
+#SE
+PieDonut(SE, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp_Cad)
+
+#HR
+PieDonut(HR, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp_Cad)
 
 
 ### E4 - How do you run software and/or access the resources mentioned in the previous question to perform your research? ######
@@ -3936,6 +4009,8 @@ survey_E4_v3 <-
               ))))))) %>%
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
+
+
 
 #Link to TC3
 survey_E4_v3_tc3 <- 
@@ -5045,14 +5120,70 @@ survey_F1_v1<-
   unnest(F1) %>% 
   rename(answer = F1) 
 
-#summarize the data
+#summarize the data for pie chart
 F1_summay <- 
   survey_F1_v1 %>% 
   group_by(answer) %>% 
   count()
 
+survey_F1_v1_tc3 <- 
+  survey_F1_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na()
+  
+#summarize the data for barplot
+summary_F1_tc3 <- 
+  survey_F1_v1_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
 
-#### Pie chart #### 
+
+##add percentage
+Workflow.F1 <- 
+  survey_F1_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.F1, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #21
+nSE <- filter(Workflow.F1, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#59
+nSSH <- filter(Workflow.F1, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #27
+
+Workflow_Health <- filter(Workflow.F1, TC3=="Health Research") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.F1, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.F1, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer, order) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plot - TC3 and  Pie chart #### 
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+#Pie chart
 PieDonut(F1_summay, 
          aes(answer, count= n), 
          ratioByGroup = FALSE, 
