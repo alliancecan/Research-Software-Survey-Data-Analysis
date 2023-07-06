@@ -5149,19 +5149,19 @@ nSE <- filter(Workflow.F1, TC3 == "Sciences and Engineering") %>% select(Interna
 nSSH <- filter(Workflow.F1, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #27
 
 Workflow_Health <- filter(Workflow.F1, TC3=="Health Research") %>%
-  group_by(TC3, answer, order) %>%
+  group_by(TC3, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.F1, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer, order) %>%
+  group_by(TC3, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.F1, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer, order) %>%
+  group_by(TC3, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
@@ -5171,7 +5171,7 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
 #### Bar plot - TC3 and  Pie chart #### 
 
 #Percentage TC3
-ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
   coord_flip() +
@@ -5353,13 +5353,72 @@ survey_F6_v1<-
   filter(F6 == "Yes" | F6 == "No" | F6 == "Maybe")
 
 
-
+#summarize data for pie chart
 F6_summay <- 
   survey_F6_v1 %>% 
   group_by(F6) %>% 
   count()
 
-#### Pie chart #### 
+
+survey_F6_v1_tc3 <- 
+  survey_F6_v1 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() %>% 
+  rename(answer = F6)
+
+#summarize the data for barplot
+summary_F6_tc3 <- 
+  survey_F6_v1_tc3 %>% 
+  group_by(TC3, answer) %>% 
+  count() %>% 
+  print()
+
+
+##add percentage
+Workflow.F6 <- 
+  survey_F6_v1_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.F6, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #21
+nSE <- filter(Workflow.F6, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#59
+nSSH <- filter(Workflow.F6, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #27
+
+Workflow_Health <- filter(Workflow.F6, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.F6, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.F6, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### Bar plot - TC3 and  Pie chart #### 
+
+#Percentage TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +
+  geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+#Pie chart
 PieDonut(F6_summay, 
          aes(F6, count= n), 
          ratioByGroup = FALSE, 
