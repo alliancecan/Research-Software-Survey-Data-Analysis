@@ -822,59 +822,59 @@ G3,523,"le logiciel est mis a jour regulierement, au minimum pour s’adapter a l’
 G3,535,limited,,Sustainability
 G3,539,"know a good bit about best practices, and try to keep this in mind when we develop.",,Sustainability
 G3,541,"We have a core group of code committers that we are continually trying to add members to.  We leverage software that has a very large community. Not all the modules we use are updated to the latest versions, so that can be a challenge.",,Sustainability
-G11,3,None,,Institutional support
-G11,20,Non,,Institutional support
+G11,3,None,No,Institutional support
+G11,20,Non,No,Institutional support
 G11,21,Librarians should be able to engage and advise researchers in this regard in a seamless manner.,,Institutional support
-G11,22,no,,Institutional support
+G11,22,no,No,Institutional support
 G11,59,I am the support,,Institutional support
-G11,104,Non,,Institutional support
-G11,143,non,,Institutional support
+G11,104,Non,No,Institutional support
+G11,143,non,No,Institutional support
 G11,161,Yes,,Institutional support
-G11,165,Non,,Institutional support
+G11,165,Non,No,Institutional support
 G11,291,x,,Institutional support
 G11,292,The software was just placed in the repository and indexed.,,Institutional support
 G11,330,"Yes, helped explain process and get things set up",,Institutional support
 G11,379,Yes,,Institutional support
-G11,381,"none, we're on our own",,Institutional support
+G11,381,"none, we're on our own",No,Institutional support
 G11,405,through our Library Services and through IT Support,,Institutional support
 G11,406,"Within our organization we have established software development processes, end-to-end, but need to evolve with software publication standards pertaining to research data outputs.",,Institutional support
 G11,425,Institution provides server hosting for repositories.,,Institutional support
 G11,452,director of data research centre at institution,,Institutional support
 G11,475,Some help with documenting data resources published in a institutional data repository,,Institutional support
 G11,501,great support ,,Institutional support
-G11,517,no,,Institutional support
-G11,3,None,,Research discipline/community support
-G11,20,Non,,Research discipline/community support
-G11,22,no,,Research discipline/community support
+G11,517,no,No,Institutional support
+G11,3,None,No,Research discipline/community support
+G11,20,Non,No,Research discipline/community support
+G11,22,no,No,Research discipline/community support
 G11,104,Oui,,Research discipline/community support
-G11,143,non,,Research discipline/community support
+G11,143,non,No,Research discipline/community support
 G11,161,Yes,,Research discipline/community support
-G11,165,Non,,Research discipline/community support
+G11,165,Non,No,Research discipline/community support
 G11,203,"Minimal -- I have a research colleague who is knowledable about curation, so he has advised me on good practice.",,Research discipline/community support
 G11,235,iReceptor Team/AIRR Community,,Research discipline/community support
 G11,330,Technical support,,Research discipline/community support
 G11,381,"none, we're on our own",,Research discipline/community support
 G11,425,The TEI community helps to maintain the TEI software and Guidelines.,,Research discipline/community support
 G11,483,PyOpenSci,,Research discipline/community support
-G11,517,no,,Research discipline/community support
-G11,3,None,,"Repository provider support (e.g., Zenodo, Software Heritage)"
-G11,20,Non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
-G11,22,no,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,517,no,No,Research discipline/community support
+G11,3,None,No,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,20,Non,No,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,22,no,No,"Repository provider support (e.g., Zenodo, Software Heritage)"
 G11,91,Yes,,"Repository provider support (e.g., Zenodo, Software Heritage)"
-G11,104,Non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
-G11,143,non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
-G11,165,Non,,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,104,Non,No,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,143,non,No,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,165,Non,No,"Repository provider support (e.g., Zenodo, Software Heritage)"
 G11,191,GitHub provides no-cost support for professional accounts for researchers,,"Repository provider support (e.g., Zenodo, Software Heritage)"
 G11,201,A bunch of advice from a colleague who works as a software editor at a learned society gave a lot of useful suggestions for preserving code in Zenodo.,,"Repository provider support (e.g., Zenodo, Software Heritage)"
 G11,381,"none, we're on our own",,"Repository provider support (e.g., Zenodo, Software Heritage)"
 G11,406,Exploring these options,,"Repository provider support (e.g., Zenodo, Software Heritage)"
 G11,425,Publications and presentations are up on Zenodo.,,"Repository provider support (e.g., Zenodo, Software Heritage)"
 G11,482,online docs,,"Repository provider support (e.g., Zenodo, Software Heritage)"
-G11,517,no,,"Repository provider support (e.g., Zenodo, Software Heritage)"
-G11,3,None,,Other
+G11,517,no,No,"Repository provider support (e.g., Zenodo, Software Heritage)"
+G11,3,None,No,Other
 G11,21,Platforms should be able to guide researchers to accurately curate their research data.,,Other
 G11,73,Code Ocean,,Other
-G11,165,Non,,Other
+G11,165,Non,No,Other
 G11,274,n.a.,,Other
 G11,297,"NIH, NSF",,Other
 G11,381,"none, we're on our own",,Other
