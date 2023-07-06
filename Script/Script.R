@@ -88,6 +88,7 @@ cb_pie1 <- rep(c("#32322F", "#D6AB00"), 100)
 likert_color <- c("#B2182B", "#F4A582", "#d3d3d3", "#92C5DE", "#2166AC")
 likert_color1 <- c("#2166AC", "#92C5DE", "#d3d3d3","#F4A582", "#B2182B")
 
+pie_color <- c("#2166AC", "#B2182B", "#F4A582","#d3d3d3", "#92C5DE")
 # A ############################################################################################
 ### A1 - Select the option that best describes your gender identity. ######
 survey_A1_v1 <- 
@@ -3179,8 +3180,9 @@ Workflow_SSH <- filter(Workflow.D20, TC3=="Social Sciences and Humanities") %>%
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
 
-#### Bar plot - TC3 #### 
+#### Bar plot - TC3 and Pie chart #### 
 
+#TC3
 ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
@@ -3192,6 +3194,23 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) +
   xlab("") + 
   ylab("")
 
+
+#Pie chart all
+
+
+PieDonut(D20_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  pie_color)
 
 
 ### D21 - Are you able to measure the impact/use of your research software using other methods (e.g., number of users, number of downloads)? ######
@@ -3517,9 +3536,18 @@ Workflow_SSH <- filter(Workflow.D30, TC3=="Social Sciences and Humanities") %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
 
-Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
-#### Bar plot - TC3 #### 
+SSH <- Workflow_Tri2 %>% 
+  filter(TC3 == "Social Sciences and Humanities")
+
+SE <- Workflow_Tri2 %>% 
+  filter(TC3 == "Sciences and Engineering")
+
+HR <- Workflow_Tri2 %>% 
+  filter(TC3 == "Health Research")
+
+#### Bar plot - TC3 and Pie charts #### 
 
 ggplot(Workflow_Tri2, aes(x=reorder(D30, `%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
@@ -3532,6 +3560,50 @@ ggplot(Workflow_Tri2, aes(x=reorder(D30, `%`))) +
   xlab("") + 
   ylab("")
 
+#SSh
+PieDonut(SSH, 
+         aes(D30, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp_Cad)
+
+#SE
+PieDonut(SE, 
+         aes(D30, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp_Cad)
+
+#HR
+PieDonut(HR, 
+         aes(D30, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp_Cad)
 
 
 
@@ -3643,9 +3715,58 @@ survey_E2_v1<-
                percentage == "50-75", 3, 4
              ))))
 
+survey_E2_v2<- 
+  survey_organized_spread %>% 
+  select(Internal.ID, E2) %>% 
+  unnest(E2) %>% 
+  rename(answer = E2) %>% 
+  mutate(answer = as.integer(answer),
+         percentage  = ifelse(
+           answer <6, "0-5", ifelse(
+             answer >5 & answer < 11, "6-10", ifelse(
+               answer > 10 & answer < 16, "11-15", ifelse(
+                 answer > 15 & answer < 21, "16-20", ifelse(
+                   answer > 20 & answer < 26, "21-25", ifelse(
+                     answer > 25 & answer < 31, "26-30", ifelse(
+                       answer > 30 & answer < 36, "31-35", ifelse(
+                         answer > 35 & answer < 41, "36-40", ifelse(
+                           answer > 40 & answer < 46, "41-45", ifelse(
+                             answer > 45 & answer < 51, "46-50", ifelse(
+                               answer > 50 & answer < 56, "51-55", ifelse(
+                                 answer > 55 & answer < 61, "56-60", ifelse(
+                                   answer > 60 & answer < 66, "61-65", ifelse(
+                                     answer > 65 & answer < 71, "66-70", ifelse(
+                                       answer > 70 & answer < 76, "71-75", ifelse(
+                                         answer > 75 & answer < 81, "76-80", ifelse(
+                                           answer > 80 & answer < 86, "81-85", ifelse(
+                                             answer > 85 & answer < 91, "86-90", ifelse(
+                                               answer > 90 & answer < 96, "91-95", "96-100"
+                                                 ))))))))))))))))))),
+         order = ifelse(
+           answer <6, 1, ifelse(
+             answer >5 & answer < 11, 2, ifelse(
+               answer > 10 & answer < 16, 3, ifelse(
+                 answer > 15 & answer < 21, 4, ifelse(
+                   answer > 20 & answer < 26, 5, ifelse(
+                     answer > 25 & answer < 31, 6, ifelse(
+                       answer > 30 & answer < 36, 7, ifelse(
+                         answer > 35 & answer < 41, 8, ifelse(
+                           answer > 40 & answer < 46, 9, ifelse(
+                             answer > 45 & answer < 51, 10, ifelse(
+                               answer > 50 & answer < 56, 11, ifelse(
+                                 answer > 55 & answer < 61, 12, ifelse(
+                                   answer > 60 & answer < 66, 13, ifelse(
+                                     answer > 65 & answer < 71, 14, ifelse(
+                                       answer > 70 & answer < 76, 15, ifelse(
+                                         answer > 75 & answer < 81, 16, ifelse(
+                                           answer > 80 & answer < 86, 17, ifelse(
+                                             answer > 85 & answer < 91, 18, ifelse(
+                                               answer > 90 & answer < 96, 19, 20
+                                             ))))))))))))))))))))
+
 #Link to TC3
 survey_E2_v1_tc3 <- 
-  survey_E2_v1 %>% 
+  survey_E2_v2 %>% 
   left_join(domain1, by = "Internal.ID")
 
 
