@@ -788,6 +788,79 @@ PieDonut(B5_summay,
   scale_fill_manual(values =  cbp1)
 
 
+### B5 & B3 ######
+survey_B5_v2.1 <- 
+  survey_B5_v2 %>% 
+  select(-B5) %>% 
+  rename(B5 = Answer_n)
+
+survey_B3_v4.3 <- 
+  survey_B3_v4.2 %>% 
+  select(-Role) %>% 
+  rename(B3 = Role_n)
+
+B5.B3 <- 
+  survey_B5_v2.1 %>% 
+  left_join(survey_B3_v4.3, by = "Internal.ID")
+
+#summarize
+sum.b5.b3 <- 
+  B5.B3 %>% 
+  group_by(B5, B3) %>% 
+  count()
+
+#ftc
+ftc <- 
+  sum.b5.b3 %>% 
+  filter(B5 == "Fixed-term contract")
+
+#flpp
+flpp <- 
+  sum.b5.b3 %>% 
+  filter(B5 == "Full-time permanent position") %>% 
+  drop_na()
+
+#ptp
+ptp <- 
+  sum.b5.b3 %>% 
+  filter(B5 == "Part-time position")
+
+#### Pie chart ####
+
+PieDonut(ftc, 
+         aes(B3, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp_Cad)
+
+PieDonut(flpp, 
+         aes(B3, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp_Cad)
+
+PieDonut(ptp, 
+         aes(B3, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=FALSE, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5,
+         pieLabelSize = 7)+
+  scale_fill_manual(values =  cbp_Cad)
+
+
 ### B6 - Please provide the number of years since your first appointment into this position. ######
 survey_B6_v1<- 
   survey_organized_spread %>% 
