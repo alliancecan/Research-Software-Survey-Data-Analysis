@@ -1341,6 +1341,28 @@ summary_C4_tc4 <-
   count() %>% 
   print()
 
+#Link to roles
+survey_C4_v1.roles <- 
+  survey_C4_v1 %>% 
+  left_join(survey_B3_v4.1, by = "Internal.ID")
+
+#summarize the data
+survey_C4_v1.roles.sum <- 
+  survey_C4_v1.roles %>% 
+  group_by(Role_n, answer) %>% 
+  count()
+
+
+# ggplot(survey_C4_v1.roles.sum, aes(y=n, x=reorder(answer, n))) + 
+#   geom_bar(position="stack", stat="identity", aes(fill = Role_n)) +
+#   scale_fill_manual(values =  cbp1) + 
+#   coord_flip()+
+#   guides(fill=guide_legend(title="Tri-agency"))+
+#   theme_linedraw(base_size = 20) +
+#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+#   xlab("")+
+#   ylab("n")
+
 #### Pie chart #### 
 PieDonut(C4_summay, 
          aes(answer, count= n), 
@@ -1730,8 +1752,64 @@ D1_Previously_sum <-
   group_by(Answer) %>% 
   count()
 
+#link to role
+c1.role <- 
+  survey_D1_v2 %>% 
+  left_join(survey_B3_v4.1, by = "Internal.ID")
 
-#### Pie charts #### 
+#summarize
+c1.role.sum <- 
+  c1.role %>% 
+  group_by(Answer, Role_n) %>% count()
+
+
+#Link to TC3
+D1.domain <- 
+  survey_D1_v2 %>% 
+  left_join(domain1, by = "Internal.ID") %>% 
+  drop_na() # 
+
+
+##add percentage
+Workflow.D1 <- 
+  D1.domain %>% 
+  unique()
+
+nHR <- filter(Workflow.D1, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+nSE <- filter(Workflow.D1, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#91
+nSSH <- filter(Workflow.D1, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #36
+
+Workflow_Health <- filter(Workflow.D1, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D1, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D1, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#### bar plot TC3 - Pie charts #### 
+ggplot(c1.role.sum, aes(y=n, x=reorder(Answer, n))) +
+  geom_bar(position="stack", stat="identity", aes(fill = Role_n)) +
+  scale_fill_manual(values =  cbp1) +
+  coord_flip()+
+  guides(fill=guide_legend(title="Tri-agency"))+
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  xlab("")+
+  ylab("n")
+
 
 #"Currently"
 PieDonut(D1_Currently_sum, 
@@ -1763,6 +1841,18 @@ PieDonut(D1_Previously_sum,
          color = "black",
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie)
+
+#TC3
+ggplot(Workflow_Tri2, aes(x=reorder(Answer,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
 
 ### D2 - Have you or your team received funding from a funding call that is specific to the development of research software (e.g. CANARIE Research Software, CFI Cyberinfrastructure Challenge I, Chan Zuckerberg Open Source Software)? ######
 survey_D2_v1<- 
@@ -2920,8 +3010,66 @@ D14_summay <-
   group_by(answer) %>% 
   count()
 
+#link to C13
+survey_C13_v1
+
+c13.d14 <- 
+  survey_D14_v3 %>% 
+  left_join(survey_C13_v1, by = "Internal.ID")
+
+#C13 yes
+c13.d14.yes <- 
+  c13.d14 %>% 
+  filter(C13 == "Yes")
+
+c13.d14.yes.sum <- 
+  c13.d14.yes %>% 
+  group_by(answer) %>% 
+  count()
+
+
+#C13 No
+c13.d14.no <- 
+  c13.d14 %>% 
+  filter(C13 == "No")
+
+c13.d14.no.sum <- 
+  c13.d14.no %>% 
+  group_by(answer) %>% 
+  count()
+
 #### Pie chart #### 
 PieDonut(D14_summay, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+#C13 yes
+PieDonut(c13.d14.yes.sum, 
+         aes(answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cb_pie)
+
+#C13 No
+PieDonut(c13.d14.no.sum, 
          aes(answer, count= n), 
          ratioByGroup = FALSE, 
          showPieName=F, 
