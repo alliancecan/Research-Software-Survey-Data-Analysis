@@ -1769,35 +1769,72 @@ D1.domain <-
   left_join(domain1, by = "Internal.ID") %>% 
   drop_na() # 
 
-
-##add percentage
-Workflow.D1 <- 
+prev <- 
   D1.domain %>% 
+  filter(question_n == "Previously")
+
+cur <- 
+  D1.domain %>% 
+  filter(question_n == "Currently")
+
+##add percentage - prev
+Workflow.D1.pr <- 
+  prev %>% 
   unique()
 
-nHR <- filter(Workflow.D1, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
-nSE <- filter(Workflow.D1, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#91
-nSSH <- filter(Workflow.D1, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #36
+nHR.pr <- filter(Workflow.D1.pr, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+nSE.pr <- filter(Workflow.D1.pr, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#91
+nSSH.pr <- filter(Workflow.D1.pr, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #36
 
-Workflow_Health <- filter(Workflow.D1, TC3=="Health Research") %>%
+Workflow_Health <- filter(Workflow.D1.pr, TC3=="Health Research") %>%
   group_by(TC3, Answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
-Workflow_SciEng <- filter(Workflow.D1, TC3=="Sciences and Engineering") %>%
+Workflow_SciEng <- filter(Workflow.D1.pr, TC3=="Sciences and Engineering") %>%
   group_by(TC3, Answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
-Workflow_SSH <- filter(Workflow.D1, TC3=="Social Sciences and Humanities") %>%
+Workflow_SSH <- filter(Workflow.D1.pr, TC3=="Social Sciences and Humanities") %>%
   group_by(TC3, Answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
 
-Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+Workflow_Tri2.pr <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+
+##add percentage - cur
+Workflow.D1.cr <- 
+  cur %>% 
+  unique()
+
+nHR.cr <- filter(Workflow.D1.cr, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+nSE.cr <- filter(Workflow.D1.cr, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#91
+nSSH.cr <- filter(Workflow.D1.cr, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #36
+
+Workflow_Health <- filter(Workflow.D1.cr, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D1.cr, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D1.cr, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2.cr <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
 
 #### bar plot TC3 - Pie charts #### 
 ggplot(c1.role.sum, aes(y=n, x=reorder(Answer, n))) +
@@ -1842,8 +1879,20 @@ PieDonut(D1_Previously_sum,
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie)
 
-#TC3
-ggplot(Workflow_Tri2, aes(x=reorder(Answer,`%`))) + 
+#TC3 - pr
+ggplot(Workflow_Tri2.pr, aes(x=reorder(Answer,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+#TC3 - cr
+ggplot(Workflow_Tri2.cr, aes(x=reorder(Answer,`%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
   scale_fill_manual(values =  cbp1) + 
   coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
