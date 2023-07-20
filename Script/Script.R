@@ -57,12 +57,6 @@ survey_organized_spread <- pivot_wider(survey_organized_clean,
                                        values_from = Answer,
                                        values_fn = list)
 
-#Select columns that will be used for the data analysis
-survey_selected_data <- 
-  survey_organized_spread %>% 
-  select(Internal.ID, B1, B2, B3, B7, B8, C2, C3, C4, C5, C6, C7, C10, C11,
-         C12, C13, C14, C15, D2, D3, D4, D5, D6, D8, D9)
-
 # General colour Schemes ############################################################################################
 
 cbp1 <- rep(c("#B7B6B3", "#D6AB00","#00DBA7", "#56B4E9",
