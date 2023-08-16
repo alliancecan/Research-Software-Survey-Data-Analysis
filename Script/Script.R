@@ -1,3 +1,8 @@
+#Total number of respondents * number of levels
+#Go back through the code/pie charts to make sure that what is calculated is the total N of respond*
+#Total N = The N of the cleaned data
+
+
 # Prepare the directory and load the libraries ----------------------------
 
 ###Set working directory
@@ -200,7 +205,7 @@ PieDonut(A3_summay,
          donutAlpha = 1, 
          color = "black",
          pieLabelSize = 7)+ 
-  scale_fill_manual(values =  cb_pie)
+  scale_fill_manual(values =  cbp_Cad1)
 
 ggplot(A3_summay, aes(y=n, x=reorder(A3, n))) + 
   geom_bar(position="stack", stat="identity") +
@@ -4982,9 +4987,9 @@ Workflow.E13 <-
   survey_E13_v1_tc3 %>% 
   unique()
 
-nHR <- filter(Workflow.E13, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #21
-nSE <- filter(Workflow.E13, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#59
-nSSH <- filter(Workflow.E13, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #27
+nHR <- filter(Workflow.E13, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #31
+nSE <- filter(Workflow.E13, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#79
+nSSH <- filter(Workflow.E13, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #39
 
 Workflow_Health <- filter(Workflow.E13, TC3=="Health Research") %>%
   group_by(TC3, answer, order) %>%
