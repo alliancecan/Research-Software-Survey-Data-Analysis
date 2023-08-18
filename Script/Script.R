@@ -4378,7 +4378,7 @@ survey_E4_v3 <-
   select(-Question) %>% 
   rename(Answer_q = separete_v3) %>% 
   drop_na() %>% 
-  filter(!Answer == "No" | !Answer == NA) %>% 
+  # filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
     Answer_q == "Run desktop_research_software_on_personal_computer_or_laptop_", "Run desktop research software on personal computer or laptop", ifelse(
       Answer_q == "Run desktop_research_software_on_lab_computers__", "Run desktop research software on lab computers", ifelse(
@@ -4400,31 +4400,47 @@ survey_E4_v3_tc3 <-
 ##add percentage
 Workflow.E4 <- 
   survey_E4_v3_tc3 %>% 
-  unique()
+  unique() %>% 
+  drop_na() %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", ifelse(
+      Answer == "Yes", "Yes", "Other"
+    )
+  ))
 
 nHR <- filter(Workflow.E4, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
 nSE <- filter(Workflow.E4, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#82
 nSSH <- filter(Workflow.E4, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
 
 Workflow_Health <- filter(Workflow.E4, TC3=="Health Research") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.E4, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.E4, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#Other = Yes 
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", "Yes"
+  ))
+
+#Select only "Yes" for the plot
+Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
+
 
 #### Bar plots - TC3 #### 
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
@@ -4550,7 +4566,7 @@ survey_E8_v3 <-
   select(-Question) %>% 
   rename(Answer_q = separete_v3) %>% 
   drop_na() %>% 
-  filter(!Answer == "No" | !Answer == NA) %>% 
+  # filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
     Answer_q == "Cloud collaboration_platforms__e_g___OSF__", "Cloud collaboration platforms (e.g., OSF)", ifelse(
       Answer_q == "Commercial data_software__e_g___ESRI__NVIVO__Tableau__", "Commercial data software (e.g., ESRI, NVIVO, Tableau)", ifelse(
@@ -4575,31 +4591,46 @@ survey_E8_v3_tc3 <-
 ##add percentage
 Workflow.E8 <- 
   survey_E8_v3_tc3 %>% 
-  unique()
+  unique() %>% 
+  drop_na() %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", ifelse(
+      Answer == "Yes", "Yes", "Other"
+    )))
 
 nHR <- filter(Workflow.E8, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
 nSE <- filter(Workflow.E8, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#83
 nSSH <- filter(Workflow.E8, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #40
 
 Workflow_Health <- filter(Workflow.E8, TC3=="Health Research") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.E8, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.E8, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#Other = Yes 
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", "Yes"
+  ))
+
+#Select only "Yes" for the plot
+Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
+
 
 #### Bar plots - TC3 #### 
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
