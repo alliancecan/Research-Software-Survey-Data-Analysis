@@ -4108,7 +4108,7 @@ survey_E3_v3 <-
   select(-Question) %>% 
   rename(Answer_q = separete_v3) %>% 
   drop_na() %>% 
-  filter(!Answer == "No" | !Answer == NA) %>% 
+  # filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
     Answer_q == "Personal Desktop_laptop_computer_", "Personal Desktop/laptop computer", ifelse(
       Answer_q == "Lab computers_", "Lab computers", ifelse(
@@ -4122,6 +4122,7 @@ survey_E3_v3 <-
   select(Internal.ID, Answer, Answer_n) %>% 
   rename(answer = Answer_n)
 
+#Grouped answers
 survey_E3_v4 <- 
   survey_E3_v2 %>% 
   select(-Question) %>% 
@@ -4143,37 +4144,43 @@ survey_E3_v4 <-
 
 #Link to TC3
 survey_E3_v3_tc3 <- 
-  survey_E3_v4 %>% 
+  survey_E3_v3 %>% 
   left_join(domain1, by = "Internal.ID")
 
 ##add percentage
 Workflow.E3 <- 
   survey_E3_v3_tc3 %>% 
-  unique()
+  unique() %>% 
+  drop_na()
 
 nHR <- filter(Workflow.E3, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #34
 nSE <- filter(Workflow.E3, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#83
 nSSH <- filter(Workflow.E3, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
 
 Workflow_Health <- filter(Workflow.E3, TC3=="Health Research") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, answer, Answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.E3, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, answer, Answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.E3, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, answer, Answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
 
-Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", "Yes"
+  ))
+
+Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
 
 SSH <- Workflow_Tri2 %>% 
   filter(TC3 == "Social Sciences and Humanities")
