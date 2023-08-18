@@ -3254,7 +3254,7 @@ survey_D16_v3 <-
   select(-Question) %>% 
   rename(Answer_q = separete_v3) %>% 
   drop_na() %>% 
-  filter(!Answer == "No" | !Answer == NA) %>% 
+  # filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
     Answer_q == "Institutional policies__", "Institutional policies", ifelse(
       Answer_q == "Funder policies_", "Funder policies", ifelse(
@@ -3281,31 +3281,47 @@ summary_D16_TC3<-
 ##add percentage
 Workflow.D16 <- 
   survey_D16_v3_tc3 %>% 
-  unique()
+  unique() %>% 
+  drop_na() %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", ifelse(
+      Answer == "Yes", "Yes", "Other"
+    )
+  ))
 
 nHR <- filter(Workflow.D16, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #32
 nSE <- filter(Workflow.D16, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#79
 nSSH <- filter(Workflow.D16, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #30
 
 Workflow_Health <- filter(Workflow.D16, TC3=="Health Research") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.D16, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.D16, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#Other = Yes 
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", "Yes"
+  ))
+
+#Select only "Yes" for the plot
+Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
+
 
 #### Bar plots - TC3#### 
 
