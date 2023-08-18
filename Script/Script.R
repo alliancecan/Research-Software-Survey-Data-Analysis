@@ -2805,7 +2805,7 @@ survey_D10_v3 <-
   rename(Answer_q = separete_v3) %>% 
   drop_na() %>% 
   filter() %>% 
-  filter(!Answer == "No" | !Answer == NA) %>% 
+  # filter(!Answer == "No" | !Answer == NA) %>% 
   mutate(Answer_n = ifelse(
     Answer_q == "Libraries that_are_used_by_other_research_software_tools__e_g__Numpy__", "Libraries that are used by other research software tools (e.g. Numpy)", ifelse(
       Answer_q == "Tools that_are_run_by_researchers__e_g__OpenFoam__", "Tools that are run by researchers (e.g. OpenFoam)", ifelse(
@@ -2859,31 +2859,48 @@ summary_D10_TC3<-
 ##add percentage
 Workflow.D10 <- 
   survey_D10_v3_tc3 %>% 
-  unique()
+  unique() %>% 
+  drop_na() %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", ifelse(
+      Answer == "Yes", "Yes", "Other"
+    )
+  ))
 
 nHR <- filter(Workflow.D10, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #35
 nSE <- filter(Workflow.D10, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#92
 nSSH <- filter(Workflow.D10, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
 
 Workflow_Health <- filter(Workflow.D10, TC3=="Health Research") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer, answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nHR)*100)
 
 Workflow_SciEng <- filter(Workflow.D10, TC3=="Sciences and Engineering") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer,answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSE)*100)
 
 Workflow_SSH <- filter(Workflow.D10, TC3=="Social Sciences and Humanities") %>%
-  group_by(TC3, answer) %>%
+  group_by(TC3, Answer,answer) %>%
   summarize(n = n()) %>%
   arrange(desc(n),.by_group = T) %>%
   mutate('%' = (n / nSSH)*100) 
 
 Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) 
+
+#Other = Yes 
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", "Yes"
+  ))
+
+#Select only "Yes" for the plot
+Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
+
+
 
 #### Bar plots#### 
 
