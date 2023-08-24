@@ -1,8 +1,3 @@
-#Total number of respondents * number of levels
-#Go back through the code/pie charts to make sure that what is calculated is the total N of respond*
-#Total N = The N of the cleaned data
-
-
 # Prepare the directory and load the libraries ----------------------------
 
 ###Set working directory
@@ -2249,18 +2244,18 @@ survey_D6_v1 <-
   survey_organized %>% 
   filter(Ques_num == "D6") %>% 
   mutate(answer_n = ifelse(
-    Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty/Librarian", ifelse(
-      Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty/Librarian", ifelse(
+    Question == "Who_develops_the_software_in_your_group___Faculty___Professor__including_assistant_associate_full_professor__clinical_professor__teaching_professor__", "Faculty - Professor", ifelse(
+      Question == "Who_develops_the_software_in_your_group___Faculty___Adjunct__emeritus__visiting__or_limited_term_" , "Faculty - Adjunct, emeritus, visiting, or limited-term", ifelse(
         Question == "Who_develops_the_software_in_your_group___Administrator__", "Administrator", ifelse(
-          Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Researcher", ifelse(
-            Question == "Who_develops_the_software_in_your_group___Research_Software_Engineer___Expert_", "Research Software Developer", ifelse(
-              Question == "Who_develops_the_software_in_your_group___Research_Associate__"  , "Researcher", ifelse(
-                Question == "Who_develops_the_software_in_your_group___Research_Staff__", "Researcher", ifelse(
-                  Question == "Who_develops_the_software_in_your_group___Student__Doctoral__", "Student", ifelse(
-                    Question == "Who_develops_the_software_in_your_group___Student__Masters___", "Student", ifelse(
-                      Question == "Who_develops_the_software_in_your_group___Student__Undergrad___", "Student", ifelse(
+          Question == "Who_develops_the_software_in_your_group___Post_Doctoral_Fellow___", "Post-Doctoral Fellow", ifelse(
+            Question == "Who_develops_the_software_in_your_group___Research_Software_Engineer___Expert_", "Research Software Engineer / Expert", ifelse(
+              Question == "Who_develops_the_software_in_your_group___Research_Associate__"  , "Research Associate", ifelse(
+                Question == "Who_develops_the_software_in_your_group___Research_Staff__", "Research Staff", ifelse(
+                  Question == "Who_develops_the_software_in_your_group___Student__Doctoral__", "Student (Doctoral)", ifelse(
+                    Question == "Who_develops_the_software_in_your_group___Student__Masters___", "Student (Masters)", ifelse(
+                      Question == "Who_develops_the_software_in_your_group___Student__Undergrad___", "Student (Undergrad)", ifelse(
                         Question == "Who_develops_the_software_in_your_group___Researcher_", "Researcher", ifelse(
-                          Question == "Who_develops_the_software_in_your_group___Librarian_" , "Faculty/Librarian", ifelse(
+                          Question == "Who_develops_the_software_in_your_group___Librarian_" , "Librarian", ifelse(
                             Question == "Who_develops_the_software_in_your_group___Other_", "Other", ifelse(
                               Question == "Who_develops_the_software_in_your_group___Research_Software_Developer_", "Research Software Developer", "?"
                             ))))))))))))))) %>% 
@@ -2349,7 +2344,7 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) +
   scale_fill_manual(values =  cbp1) + 
   coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
