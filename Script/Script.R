@@ -1,7 +1,7 @@
 # Prepare the directory and load the libraries ----------------------------
 
 ###Set working directory
-setwd("C:/Users/fsdha/OneDrive - 11593765 Canada Association/Fares Drive/Works in progress/RS Survey Analysis/RS Git Repo/Data")
+setwd("C:/Users/fsdha/Desktop/RS GIT/Research-Software-Survey-Data-Analysis/Data")
 
 ###load libraries
 library(tidyverse)
@@ -1252,7 +1252,45 @@ summary_C3_SCH <-
   summary_C3_tc3 %>% 
   filter(TC3 == "Social Sciences and Humanities")
 
-#### Pie chart #### 
+
+##add percentage
+Workflow.C3 <- 
+  survey_C3_v3_tc3 %>% 
+  unique()
+
+nHR <- filter(Workflow.C3, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #25
+nSE <- filter(Workflow.C3, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#53
+nSSH <- filter(Workflow.C3, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #23
+
+Workflow_Health <- filter(Workflow.C3, TC3=="Health Research") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.C3, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.C3, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+#Other = Yes 
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>% 
+  mutate(answer = ifelse(
+    answer == "No", "No", "Yes"
+  ))
+
+#Select only "Yes" for the plot
+Workflow_Tri2 <- Workflow_Tri2 %>% filter(answer  == "Yes")
+
+#### Pie chart  and TC3#### 
 #all
 PieDonut(summary_C3_tc3, 
          aes(answer, count= n), 
@@ -1312,6 +1350,18 @@ PieDonut(summary_C3_SCH,
          color = "black",
          pieLabelSize = 7)+ 
   scale_fill_manual(values =  cb_pie1)
+
+#TC3
+ggplot(Workflow_Tri2, aes(x=reorder(answer,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
 
 ### C4 - Do you have access to software development support? ######
 survey_C4_v1<- 
@@ -1727,7 +1777,7 @@ PieDonut(C13_summay,
 
 
 # D ############################################################################################
-### D1 - Can you provide an estimate of the time you and your research team spend developing research software? ######
+### D1 - Do you yourself lead, or have you previously led, a research software development project? ######
 survey_D1_v1 <- 
   survey_organized %>% 
   filter(Ques_num == "D1") %>% 
