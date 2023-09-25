@@ -1406,17 +1406,6 @@ survey_C4_v1.roles.sum <-
   group_by(Role_n, answer) %>% 
   count()
 
-
-# ggplot(survey_C4_v1.roles.sum, aes(y=n, x=reorder(answer, n))) + 
-#   geom_bar(position="stack", stat="identity", aes(fill = Role_n)) +
-#   scale_fill_manual(values =  cbp1) + 
-#   coord_flip()+
-#   guides(fill=guide_legend(title="Tri-agency"))+
-#   theme_linedraw(base_size = 20) +
-#   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
-#   xlab("")+
-#   ylab("n")
-
 #### Pie chart #### 
 PieDonut(C4_summay, 
          aes(answer, count= n), 
@@ -2421,6 +2410,14 @@ D7_team <-
   survey_D7_v2 %>% 
   filter(question_n == "Team")
 
+#summarise
+D7_team_summary <- 
+  D7_team %>% 
+  group_by(Answer) %>% 
+  count()
+
+D7_team_summary$Answer[D7_team_summary$Answer == "Between 1/4 and 1/2 of an FTE"] <- "Between 1/4 and\n1/2 of an FTE"
+
 #"You" data
 D7_you <- 
   survey_D7_v2 %>% 
@@ -2583,8 +2580,63 @@ survey_D7_v3_TC3.sum.flip <- survey_D7_v3_TC3.merged %>%
   mutate(new_n = ifelse(question_n == "Respondant",
                         -1*proportion, proportion))
 
+##add percentage - TC3 for "Team"
+Workflow.D7 <- 
+  D7_team.domain %>% 
+  unique()
+
+nHR <- filter(Workflow.D7, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+nSE <- filter(Workflow.D7, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#91
+nSSH <- filter(Workflow.D7, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #36
+
+Workflow_Health <- filter(Workflow.D7, TC3=="Health Research") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng <- filter(Workflow.D7, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH <- filter(Workflow.D7, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)  
+
 
 #### Bar plots#### 
+#TC3
+ggplot(Workflow_Tri2, aes(x=reorder(Answer,`%`))) + 
+  geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
+  scale_fill_manual(values =  cbp1) + 
+  coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
+  theme_linedraw(base_size = 20) +
+  theme(legend.position = "none", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  # ggtitle("") +
+  guides(fill=guide_legend(title="Tri-agency"))+
+  xlab("") + 
+  ylab("")
+
+#Team pie chart
+PieDonut(D7_team_summary, 
+         aes(Answer, count= n), 
+         ratioByGroup = FALSE, 
+         showPieName=F, 
+         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=1, 
+         showRatioThreshold = F, 
+         titlesize = 5, 
+         pieAlpha = 1, 
+         donutAlpha = 1, 
+         color = "black",
+         pieLabelSize = 7)+ 
+  scale_fill_manual(values =  cbp1)
 
 #"Team" and TC3
 ggplot(D7_team_summary, aes(fill=TC3, y=n, x= reorder(answer_n, order))) + 
