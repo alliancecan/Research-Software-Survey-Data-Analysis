@@ -1,7 +1,7 @@
 # Prepare the directory and load the libraries ----------------------------
 
 ###Set working directory
-setwd("C:/Users/fsdha/Desktop/RS GIT/Research-Software-Survey-Data-Analysis/Data")
+#setwd("path...")
 
 ###load libraries
 library(tidyverse)
@@ -26,7 +26,7 @@ survey <- read.csv("ID_Alliance_RS_Survey_EN_FR_20230612.csv",
                    header = T,
                    encoding = "UTF-8",
                    na.strings=c("","NA")) %>%
-  rename(Internal.ID = X.U.FEFF.ID) # n = 548
+  rename(Internal.ID = ID) # n = 548
 
 
 # Organizing data ----------------------------------------------------------------
@@ -1252,6 +1252,44 @@ summary_C3_SCH <-
   summary_C3_tc3 %>% 
   filter(TC3 == "Social Sciences and Humanities")
 
+#Who answered Yes?
+C3.role <- 
+  survey_C3_v3_tc3 %>% 
+  left_join(survey_B3_v4.2)
+
+C3.yes <- 
+  C3.role %>% 
+  filter(answer == "Yes") %>% 
+  drop_na() %>% 
+  group_by(Role_n) %>% 
+  count() %>% 
+  print()
+
+C3.yes<- 
+  C3.yes %>% 
+  mutate(percentage = n/sum(C3.yes$n)*100) %>% 
+  arrange(-percentage) %>% 
+  print()
+
+sum(C3.yes[7:13,3])
+
+
+#Who answered No?
+C3.no <- 
+  C3.role %>% 
+  filter(answer == "No") %>% 
+  drop_na() %>% 
+  group_by(Role_n) %>% 
+  count() %>% 
+  print()
+
+C3.no <- 
+  C3.no %>% 
+  mutate(percentage = n/sum(C3.no$n)*100) %>% 
+  arrange(-percentage) %>% 
+  print()
+
+sum(C3.no[5:14,3])
 
 ##add percentage
 Workflow.C3 <- 
@@ -2064,6 +2102,19 @@ D4_B3_domain_clean <-
                       Years == "41-45", 10, 11
                       )))))))))))
 
+#Categorize the years of experience 0, 0-5, 6-10, <10
+D4_B3_domain_clean <- 
+  D4_B3_domain %>% 
+  mutate(D4 = as.integer(D4),
+         Years = ifelse(
+           D4 == 0, "0", ifelse(
+             D4 > 0 & D4 <= 5, "1-5", ifelse(
+               D4 > 5 & D4 <= 10, "6-10", ">10")))) %>% 
+  mutate(Order = ifelse(
+    Years == "0", 1, ifelse(
+      Years == "1-5", 2, ifelse(
+        Years == "6-10", 3, 4))))
+
 ##add percentage
 Workflow.D4 <- 
   D4_B3_domain_clean %>% 
@@ -2102,10 +2153,10 @@ ggplot(Workflow_Tri2, aes(x=reorder(Years,Order))) +
   scale_fill_manual(values =  cbp1) + 
   coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  theme(legend.position = "", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
-  xlab("") + 
+  xlab("Years of research software development experience") + 
   ylab("")
 
 ### D5 - What roles do you as an individual play on your software development team? ######
@@ -3844,7 +3895,7 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, -order))) +
   scale_fill_manual(values =  cbp1) + 
   coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  theme(legend.position = "", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
@@ -3912,10 +3963,10 @@ ggplot(Workflow_Tri2, aes(x=reorder(percentage, -order))) +
   scale_fill_manual(values =  cbp1) + 
   coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
   theme_linedraw(base_size = 20) +
-  theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+  theme(legend.position = "", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
   # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
-  xlab("") + 
+  xlab("%") + 
   ylab("")
 
 
@@ -4785,6 +4836,25 @@ survey_E9_v3_tc3 <-
   survey_E9_v3 %>% 
   left_join(domain1, by = "Internal.ID")
 
+#Select "Me"
+E9.me <- 
+  survey_E9_v3_tc3 %>% 
+  filter(Answer == "Yes" & answer == "Me")
+
+# "Me" & role
+E9.me.role <- 
+  E9.me %>% 
+  left_join(survey_B3_v4.2) %>% 
+  drop_na() %>% 
+  select(Internal.ID, answer, TC3, Role_n)
+
+#Summarize
+E9.me.role.sum <- 
+  E9.me.role %>% 
+  group_by(TC3, Role_n) %>% 
+  count() %>% rename(TC = TC3) %>% 
+  print()
+
 ##add percentage
 Workflow.E9 <- 
   survey_E9_v3_tc3 %>% 
@@ -4830,6 +4900,9 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>%
 Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
 
 
+# #Select only "Yes" for the plot
+# Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
+
 #### Bar plots - TC3 #### 
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
   geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
@@ -4842,6 +4915,26 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   guides(fill=guide_legend(title="Tri-agency"))+
   xlab("") + 
   ylab("")
+
+#Pie chart
+E9.me.role.sum$TC[E9.me.role.sum$TC == "Social Sciences and Humanities"] <- "Social Sciences and\nHumanities"
+
+PieDonut(E9.me.role.sum, 
+         aes(pies=TC,donuts=Role_n,count=n), 
+         # start=2*pi/2,
+         ratioByGroup = TRUE, 
+         explode =c(1,2,3),
+         r1=1,
+         labelposition=,
+         # selected = c(1,2,3),
+         # explodeDonut=TRUE
+         showPieName=T, 
+         # r0=0.0,r1=1,r2=1.4,start=pi/2,
+         labelpositionThreshold=2, 
+         showRatioThreshold = F,
+         # donutAlpha = 1, 
+         color = "black")+ 
+  scale_fill_manual(values =  cb_pie2)
 
 
 ### E10 - Can you provide an estimate of the time you and your research team spend installing and supporting the research software that you use? ######
