@@ -1821,6 +1821,24 @@ survey_D1_v2 <-
   unnest(Answer) %>% 
   select(-Ques_num)
 
+#Link "lead" to "C3 = yes"
+C3.D1 <- 
+  C3.role %>% 
+  left_join(survey_D1_v2) %>% 
+  filter(answer == "Yes") %>% 
+  drop_na() %>% 
+  select(-TC3, -Role, -Role_n, -answer)
+
+C3.D1.sum <- 
+  C3.D1 %>% 
+  group_by(Answer) %>% 
+  count() %>% 
+  mutate(percentage = n/185*100) %>% 
+  arrange(-percentage) %>%  
+  print()
+
+
+
 #"Currently" data
 D1_Currently <- 
   survey_D1_v2 %>% 
