@@ -632,13 +632,13 @@ survey_B3_v4.1 <-
                                   Role == "Faculty - Adjunct, emeritus, visiting, or limited-term", "Faculty", ifelse(
                                     Role == "Faculty - Professor (including assistant/associate/full professor, clinical professor, teaching professor)", "Faculty", ifelse(
                                       Role == "Librarian", "Librarian", ifelse(
-                                        Role == "Research Software Engineer / Expert", "Research Software Developer", ifelse(
+                                        Role == "Research Software Engineer / Expert", "Research Software Engineer / Expert", ifelse(
                                           Role == "Research Associate", "Researcher", ifelse(
                                             Role == "Research Staff", "Researcher", ifelse(
-                                              Role == "Post-Doctoral Fellow", "Researcher", ifelse(
-                                                Role == "Student (Graduate)", "Student", ifelse(
-                                                  Role == "Student (Undergrad)", "Student", ifelse(
-                                                    Role == "Student (Doctoral)", "Student", Role
+                                              Role == "Post-Doctoral Fellow", "Post-Doctoral Fellow", ifelse(
+                                                Role == "Student (Graduate)", "Student (graduate and undergraduate)", ifelse(
+                                                  Role == "Student (Undergrad)", "Student (graduate and undergraduate)", ifelse(
+                                                    Role == "Student (Doctoral)", "Student (graduate and undergraduate)", Role
                                                     ))))))))))))))))))))))))))
 
 #Roles not grouped
@@ -683,8 +683,8 @@ roles_summary.2 <-
   drop_na() %>%
   print()
 
-roles_summary.1$Role_n[roles_summary.1$Role_n == "Research Software Developer"] <-  "Research Software\nDeveloper"
-
+roles_summary.1$Role_n[roles_summary.1$Role_n == "Research Software Engineer / Expert"] <-  "Research Software Engineer /\nExpert"
+roles_summary.1$Role_n[roles_summary.1$Role_n == "Student (graduate and undergraduate)"] <-  "Student\n(graduate and undergraduate)"
 
 #### Pie chart ####
 
@@ -693,11 +693,11 @@ PieDonut(roles_summary.1,
          aes(Role_n, count= n),
          ratioByGroup = FALSE,
          showPieName=FALSE,
-         r0=0.0,r1=1,r2=1.4,start=pi/2,
+         r0=0.0,r1=1,r2=1.4,start=3*pi/2,
          labelpositionThreshold=1,
          showRatioThreshold = F,
          title= "Respondents' roles",
-         titlesize = 7,pieLabelSize =7,  pieAlpha = 1, donutAlpha = 1, color = "black")+
+         titlesize = 7,pieLabelSize =5,  pieAlpha = 1, donutAlpha = 1, color = "black")+
   scale_fill_manual(values =  cbp_Cad) 
 
 #Note grouped
