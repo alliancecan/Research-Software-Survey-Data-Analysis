@@ -2489,7 +2489,13 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) +
 
 #Groups hist
 barplot(height=id.group.1$percentage, names.arg= id.group.1$group, col="#69b3a2",
-        xlab ="Group", ylab = "Percentage")
+        xlab ="Number of Different Research Software Developer Roles in Research Group", ylab = "Percentage",
+        font.axis = 1,
+        cex.axis = 1.4,
+        cex.names = 1.4,
+        cex.lab = 1.5,
+        ylim = c(0,25)
+        )
 
 # barplot(height=id.group.1$group, names.arg= id.group.1$percentage, col="#69b3a2",
 #         xlab ="Percentage", ylab = "Group")
