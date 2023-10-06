@@ -972,12 +972,12 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health)
 
 # #### Plot funds source #### 
 
- ggplot(Workflow_Tri2, aes(x=reorder(answer,-order))) + 
+ ggplot(Workflow_Tri2, aes(x=reorder(answer,`%`))) + 
    geom_bar(aes(y=`%`, fill = TC3), stat= "identity") +
    scale_fill_manual(values =  cbp1) + 
    coord_flip() +geom_text(position = position_stack(vjust = .5), aes(y=`%`, label=round(`%`, digits = 0))) +
    theme_linedraw(base_size = 20) +
-   theme(legend.position = "left", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
+   theme(legend.position = "", panel.grid.major.y = element_line(linetype = 2), panel.grid.minor.x = element_line(size = 0), panel.background = element_blank())+
    # ggtitle("") +
   guides(fill=guide_legend(title="Tri-agency"))+
    xlab("") + 
@@ -4896,24 +4896,24 @@ survey_E9_v3_tc3 <-
   survey_E9_v3 %>% 
   left_join(domain1, by = "Internal.ID")
 
-#Select "Me"
-E9.me <- 
-  survey_E9_v3_tc3 %>% 
-  filter(Answer == "Yes" & answer == "Me")
-
-# "Me" & role
-E9.me.role <- 
-  E9.me %>% 
-  left_join(survey_B3_v4.2) %>% 
-  drop_na() %>% 
-  select(Internal.ID, answer, TC3, Role_n)
-
-#Summarize
-E9.me.role.sum <- 
-  E9.me.role %>% 
-  group_by(TC3, Role_n) %>% 
-  count() %>% rename(TC = TC3) %>% 
-  print()
+# #Select "Me"
+# E9.me <- 
+#   survey_E9_v3_tc3 %>% 
+#   filter(Answer == "Yes" & answer == "Me")
+# 
+# # "Me" & role
+# E9.me.role <- 
+#   E9.me %>% 
+#   left_join(survey_B3_v4.2) %>% 
+#   drop_na() %>% 
+#   select(Internal.ID, answer, TC3, Role_n)
+# 
+# #Summarize
+# E9.me.role.sum <- 
+#   E9.me.role %>% 
+#   group_by(TC3, Role_n) %>% 
+#   count() %>% rename(TC = TC3) %>% 
+#   print()
 
 ##add percentage
 Workflow.E9 <- 
@@ -4959,9 +4959,62 @@ Workflow_Tri2 <- rbind(Workflow_SSH, Workflow_SciEng, Workflow_Health) %>%
 #Select only "Yes" for the plot
 Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
 
+##Who are the "Me"?##
+# Workflow.E9.v2 <- 
+#   Workflow.E9 %>% 
+#   filter(answer == "Me" & Answer == "Yes")
+# 
+# #link to role
+# Workflow.E9.v2.role <- 
+#   Workflow.E9.v2 %>% 
+#   left_join(survey_B3_v4.2) %>% 
+#   drop_na() %>% 
+#   select(Internal.ID, answer, TC3, Role_n)
+  
+##add percentage
+Workflow.E9.role <- 
+  survey_E9_v3_tc3 %>% 
+  unique() %>% 
+  drop_na() %>% 
+  filter(answer == "Me") %>% 
+  mutate(Answer = ifelse(
+    Answer == "No", "No", ifelse(
+      Answer == "Yes", "Yes", "Other"
+    )
+  )) %>% 
+  left_join(survey_B3_v4.2) %>%
+  filter(!Answer == "No") %>% 
+  drop_na()
 
-# #Select only "Yes" for the plot
-# Workflow_Tri2 <- Workflow_Tri2 %>% filter(Answer  == "Yes")
+nHR <- filter(Workflow.E9.role, TC3 == "Health Research") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #33
+nSE <- filter(Workflow.E9.role, TC3 == "Sciences and Engineering") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric()#82
+nSSH <- filter(Workflow.E9.role, TC3 == "Social Sciences and Humanities") %>% select(Internal.ID) %>% unique() %>% count() %>% as.numeric() #38
+
+Workflow_Health.r <- filter(Workflow.E9.role, TC3=="Health Research") %>%
+  group_by(TC3, Answer, answer, Role_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nHR)*100)
+
+Workflow_SciEng.r <- filter(Workflow.E9.role, TC3=="Sciences and Engineering") %>%
+  group_by(TC3, Answer, answer, Role_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSE)*100)
+
+Workflow_SSH.r <- filter(Workflow.E9.role, TC3=="Social Sciences and Humanities") %>%
+  group_by(TC3, Answer, answer, Role_n) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n),.by_group = T) %>%
+  mutate('%' = (n / nSSH)*100) 
+
+Workflow_Tri2.r <- rbind(Workflow_SSH.r, Workflow_SciEng.r, Workflow_Health.r)
+
+Workflow_Tri2.r <-
+  Workflow_Tri2.r %>% 
+  select(TC3, Role_n, `%`) %>% 
+  rename(TC = TC3) %>% 
+  mutate(P = round(`%`))
 
 #### Bar plots - TC3 #### 
 ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) + 
@@ -4977,24 +5030,23 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
   ylab("")
 
 #Pie chart
-E9.me.role.sum$TC[E9.me.role.sum$TC == "Social Sciences and Humanities"] <- "Social Sciences and\nHumanities"
+Workflow_Tri2.r$TC[Workflow_Tri2.r$TC == "Social Sciences and Humanities"] <- "Social Sciences and\nHumanities"
 
-PieDonut(E9.me.role.sum, 
-         aes(pies=TC,donuts=Role_n,count=n), 
-         # start=2*pi/2,
+PieDonut(Workflow_Tri2.r, 
+         aes(pies=TC,donuts=Role_n,count=P), 
+         start=2.8*pi/2,
          ratioByGroup = TRUE, 
          explode =c(1,2,3),
-         r1=1,
-         labelposition=,
-         # selected = c(1,2,3),
+         r1=1.1,
+         labelposition=1,
+         # sexlected = c(1,2,3),
          # explodeDonut=TRUE
          showPieName=T, 
          # r0=0.0,r1=1,r2=1.4,start=pi/2,
          labelpositionThreshold=2, 
          showRatioThreshold = F,
          # donutAlpha = 1, 
-         color = "black")+ 
-  scale_fill_manual(values =  cb_pie2)
+         color = "black")
 
 
 ### E10 - Can you provide an estimate of the time you and your research team spend installing and supporting the research software that you use? ######
