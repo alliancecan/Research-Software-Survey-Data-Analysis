@@ -582,7 +582,6 @@ survey_B3_v1<-
   unnest(B3) %>% 
   rename(Role = B3) # n = 328
 
-
 ##From "Other", avoid duplication and select answers
 
 #Add "2" to rows that I want to select
@@ -685,6 +684,8 @@ roles_summary.2 <-
 
 roles_summary.1$Role_n[roles_summary.1$Role_n == "Research Software Engineer / Expert"] <-  "Research Software Engineer /\nExpert"
 roles_summary.1$Role_n[roles_summary.1$Role_n == "Student (graduate and undergraduate)"] <-  "Student\n(graduate and undergraduate)"
+
+
 
 #### Pie chart ####
 
@@ -2400,6 +2401,34 @@ other <-
 # #Export open text
 # write.csv(other, "D6.csv")
 
+##The diversity of staff roles
+#select those who did not answer "No" to this question
+survey_D6_v1.yes <- 
+  survey_D6_v1 %>% 
+  filter(!Answer == "No")
+  
+#verify duplications
+duplications <- survey_D6_v1.yes[duplicated(survey_D6_v1.yes$Internal.ID) | duplicated(survey_D6_v1.yes$Internal.ID, fromLast = TRUE), ]
+
+#Create groups of roles
+id.group <- 
+  survey_D6_v1.yes %>% 
+  group_by(Internal.ID) %>% 
+  count() %>% 
+  rename(group = n) %>% 
+  group_by(group) %>% 
+  count() %>% 
+  print()
+
+sum.id.group <- sum(id.group$n)
+
+id.group.1 <- 
+  id.group %>% 
+  mutate(percentage = n/sum.id.group*100) %>% 
+  arrange(group) %>% 
+  print()
+
+
 ##add percentage
 Workflow.D6 <- 
   D6.domain %>% 
@@ -2458,6 +2487,13 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer_n,`%`))) +
   xlab("") + 
   ylab("")
 
+#Groups hist
+barplot(height=id.group.1$percentage, names.arg= id.group.1$group, col="#69b3a2",
+        xlab ="Group", ylab = "Percentage")
+
+# barplot(height=id.group.1$group, names.arg= id.group.1$percentage, col="#69b3a2",
+#         xlab ="Percentage", ylab = "Group")
+  
 ### D7 - Can you provide an estimate of the time you and your research team spend developing research software? ######
 survey_D7_v1 <- 
   survey_organized %>% 
