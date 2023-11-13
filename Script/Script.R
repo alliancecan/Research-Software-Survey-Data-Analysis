@@ -3914,8 +3914,8 @@ survey_D26_v1_tc3 <-
   left_join(domain1, by = "Internal.ID") %>% 
   mutate(order = ifelse(
     answer == "Expert (recognized authority)", 1, ifelse(
-      answer == "Fundamental Awareness (basic knowledge)", 2, ifelse(
-        answer == "Advanced (applied theory)", 3, ifelse(
+      answer == "Fundamental Awareness (basic knowledge)", 3, ifelse(
+        answer == "Advanced (applied theory)", 2, ifelse(
           answer == "Intermediate (practical application)", 4, 5
         ))))) %>%
   drop_na()
