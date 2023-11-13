@@ -507,11 +507,12 @@ domain_summary <-
 
 #Edit names
 domain_summary_v1 <- domain_summary
-domain_summary_v1$Domain[domain_summary_v1$Domain== "Social sciences"] <- "Social sciences"
-domain_summary_v1$Domain[domain_summary_v1$Domain == "Agricultural and veterinary sciences"] <- "Agricultural and\nveterinary sciences"
-domain_summary_v1$Domain[domain_summary_v1$Domain == "Engineering and technology"] <- "Engineering and\ntechnology"
-domain_summary_v1$Domain[domain_summary_v1$Domain == "Medical, health and life sciences"] <- "Medical, health\nand life sciences"
-domain_summary_v1$Domain[domain_summary_v1$Domain == "Humanities and the artss"] <- "Humanities and\nthe arts"
+domain_summary_v1$Domain[domain_summary_v1$Domain== "Social sciences"] <- "Social Sciences"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Agricultural and veterinary sciences"] <- "Agricultural and\nVeterinary Sciences"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Engineering and technology"] <- "Engineering and\nTechnology"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Medical, health and life sciences"] <- "Medical, Health\nand Life Sciences"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Humanities and the arts"] <- "Humanities and the Arts"
+domain_summary_v1$Domain[domain_summary_v1$Domain == "Natural sciences"] <- "Natural Sciences"
 
 #### Group domains into TC3 ####
 domain_summary1 <-
@@ -556,7 +557,7 @@ PieDonut(domain_summary_v1,
          showRatioThreshold = F, 
          title= "Respondents' roles", 
          titlesize = 5,
-         pieLabelSize = 7)+
+         pieLabelSize = 5.5)+
   scale_fill_manual(values =  cbp_Cad)
 
 
@@ -701,7 +702,7 @@ PieDonut(roles_summary.1,
          titlesize = 7,pieLabelSize =5,  pieAlpha = 1, donutAlpha = 1, color = "black")+
   scale_fill_manual(values =  cbp_Cad) 
 
-#Note grouped
+#Not grouped
 PieDonut(roles_summary.2,
          aes(Role_n, count= n),
          ratioByGroup = FALSE,
@@ -5032,9 +5033,14 @@ ggplot(Workflow_Tri2, aes(x=reorder(answer, `%`))) +
 #Pie chart
 Workflow_Tri2.r$TC[Workflow_Tri2.r$TC == "Social Sciences and Humanities"] <- "Social Sciences and\nHumanities"
 
+Workflow_Tri2.r$Role_n[Workflow_Tri2.r$Role_n == "Student (Graduate)"] <- ""
+
+
+
+
 PieDonut(Workflow_Tri2.r, 
          aes(pies=TC,donuts=Role_n,count=P), 
-         start=2.8*pi/2,
+         start=1.8*pi/2,
          ratioByGroup = TRUE, 
          explode =c(1,2,3),
          r1=1.1,
