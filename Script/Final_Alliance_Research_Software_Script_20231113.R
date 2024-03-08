@@ -1,6 +1,6 @@
 # Prepare the directory and load the libraries ----------------------------
 
-###Set working directory
+###Set working directory 
 #setwd("path...")
 
 ###load libraries
